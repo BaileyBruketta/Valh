@@ -48,6 +48,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "item stats")
 	int GetGunNumber(int ItemID);
 
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+	int GetGunDamage(int ItemID);
+
 	//This is used to keep track of inventory spots available
 	int NumberOfItemsTotal;
 };

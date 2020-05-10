@@ -48,6 +48,13 @@ FString AInventory::GetItemName(int ItemID)
 	case 0 : 
 		itemName = "Steely Revolver";
 		break;
+	case 1 :
+		itemName = "Old World Attack Rifle";
+		break;
+	case 2 :
+	case 3 :
+		itemName = "vintage Submachinegun";
+		break;
 	}
 
 	return itemName;
@@ -62,9 +69,36 @@ int AInventory::GetGunNumber(int ItemID)
 	case 0 :
 		gunNumber = 0;
 		break;
+	case 1:
+		gunNumber = 1;
+		break;
+	case 2:
+	case 3:
+		gunNumber = 3;
+		break;
 	}
 
 	return gunNumber;
+}
+
+int AInventory::GetGunDamage(int ItemID)
+{
+	int gunDamage = 6666;
+	switch (ItemID)
+	{
+	case 0 :
+		gunDamage = 40;
+		break;
+	case 1 : 
+		gunDamage = 20;
+		break;
+	case 2:
+	case 3 :
+		gunDamage = 9;
+		break;
+	}
+
+	return gunDamage;
 }
 
 

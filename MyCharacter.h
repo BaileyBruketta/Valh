@@ -49,7 +49,7 @@ public:
 	void Interact();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-	class AInventory* Inventory;
+		class AInventory* Inventory;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> InventoryDefault;
@@ -75,9 +75,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = Mesh)
 		class USkeletalMeshComponent* Gun;
 
+	//Active Magazine
+	UPROPERTY(EditAnywhere, Category = Mesh)
+		class USkeletalMeshComponent* MeshMagazine;
+
 	//GUNS
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun0MeshReference;					//gun 0 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun1MeshReference;        
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun1MagazineMeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun3MeshReference;
 
 
 	//This is the base function called, from here, a seconday "Hashmap" functions will be called to grab locations for guns 
@@ -88,11 +101,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Guns")
 		void SetGunVariables(int gunNumber);
 
-	FVector* RelativeGunlocation;
-	FVector* AdsRelativeGunLocation;
-	FRotator* GunRotation;
-	FRotator* AdsGunRotation;
-	FVector* GunScale;
+	FVector RelativeGunlocation;
+	FVector AdsRelativeGunLocation;
+	FRotator GunRotation;
+	FRotator AdsGunRotation;
+	FVector GunScale;
+
+	FVector RelativeMagazineLocation;
+	FVector AdsRelativeMagazineLocation;
+	FRotator MagazineRotation;
+	FRotator AdsMagazineRotation;
+	FVector MagazineScale;
 
 	void FireWeaponOrTool();
 

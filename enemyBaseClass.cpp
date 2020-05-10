@@ -63,21 +63,20 @@ void AenemyBaseClass::EnemyPushBack()
 	FVector location;
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
-	FRotator weSmokeOpps;
-	FVector whereHeAt;
+	FRotator newRot;
+	FVector otherLoc;
 
-	whereHeAt = player->GetActorLocation();
+	otherLoc = player->GetActorLocation();
 
-	weSmokeOpps = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), whereHeAt);
+	newRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), otherLoc);
 
-	this->SetActorRotation(weSmokeOpps);
+	this->SetActorRotation(newRot);
 
 	FVector whereImAt;
 	whereImAt = this->GetActorLocation();
 	whereImAt += this->GetActorForwardVector() * -30.0f;
 
-	float dist = FVector::Dist(whereImAt, whereHeAt);
-
+	float dist = FVector::Dist(whereImAt, otherLoc);
 	this->SetActorRelativeLocation(whereImAt);
 
 }

@@ -22,7 +22,7 @@ void AItemPickup::BeginPlay()
 // Called every frame
 void AItemPickup::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//Super::Tick(DeltaTime);
 
 }
 

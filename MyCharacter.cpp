@@ -10,6 +10,11 @@
 #include "enemybaseClass.h"
 #include "GameFramework/InputSettings.h"
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+//TODO : Make individual componenets for gun magazines, silenceers, and other attachments;;
+//TODO : Make 2 arm meshcomponents to attach to the gun object, and accompanying transform values
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -35,6 +40,7 @@ AMyCharacter::AMyCharacter()
 	FVector Loc = GetActorLocation();
 	FActorSpawnParameters SpawnParams;
 	//Inventory = GetWorld()->SpawnActor<AInventory>(InventoryDefault, Loc, Rots, SpawnParams);
+	//As this occassionally stops constructing at runtime, the bluepirnt spawns one successfully and sets characters ref to it
 	Inventory = CreateDefaultSubobject<AInventory>(TEXT("PlayerInventory"));
 
 	//Create a BodyMesh
@@ -61,20 +67,32 @@ AMyCharacter::AMyCharacter()
 	Gun->CastShadow = true;
 	Gun->SetupAttachment(Arms);
 
+	//Magazine
+	MeshMagazine = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Magazine"));
+	MeshMagazine->bCastDynamicShadow = true;
+	MeshMagazine->CastShadow = true;
+	MeshMagazine->SetupAttachment(Gun);
+
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	FP_MuzzleLocation->SetupAttachment(Gun);
 	FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
 
-	RelativeGunlocation    = new FVector;
-	AdsRelativeGunLocation = new FVector;
-	GunRotation            = new FRotator;
-	AdsGunRotation         = new FRotator;
-	GunScale               = new FVector;
+	RelativeGunlocation.Set(0.0f,0.0f,0.0f);
+	AdsRelativeGunLocation.Set(0.0f, 0.0f, 0.0f);
+	GunRotation;
+	AdsGunRotation;
+	GunScale.Set(0.0f, 0.0f, 0.0f);
 	gunBaseDamage          = 0;
 	ammoInMagazine         = 1000;
 	currentFireType        = 0;
 	isFiring               = false;
-	GunOffset              = FVector(100.0f, 0.0f, 10.0f);
+	GunOffset.Set(100.0f, 0.0f, 10.0f);
+
+	RelativeMagazineLocation.Set(0.0f, 0.0f, 0.0f);
+	AdsRelativeMagazineLocation.Set(0.0f, 0.0f, 0.0f);
+	MagazineRotation;
+	AdsMagazineRotation;
+	MagazineScale.Set(0.0f, 0.0f, 0.0f);
 
 
 
@@ -125,7 +143,7 @@ void AMyCharacter::Interact()
 	FHitResult* HitResult = new FHitResult();
 	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
 	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
-	FVector EndTrace = ((forwardVector*200.f) + StartTrace);
+	FVector EndTrace = ((forwardVector*1000.f) + StartTrace);
 	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
 
 	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
@@ -180,7 +198,13 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 	//set the mesh
 	switch (gunNumber) 
 	{
-	case 0: Gun->SetSkeletalMesh(Gun0MeshReference);
+	case 0: Gun->SetSkeletalMesh(Gun0MeshReference); SetGunVariables(0);
+		break;
+
+	case 1: Gun->SetSkeletalMesh(Gun1MeshReference); MeshMagazine->SetSkeletalMesh(Gun1MagazineMeshReference); SetGunVariables(1);
+		break;
+
+	case 3: Gun->SetSkeletalMesh(Gun3MeshReference); SetGunVariables(3);
 		break;
 	}
 }
@@ -188,11 +212,28 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 void AMyCharacter::SetGunVariables(int gunNumber)
 {
 	//set location, adslocation, rotation, ads rotation, scale, gunbasedamage, rateoffire
-
-	//switch (gunNumber)
-	//{
-	//case 0: 
-	//}
+	
+	switch (gunNumber)
+	{
+	case 0:
+		RelativeGunlocation.Set(-6.666f, 23.333f, 153.333f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = .2f; GunScale.Y = .2f; GunScale.Z = .2f; Gun->SetRelativeScale3D(GunScale);
+		gunBaseDamage = 40;
+		break;
+	case 1:
+		RelativeGunlocation.Set(-10.0f, 50.0f, 120.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 2.0f; GunScale.Y = 2.0f; GunScale.Z = 2.0f; Gun->SetRelativeScale3D(GunScale);
+		gunBaseDamage = 20;
+		break;
+	case 3:
+		RelativeGunlocation.Set(-14.0f, 51.0f, 122.5f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 5.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
+		gunBaseDamage = 9;
+		break;
+	}
 }
 
 void AMyCharacter::FireWeaponOrTool()
