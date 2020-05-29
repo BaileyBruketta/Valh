@@ -38,6 +38,7 @@ void AFoliageGod::Tick(float DeltaTime)
 
 }
 
+//TODO: rewrite as an iteration using arrays for plant object/ number of plants per plant type
 void AFoliageGod::SpawnOne()
 {
 	FVector Locs = GetActorLocation();
