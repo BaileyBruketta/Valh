@@ -40,6 +40,7 @@ void AFoliageGod::Tick(float DeltaTime)
 
 }
 
+
 void AFoliageGod::SpawnFunction()
 {
 	//needed for UE4 spawn macro
