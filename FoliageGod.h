@@ -42,9 +42,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> plant7;
 
-
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void SpawnOne();
+	void SpawnFunction();
 
 	TArray<AActor> plants;
 	TArray<int> platNumber;

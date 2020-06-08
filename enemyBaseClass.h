@@ -50,4 +50,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = capsule)
 		class UCapsuleComponent* capsule;
 
+	UPROPERTY(EditAnywhere, Category = Movement)
+		 FVector primaryNextLocation;
+
+	UFUNCTION()
+	void FindNextDestination();
+
 };

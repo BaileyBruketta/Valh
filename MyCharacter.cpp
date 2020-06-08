@@ -216,15 +216,15 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 	switch (gunNumber)
 	{
 	case 0:
-		RelativeGunlocation.Set(-6.666f, 23.333f, 153.333f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-6.666f, 27.0f, 154.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = .2f; GunScale.Y = .2f; GunScale.Z = .2f; Gun->SetRelativeScale3D(GunScale);
 		gunBaseDamage = 40;
 		break;
 	case 1:
-		RelativeGunlocation.Set(-10.0f, 50.0f, 120.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-10.0f, 56.0f, 123.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
-		GunScale.X = 2.0f; GunScale.Y = 2.0f; GunScale.Z = 2.0f; Gun->SetRelativeScale3D(GunScale);
+		GunScale.X = 1.8f; GunScale.Y = 1.8f; GunScale.Z = 1.8f; Gun->SetRelativeScale3D(GunScale);
 		gunBaseDamage = 20;
 		break;
 	case 3:

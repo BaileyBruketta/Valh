@@ -22,6 +22,8 @@ AenemyBaseClass::AenemyBaseClass()
 	MeshBody->bCastDynamicShadow = true;
 	MeshBody->CastShadow = true;
 	MeshBody->SetupAttachment(capsule);
+
+	primaryNextLocation.Set(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned
@@ -82,6 +84,11 @@ void AenemyBaseClass::EnemyPushBack()
 }
 
 void AenemyBaseClass::DeathDrop()
+{
+
+}
+
+void AenemyBaseClass::FindNextDestination()
 {
 
 }

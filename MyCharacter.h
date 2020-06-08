@@ -81,16 +81,16 @@ public:
 
 	//GUNS
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
-		class USkeletalMesh* Gun0MeshReference;					//gun 0 
+		class USkeletalMesh* Gun0MeshReference;					//gun 0 revolver
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun1MeshReference;        
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
-		class USkeletalMesh* Gun1MagazineMeshReference;
+		class USkeletalMesh* Gun1MagazineMeshReference;         // rifle
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
-		class USkeletalMesh* Gun3MeshReference;
+		class USkeletalMesh* Gun3MeshReference;                 // smg
 
 
 	//This is the base function called, from here, a seconday "Hashmap" functions will be called to grab locations for guns 
