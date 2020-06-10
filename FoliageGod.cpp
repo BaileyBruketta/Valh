@@ -40,6 +40,7 @@ void AFoliageGod::Tick(float DeltaTime)
 
 }
 
+//The sheer amount of plants spawned here is made possible by using a Cull Distance Volume object native to UE4 within the map. Failure to use such support provides no inbuilt object culling feature.
 
 void AFoliageGod::SpawnFunction()
 {
@@ -49,7 +50,7 @@ void AFoliageGod::SpawnFunction()
 	FActorSpawnParameters SpawnParams;
 
 	//for every type of plant object we are to spawn
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 15; j++)
 	{
 		//determine number of plants by plant type
 		int plantMin          = 0;
@@ -59,14 +60,24 @@ void AFoliageGod::SpawnFunction()
 		//pull differnt variables depending on which plant number is being operated on
 		switch (j)
 		{
-		case 0: plantMin          = 800; plantMaxModifier  = 1000;plantSizeModifier = 5;break;		//TODO: have this read a CSV file with these values
+			//plants
+		case 0: plantMin          = 1500; plantMaxModifier  = 4000;plantSizeModifier = 3;break;		//TODO: have this read a CSV file with these values
 		case 1: plantMin          = 3;   plantMaxModifier  = 50;  plantSizeModifier = 9;break;		//TODO: have this open a different CSV file for each terrain piece
-		case 2: plantMin          = 300; plantMaxModifier  = 2000;plantSizeModifier = 3;break;		
+		case 2: plantMin          = 50; plantMaxModifier  = 300;plantSizeModifier = 3;break;		
 		case 3: plantMin          = 100; plantMaxModifier  = 600; plantSizeModifier = 3;break;
-		case 4: plantMin          = 100; plantMaxModifier  = 600; plantSizeModifier = 3;break;
+		case 4: plantMin          = 50; plantMaxModifier  = 300; plantSizeModifier = 3;break;
 		case 5: plantMin          = 3;   plantMaxModifier  = 50;  plantSizeModifier = 3;break;
-		case 6: plantMin          = 1500;plantMaxModifier  = 4000;plantSizeModifier = 3;break;
+		case 6: plantMin          = 500;plantMaxModifier  = 1000;plantSizeModifier = 3;break;
 		case 7: plantMin          = 5;   plantMaxModifier  = 50;  plantSizeModifier = 3;break;
+			//grasses
+		case 8: plantMin          = 30000;plantMaxModifier  = 45000;plantSizeModifier = 3;break;
+		case 9: plantMin = 35000; plantMaxModifier = 50000; plantSizeModifier = 3; break;
+			//rocks
+		case 10: plantMin = 10; plantMaxModifier = 50; plantSizeModifier = 2; break;
+		case 11: plantMin = 15; plantMaxModifier = 50; plantSizeModifier = 2; break;
+		case 12: plantMin = 15; plantMaxModifier = 30; plantSizeModifier = 2; break;
+		case 13: plantMin = 15; plantMaxModifier = 30; plantSizeModifier = 2; break;
+		case 14: plantMin = 15; plantMaxModifier = 30; plantSizeModifier = 2; break;
 		}
 
 		//determine the number of plants for specific plant type (J) based on stats pulled in switch case
@@ -114,6 +125,14 @@ void AFoliageGod::SpawnFunction()
 			case 5: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant5, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 			case 6: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant6, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 			case 7: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant7, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 8: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant8, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 9: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant9, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+
+			case 10: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 11: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 12: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 13: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+			case 14: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 			}
 
 			

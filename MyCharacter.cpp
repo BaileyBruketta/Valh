@@ -55,7 +55,7 @@ AMyCharacter::AMyCharacter()
 	MeshTorso->CastShadow = true;
 	MeshTorso->SetupAttachment(RootComponent);
 
-	//Create Arms
+	//Create Arms - no longer necessary, however the previously determined firearm locations are affected by this. easier to keep. 
 	Arms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms"));
 	Arms->bCastDynamicShadow = true;
 	Arms->CastShadow = true;
@@ -67,11 +67,27 @@ AMyCharacter::AMyCharacter()
 	Gun->CastShadow = true;
 	Gun->SetupAttachment(Arms);
 
+	//Arms
+	LeftArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftArm"));
+	LeftArm->bCastDynamicShadow = true;
+	LeftArm->CastShadow = true;
+	LeftArm->SetupAttachment(Gun);
+
+	RightArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArm"));
+	RightArm->bCastDynamicShadow = true;
+	RightArm->CastShadow = true;
+	RightArm->SetupAttachment(Gun);
+
 	//Magazine
 	MeshMagazine = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Magazine"));
 	MeshMagazine->bCastDynamicShadow = true;
 	MeshMagazine->CastShadow = true;
-	MeshMagazine->SetupAttachment(Gun);
+	MeshMagazine->SetupAttachment(Gun, TEXT("SOCK"));
+	
+	//MeshMag = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gun Mag"));
+	//MeshMag->bCastDynamicShadow = true;
+	//MeshMag->CastShadow = true;
+	//MeshMag->AttachToComponent(Gun, "SOCK");
 
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	FP_MuzzleLocation->SetupAttachment(Gun);
@@ -93,6 +109,13 @@ AMyCharacter::AMyCharacter()
 	MagazineRotation;
 	AdsMagazineRotation;
 	MagazineScale.Set(0.0f, 0.0f, 0.0f);
+
+	//Set to false 
+	isADS = false;
+
+	rateOfFire = 0.0f;
+
+	
 
 
 
@@ -121,7 +144,12 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	check(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AMyCharacter::Interact);
+
 	PlayerInputComponent->BindAction("OnFire", IE_Pressed, this, &AMyCharacter::OnFire);
+	PlayerInputComponent->BindAction("OnFire", IE_Released, this, &AMyCharacter::ReleaseTrigger);
+
+	PlayerInputComponent->BindAction("AdsIn", IE_Pressed, this, &AMyCharacter::AimDownSights);
+	PlayerInputComponent->BindAction("AdsIn", IE_Released, this, &AMyCharacter::RelaxAim);
 
 	//Movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
@@ -135,6 +163,46 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	
 
+}
+
+//Aiming
+void AMyCharacter::AimDownSights()
+{
+	//manipulate gun locations
+	Gun->SetRelativeLocation(AdsRelativeGunLocation);
+	Gun->SetRelativeRotation(AdsGunRotation);
+
+	//send signal for movement blueprint
+	FName AnimPropName = TEXT("isADS");
+	if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+	{
+		UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+		if (myBool != NULL)
+		{
+			myBool->SetPropertyValue_InContainer(AnimInst, true);
+		}
+	}
+	//keep for reference
+	isADS = true;
+}
+
+void AMyCharacter::RelaxAim()
+{
+	Gun->SetRelativeLocation(RelativeGunlocation);
+	Gun->SetRelativeRotation(GunRotation);
+
+	//send signal for movement blueprint
+	FName AnimPropName = TEXT("isADS");
+	if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+	{
+		UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+		if (myBool != NULL)
+		{
+			myBool->SetPropertyValue_InContainer(AnimInst, false);
+		}
+	}
+
+	isADS = false;
 }
 
 //Game World Interactions
@@ -179,6 +247,34 @@ void AMyCharacter::MoveForward(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
+
+		
+			//Set gun anim BP to walk
+			FName AnimPropName = TEXT("isWalkingForward");
+			if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+			{
+				UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+				if (myBool != NULL)
+				{
+					myBool->SetPropertyValue_InContainer(AnimInst, true);
+				}
+			}
+		
+
+	}
+
+	if (Value == 0.0f)
+	{
+		//Set gun anim BP to idle
+		FName AnimPropName = TEXT("isWalkingForward");
+		if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+		{
+			UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+			if (myBool != NULL)
+			{
+				myBool->SetPropertyValue_InContainer(AnimInst, false);
+			}
+		}
 	}
 }
 
@@ -188,8 +284,38 @@ void AMyCharacter::MoveRight(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
+
+		
+			//Set gun anim BP to walk
+			FName AnimPropName = TEXT("isWalkingRight");
+			if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+			{
+				UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+				if (myBool != NULL)
+				{
+					myBool->SetPropertyValue_InContainer(AnimInst, true);
+				}
+			}
+		
+	}
+
+	if (Value == 0.0f)
+	{
+		
+		//Set gun anim BP to idle
+		FName AnimPropName = TEXT("isWalkingRight");
+		if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+		{
+			UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+			if (myBool != NULL)
+			{
+				myBool->SetPropertyValue_InContainer(AnimInst, false);
+			}
+		}
 	}
 }
+
+
 
 //Guns
 
@@ -199,12 +325,22 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 	switch (gunNumber) 
 	{
 	case 0: Gun->SetSkeletalMesh(Gun0MeshReference); SetGunVariables(0);
+			Gun->SetAnimClass(Gun0AnimReference->GetAnimBlueprintGeneratedClass());
+			FireAnimation = Gun0FireAnimation;
+			currentFireType = 0;
 		break;
 
 	case 1: Gun->SetSkeletalMesh(Gun1MeshReference); MeshMagazine->SetSkeletalMesh(Gun1MagazineMeshReference); SetGunVariables(1);
+			Gun->SetAnimClass(Gun1AnimReference->GetAnimBlueprintGeneratedClass());
+			MeshMagazine->SetupAttachment(Gun, TEXT("SOCK"));
+			FireAnimation = Gun1FireAnimation;
+			currentFireType = 1; rateOfFire = 0.08f;
 		break;
 
 	case 3: Gun->SetSkeletalMesh(Gun3MeshReference); SetGunVariables(3);
+			Gun->SetAnimClass(Gun3AnimReference->GetAnimBlueprintGeneratedClass());
+			FireAnimation = Gun3FireAnimation;
+			currentFireType = 1; rateOfFire = 0.06f;
 		break;
 	}
 }
@@ -219,18 +355,36 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		RelativeGunlocation.Set(-6.666f, 27.0f, 154.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = .2f; GunScale.Y = .2f; GunScale.Z = .2f; Gun->SetRelativeScale3D(GunScale);
+
+		AdsRelativeGunLocation.X = 0.076412f; AdsRelativeGunLocation.Y = 35.255905f; AdsRelativeGunLocation.Z = 154.0f;
+		AdsGunRotation.Roll = -0.000001f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 90.000008f;
+
 		gunBaseDamage = 40;
 		break;
 	case 1:
 		RelativeGunlocation.Set(-10.0f, 56.0f, 123.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.8f; GunScale.Y = 1.8f; GunScale.Z = 1.8f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = 270.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 0.01f; MagazineScale.Y = 0.01f; MagazineScale.Z = 0.01f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = 0.03f; AdsRelativeGunLocation.Y = 15.924101f; AdsRelativeGunLocation.Z = 120.5f;
+		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 89.999f;
+		
+
 		gunBaseDamage = 20;
 		break;
 	case 3:
-		RelativeGunlocation.Set(-14.0f, 51.0f, 122.5f); Gun->SetRelativeLocation(RelativeGunlocation);
-		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 5.0f; Gun->SetRelativeRotation(GunRotation);
+		RelativeGunlocation.Set(-9.911915f, 54.848583f, 122.499985f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.956615f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
+
+		AdsRelativeGunLocation.X = 2.229065f; AdsRelativeGunLocation.Y = 47.279953f; AdsRelativeGunLocation.Z = 125.199997f;
+		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 0.0f;
+
 		gunBaseDamage = 9;
 		break;
 	}
@@ -243,6 +397,13 @@ void AMyCharacter::FireWeaponOrTool()
 	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
 	FVector EndTrace = ((forwardVector*20000.f) + StartTrace);
 	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+
+	//play firing animation
+	UAnimInstance* AnimInstance = Gun->GetAnimInstance();
+	if (AnimInstance != NULL)
+	{
+		AnimInstance->Montage_Play(FireAnimation, 1.f);
+	}
 
 	//this is a raycast from the player character camera
 	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
@@ -265,6 +426,7 @@ void AMyCharacter::FireWeaponOrTool()
 		SpawnBulletImpact(Locs, Rots);
 
 	}
+
 }
 
 void AMyCharacter::SpawnBulletImpact(FVector Loc, FRotator Rot)
@@ -284,18 +446,15 @@ void AMyCharacter::SemiAutomaticFire()
 }
 void AMyCharacter::FullyAutomaticFire()
 {
-	firearmTimer -= 1;
-	if (firearmTimer < 5)
-	{
-		if (ammoInMagazine > 0)
-		{
-			FireWeaponOrTool();
-			//FireSoundAndAnimation();
-			SpawnGunSmoke();
-			ammoInMagazine -= 1;
+	if (isFiring == true) {
 
-			firearmTimer = rateOfFire;
-		}
+		
+		FireWeaponOrTool();
+		//FireSoundAndAnimation();
+		SpawnGunSmoke();
+		ammoInMagazine -= 1;
+		GetWorld()->GetTimerManager().SetTimer(firingPin, this, &AMyCharacter::FullyAutomaticFire, rateOfFire, false);
+			
 	}
 }
 
@@ -316,7 +475,7 @@ void AMyCharacter::SpawnGunSmoke()
 
 void AMyCharacter::OnFire()
 {
-
+	isFiring = true;
 	//check for ammo and gun type to determine rate of fire
 	if (ammoInMagazine > 0)
 	{
@@ -326,9 +485,10 @@ void AMyCharacter::OnFire()
 		}
 		else if (currentFireType == 1) //fully automatic
 		{
-			firearmTimer = 0;
-			isFiring = true;
+			FullyAutomaticFire();
 		}
 	}
 }
+
+void AMyCharacter::ReleaseTrigger(){ isFiring = false; }
 

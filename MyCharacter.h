@@ -48,6 +48,15 @@ public:
 	//handles e press for interacting with game world
 	void Interact();
 
+	void AimDownSights();
+	void RelaxAim();
+
+	bool isADS;
+
+	
+
+	//float RateOfFire;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 		class AInventory* Inventory;
 
@@ -71,18 +80,42 @@ public:
 	UPROPERTY(EditAnywhere, Category = Mesh)
 		class USkeletalMeshComponent* Arms;
 
+	//Arms Actual
+	UPROPERTY(EditAnywhere, Category = Mesh)
+		class USkeletalMeshComponent* LeftArm;
+
+	UPROPERTY(EditAnywhere, Category = Mesh)
+		class USkeletalMeshComponent* RightArm;
+
 	//Active Firearm
 	UPROPERTY(EditAnywhere, Category = Mesh)
 		class USkeletalMeshComponent* Gun;
+
 
 	//Active Magazine
 	UPROPERTY(EditAnywhere, Category = Mesh)
 		class USkeletalMeshComponent* MeshMagazine;
 
+	UPROPERTY(EditAnywhere, Category = Mesh)
+		class UStaticMeshComponent* MeshMag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* FireAnimation;
+
 	//GUNS
+
+	/////////////////////////////////////////////////////////////////////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun0MeshReference;					//gun 0 revolver
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun0AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun0FireAnimation;
+
+	
+	/////////////////////////////////////////////////////////////////////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun1MeshReference;        
 
@@ -90,7 +123,23 @@ public:
 		class USkeletalMesh* Gun1MagazineMeshReference;         // rifle
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UStaticMesh* Gun1MagRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun1AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun1FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun3MeshReference;                 // smg
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun3AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun3FireAnimation;
 
 
 	//This is the base function called, from here, a seconday "Hashmap" functions will be called to grab locations for guns 
@@ -134,10 +183,15 @@ public:
 	float firearmTimer;
 
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Guns")
-		int rateOfFire;
+		float rateOfFire;
 
 	void SemiAutomaticFire();
 	void FullyAutomaticFire();
+
+	//let the computer know that the player has stopped pressing the fire button so that it does not continue automatic fire
+	void ReleaseTrigger();
+
+	FTimerHandle firingPin;
 
 	//spawns gunsmoke upon firing
 	UFUNCTION()
