@@ -42,18 +42,38 @@ public:
 		void EnemyPushBack();
 
 	UFUNCTION()
+		void UpdateReceived();
+
+	UFUNCTION()
 		void DeathDrop();
 
 	UPROPERTY(EditAnywhere, Category = Mesh)
 		class USkeletalMeshComponent* MeshBody;
 
-	UPROPERTY(EditAnywhere, Category = capsule)
-		class UCapsuleComponent* capsule;
+	UPROPERTY(EditAnywhere, Category = Body)
+		class UStaticMesh* bodyDummy;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = capsule)
+		class UCapsuleComponent* CapsuleComponent;
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 		 FVector primaryNextLocation;
 
 	UFUNCTION()
 	void FindNextDestination();
+
+	int State;
+	int StateTimer;
+
+	void ClipToGround();
+
+	void RandomRotation();
+	void NewState();
+	void PlayerDistanceCheck();
+	void RunFromPlayer();
+
+	int Speed;
+
+	ACharacter* playerCharacterReference;
 
 };

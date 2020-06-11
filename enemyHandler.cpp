@@ -66,7 +66,7 @@ void AenemyHandler::SpawnEnemies()
 			FVector EndTrace = HeightTest; EndTrace.Z = -800; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
 			if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
 			{
-				spawnpoint.Z = HitResult->Location.Z;
+				spawnpoint.Z = HitResult->Location.Z; spawnpoint.Z += 400;
 			}
 
 			if (spawnpoint.Z > 471) { underwater = false; }
@@ -84,11 +84,18 @@ void AenemyHandler::SpawnEnemies()
 		enemyIDList[i] = enemyID;
 
 	}
+
+	//initaite update sequence
+	UpdateEnemies();
 }
 
 void AenemyHandler::UpdateEnemies()
 {
+	//Send update signal to all spawned enemies
+	for (int i = 0; i < numberOfEnemies; i++){spawnedEnemyReferences[i]->UpdateReceived();}
 
+	//Call this function again every 1 second
+	GetWorld()->GetTimerManager().SetTimer(updateTimer, this, &AenemyHandler::UpdateEnemies, 0.05f, false);
 }
 
 void AenemyHandler::CheckInRange()

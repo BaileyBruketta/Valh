@@ -62,4 +62,8 @@ public:
 	int currentNumber = 0;
 
 	void DecreaseHealth(int enemyNumber, int healthDecrease);
+
+	FTimerHandle updateTimer;
+	
+	
 };
