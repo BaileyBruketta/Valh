@@ -1,0 +1,2 @@
+Name,TypeNumber,StartingHealth,WalkingSpeed,WalkingTimer,RunningSpeed,RunningTimer,ScaleMin,Scalemax,WaitingTimer
+Rabbit,0,8,20,10,35,60,0.8,1.2,60

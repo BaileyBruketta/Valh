@@ -1,0 +1,2 @@
+BlockNumber,BlockMinXValue,BlockMaxXValue,BlockMinYValue,BlockMaxYValue
+0,0,100800,0,100800

@@ -77,6 +77,9 @@ void AenemyBaseClass::DamageTarget(float Damage)
 
 	theHandler->DecreaseHealth(globalIdentifier, Damage);
 	//EnemyPushBack();
+
+	//This should run a check against "enemyType," but this object does not currently hold that information
+	RunFromPlayer();
 }
 
 //this is set at spawn and used to identify the unit
@@ -109,9 +112,7 @@ void AenemyBaseClass::EnemyPushBack()
 
 }
 
-void AenemyBaseClass::DeathDrop()
-{
-
+void AenemyBaseClass::DeathDrop(){	//probably not going to use this anymore as this functionality is now handled in the enemyHandler
 }
 
 //this is called after a state switch to find the next location to move towards

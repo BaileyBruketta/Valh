@@ -104,7 +104,7 @@ public:
 
 	//GUNS
 
-	/////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////       "Whitewater Special"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun0MeshReference;					//gun 0 revolver
 
@@ -115,7 +115,7 @@ public:
 		class UAnimMontage* Gun0FireAnimation;
 
 	
-	/////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////       "Rebel's Rifle"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun1MeshReference;        
 
@@ -123,15 +123,12 @@ public:
 		class USkeletalMesh* Gun1MagazineMeshReference;         // rifle
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
-		class UStaticMesh* Gun1MagRef;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class UAnimBlueprint* Gun1AnimReference;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun1FireAnimation;
 
-	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////       "The Nazi Fucker"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun3MeshReference;                 // smg
 
@@ -140,6 +137,26 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun3FireAnimation;
+
+	/////////////////////////////////////////////////////////////////////////////////        "Draco, Soldier of Kings"
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun7MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun7WoodenParts;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun7AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun7FireAnimation;
+
+
+
+	////////// /////////// /////////// /////////// //////////// ////////// /////////
+	//Gun Flash
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		TSubclassOf<AActor> GunFlash;
 
 
 	//This is the base function called, from here, a seconday "Hashmap" functions will be called to grab locations for guns 

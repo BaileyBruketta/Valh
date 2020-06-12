@@ -1,0 +1,1 @@
+Name,TypeNumber,Health,FVector.X,FVector.Y,FVector.Z,Rotation.X,Rotation.Y,Rotation.Z,CurrentStateNumber,WaitTimerRemaining,Scale,GlobalIdentifier

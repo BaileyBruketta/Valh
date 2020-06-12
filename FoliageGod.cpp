@@ -70,8 +70,8 @@ void AFoliageGod::SpawnFunction()
 		case 6: plantMin          = 500;plantMaxModifier  = 1000;plantSizeModifier = 3;break;
 		case 7: plantMin          = 5;   plantMaxModifier  = 50;  plantSizeModifier = 3;break;
 			//grasses
-		case 8: plantMin          = 30000;plantMaxModifier  = 45000;plantSizeModifier = 3;break;
-		case 9: plantMin = 35000; plantMaxModifier = 50000; plantSizeModifier = 3; break;
+		case 8: plantMin          = 3000;plantMaxModifier  = 4000;plantSizeModifier = 3;break;  //prev 30k, 45k
+		case 9: plantMin = 3000; plantMaxModifier = 7000; plantSizeModifier = 3; break;         //prev 35k, 50k
 			//rocks
 		case 10: plantMin = 10; plantMaxModifier = 50; plantSizeModifier = 2; break;
 		case 11: plantMin = 15; plantMaxModifier = 50; plantSizeModifier = 2; break;

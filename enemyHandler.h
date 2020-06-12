@@ -49,12 +49,13 @@ public:
 
 	//used to perform fucntions relating to enemy statii
 	TArray<FVector> spawnedEnemyLocations;
-	TArray<int> enemyTypeID;
+	TArray<int> enemyType;
 	TArray<bool> withinRange;
 	TArray<bool> alerted;
 	TArray<float> health;
 	TArray<int> enemyIDList;
 	TArray<float> revivalTimer;
+	TArray<int> enemyCurrentBlock;
 
 	void Revive(int oneToRevive);
 	FVector LocationOfPlayer;
@@ -65,5 +66,30 @@ public:
 
 	FTimerHandle updateTimer;
 	
+
+	//This handles loot and drops        
+	UFUNCTION()
+		void EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLocation);
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy0Ragdoll;
+
+
+	//meat slab
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> LootDrop0;
+
+	//fur slab
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "death")
+		TSubclassOf<AActor> LootDrop1;
+
+	void CreateDataFromSeed(int BlockNumber);
+	void SaveDeloadingBlock();
+	void SaveCurrentBlocks();
+	
+	UPROPERTY(EditAnywhere, BlueprintreadWrite, category = "Data")
+		int NumberOfBlocks;
+
+
 };
