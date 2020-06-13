@@ -17,7 +17,7 @@ AenemyHandler::AenemyHandler()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//These will be changed to be enemy type specific and feature randomization like "foliagegod," but this is sufficient for testing
-	numberOfEnemies = 5;
+	numberOfEnemies = 4000;
 	health.Init(100.0f, numberOfEnemies);
 	spawnedEnemyReferences.Init(nullptr, numberOfEnemies);
 	enemyIDList.Init(0, numberOfEnemies);
@@ -25,17 +25,21 @@ AenemyHandler::AenemyHandler()
 	revivalTimer.Init(300.0f, numberOfEnemies);
 	enemyType.Init(0, numberOfEnemies);
 	enemyCurrentBlock.Init(0, numberOfEnemies);
-
+	playerCharacterReference = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	CurrentPlayerBlock = 0;
 }
 
 // Called when the game starts or when spawned
 void AenemyHandler::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnEnemies();
+	//SpawnEnemies();
 	SaveDeloadingBlock();
 	SaveCurrentBlocks();
-	CreateDataFromSeed(0);
+	for (int i = 0; i < 6; i++) {
+		CreateDataFromSeed(i);
+		SpawnFromBlockData(i);
+	}
 }
 
 // Called every frame
@@ -52,20 +56,16 @@ void AenemyHandler::Tick(float DeltaTime)
 //      cont. should reduce first time start up time and removes the problem of trying to generate heightmap appropriate locations for unloaded maps
 void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 {
-	//Test
-	NumberOfBlocks = BlockNumber;
+	TArray<FString> CoordData = GetBlockCoords(BlockNumber);
 
-	//do once for each block that needs data created for it
-	for (int i = 0; i < NumberOfBlocks; i++)
-	{
 		//We start by Creating/Clearing save data for the block
-		FString SaveDataFileName = "/EnemyBlockData" + FString::FromInt(i) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
+		FString SaveDataFileName = "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
 		FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 
 		//We first grab the seed data for this block and parse it into useable pieces
 
 		//Grab the path of a seed data file
-		FString filename = "/EnemyBlockSeedData" + FString::FromInt(i) + ".txt";
+		FString filename = "/EnemyBlockSeedData" + FString::FromInt(BlockNumber) + ".txt";
 		FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + filename;
 		//Initiate an array
 		TArray<FString> LoadedFile;
@@ -113,12 +113,18 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 				FString HealthToSave      = EnemyRootData[2];
 				FString StateNumberToSave = "0";
 				FString WaitTimerToSave   = EnemyRootData[9];
+				//randomize scale
 				float scaleMin = FCString::Atof(*EnemyRootData[7]); float scaleMax = FCString::Atof(*EnemyRootData[8]);
 				FString ScaleToSave       = FString::SanitizeFloat(FMath::FRandRange(scaleMin, scaleMax));
-				//Run a randomization on scale for applicable enemies'
-
+				//run location algorithm
+				int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]); 
+				int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
+				FVector EnemyLocation; EnemyLocation = GenerateSpawnPoint(xMin, xMax, yMin, yMax);
+				FString FX = FString::FromInt(floor(EnemyLocation[0])); 
+				FString FY = FString::FromInt(floor(EnemyLocation[1]));
+				FString FZ = FString::FromInt(floor(EnemyLocation[2]));
 				//Write the data into file                     ; EnemyBlockSaveData : [Name,TypeNumber,Health,FVector.X,FVector.Y,FVector.Z,Rotation.X,Rotation.Y,Rotation.Z,CurrentStateNumber,WaitTimerRemaining,Scale,GlobalIdentifier]
-				FString LineToSave = NameToSave + "," + TypeToSave + "," + HealthToSave + "," + "0" + "," + "0" + "," + "0" + "," + "0" + "," + "0" + "," + "0" + "," + StateNumberToSave + "," + WaitTimerToSave + "," + ScaleToSave + "," + "\n";
+				FString LineToSave = NameToSave + "," + TypeToSave + "," + HealthToSave + "," + FX + "," + FY + "," + FZ + "," + "0" + "," + "0" + "," + "0" + "," + StateNumberToSave + "," + WaitTimerToSave + "," + ScaleToSave + "," + "\n";
 				FFileHelper::SaveStringToFile(LineToSave, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 			}
 			
@@ -127,7 +133,96 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 		//for (int i = 0; i < numberOfEnemies; i++)
 		//       append to CSV "EnemySaveData" Name, enemyType, health, globalidentifier, etc
 		//       globalIdentifier += 1
+	
+}
+
+//This is used to return an FVector for an apporpriate enemy location
+FVector AenemyHandler::GenerateSpawnPoint(int xMin, int xMax, int yMin, int yMax)
+{
+	FVector spawnpoint;
+
+	bool underwater = true;
+	while (underwater == true)
+	{
+		
+		spawnpoint.Z = 300.0f;
+		spawnpoint.X = FMath::FRandRange(xMin, xMax);
+		spawnpoint.Y = FMath::FRandRange(yMin, yMax);
+
+		FVector HeightTest = spawnpoint; HeightTest.Z = 8000; FHitResult* HitResult = new FHitResult(); FVector StartTrace = HeightTest;
+		FVector EndTrace = HeightTest; EndTrace.Z = -800; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+		{
+			spawnpoint.Z = HitResult->Location.Z; spawnpoint.Z += 400;
+		}
+
+		//avoids generating spawnpoints that are below the "water level"
+		if (spawnpoint.Z > 455) { underwater = false; }
 	}
+
+	return spawnpoint;
+}
+
+//1) Relies on the block data being in order in the reference .txt file //2)Spawns in all the recorded enemies for a single block
+void AenemyHandler::SpawnFromBlockData(int BlockNumber)
+{
+	//Start by retreiving the block data
+	FString BlockDataFileName = "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt";
+	FString BlockDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + BlockDataFileName;
+	TArray<FString> LoadedData; FFileHelper::LoadANSITextFileToStrings(*BlockDataFilePath, NULL, LoadedData);
+
+	//iterate through every line of the BlockData               xyz, 345
+	/////////////////////////////////////////////////////////////////////////////The -1 is a hack, it looks like the previous lines grab an empty line from EnemyBlockData, causing an array access out of bounds
+	for (int i = 0; i < LoadedData.Num()-1; i++)
+	{
+		TArray<FString> EnemyData; LoadedData[i].ParseIntoArray(EnemyData, TEXT(","), 1);
+		FVector SpawnPoint; SpawnPoint.X = FCString::Atof(*EnemyData[3]); SpawnPoint.Y = FCString::Atof(*EnemyData[4]); SpawnPoint.Z = FCString::Atof(*EnemyData[5]);
+		FRotator SpawnRot;  SpawnRot.Roll = FCString::Atof(*EnemyData[6]); SpawnRot.Pitch = FCString::Atof(*EnemyData[7]); SpawnRot.Yaw = FCString::Atof(*EnemyData[8]);
+		AenemyBaseClass* newEnemy; FActorSpawnParameters SpawnParams;
+
+		newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams);
+
+		//Iterate through the current list of spawned actors
+		bool attributed = false;
+		int x = 0;
+		while (attributed == false)
+		{
+			for (int JJJ = 0; JJJ < spawnedEnemyReferences.Num(); JJJ++)
+			{
+				if (spawnedEnemyReferences[JJJ] == NULL)
+				{
+					x = JJJ;
+					attributed = true;
+				}
+			}
+		}
+
+		health[x] = FCString::Atof(*EnemyData[2]);
+		spawnedEnemyReferences[x] = newEnemy;
+		spawnedEnemyReferences[x]->OnSpawn(this);
+		int enemyID = 715 + x;
+		spawnedEnemyReferences[x]->SetGlobalID(enemyID);
+		enemyIDList[x] = enemyID;
+	}
+
+	UpdateEnemies();
+}
+
+void AenemyHandler::BlockManager()
+{
+	FVector PlayerLocation = playerCharacterReference->GetActorLocation();
+
+	//Get bounds of current block
+	TArray<FString> CoordData = GetBlockCoords(CurrentPlayerBlock);
+}
+
+TArray<FString> AenemyHandler::GetBlockCoords(int BlockNumber)
+{
+	FString BlockCoordFileName = "/BlockCoordinatesSpreadsheet.txt"; FString BlockCoordFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + BlockCoordFileName;
+	TArray<FString> CoordFile; FFileHelper::LoadANSITextFileToStrings(*BlockCoordFilePath, NULL, CoordFile);
+	TArray<FString> CoordData; CoordFile[BlockNumber + 1].ParseIntoArray(CoordData, TEXT(","), 1);
+
+	return CoordData;
 }
 
 //This is used to save currently loaded enemies to a csv
@@ -194,7 +289,7 @@ void AenemyHandler::SaveCurrentBlocks()
 }
 
 
-
+/////////DEPRECATED////////////////DEPRECATED//////////////DEPRECATED//////////////////DEPRECATED///////////////DEPRECATED////////////////////
 /////////////THIS NEEDS TO BE REPLACED BY A  FUNCTION TO SPAWN FROM A SAVEDATA TXT////////////////////////////////////////////////////////////
 void AenemyHandler::SpawnEnemies()
 {
@@ -234,7 +329,7 @@ void AenemyHandler::SpawnEnemies()
 
 		}
 
-		AenemyBaseClass* newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude, spawnpoint, spawnRot, SpawnParams);
+		AenemyBaseClass* newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, spawnpoint, spawnRot, SpawnParams);
 		health[i] = 8.0f;
 		spawnedEnemyReferences[i] = newEnemy;
 		spawnedEnemyReferences[i]->OnSpawn(this);
@@ -294,7 +389,7 @@ void AenemyHandler::Revive(int oneToRevive)
 	spawnRot.Yaw = 0.0f;
 	spawnRot.Pitch = 0.0f;
 	spawnRot.Roll = 0.0f;
-	AenemyBaseClass* newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude, spawnpoint, spawnRot, SpawnParams);
+	AenemyBaseClass* newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, spawnpoint, spawnRot, SpawnParams);
 	health[oneToRevive] = 100.0f;
 	spawnedEnemyReferences[oneToRevive] = newEnemy;
 	spawnedEnemyReferences[oneToRevive]->OnSpawn(this);
@@ -306,6 +401,8 @@ void AenemyHandler::Revive(int oneToRevive)
 
 //This is actually called by the instance of enemyBaseClass itself upon death, and results in both loot and a ragdoll mesh being spawned where the enemy was killed
 //More code will have to be written here to ensure item persistence across sessions (loading from save) once a general mechanism for this is established
+////////////////////RESET THE ENEMYSPAWNEDREFERENCE LIST WHEN THIS RUNS TO REMOVE NULL POINTERS THAT ARE SANDWICHED BETWEEN LIVE ACTORS//////////////////////////////
+//TODO: CODE IN SOMETHING INITIATE A RESPAWN TIMER///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLocation)
 {
 	FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;

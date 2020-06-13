@@ -1,2 +1,7 @@
-BlockNumber,BlockMinXValue,BlockMaxXValue,BlockMinYValue,BlockMaxYValue
-0,0,100800,0,100800
+BlockNumber,BlockMinXValue,BlockMaxXValue,BlockMinYValue,BlockMaxYValue,ToNorth,ToNorthEast,ToEast,ToSouthEast,ToSouth,ToSouthWest,ToWest,ToNorthWest
+0,0,100800,0,100800,3,4,2,0,0,0,1,5
+1,-100800,0,0,100800,5,3,0,0,0,0,0,0
+2,100800,201600,0,100800,4,0,0,0,0,0,0,3
+3,0,100800,100800,201600,0,0,4,2,0,1,5,0
+4,100800,201600,100800,201600,0,0,0,0,2,0,3,0
+5,-100800,0,100800,201600,0,0,3,0,1,0,0,0

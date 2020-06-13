@@ -183,7 +183,7 @@ void AMyCharacter::AimDownSights()
 		}
 	}
 	//keep for reference
-	FirstPersonCameraComponent->SetFieldOfView(92.0f);
+	FirstPersonCameraComponent->SetFieldOfView(85.0f);
 	isADS = true;
 }
 

@@ -66,5 +66,12 @@ public:
 	TArray<float> scaleMultiplier;
 	TArray<int> scaleMax;
 
+	TArray<FString> GetBlockCoords(int BlockNumber);
+	void GeneratePlantData(int Block);
+	void SpawnPlantsFromData(int Block);
+	TArray<FString> GetSeedData(int BlockNumber);
+	void AppendPlantToDataFile(int BlockNumber, TArray<FString> PlantInfo);
+	TArray<FString> GetPlantData(int BlockNumber);
+
 	
 };

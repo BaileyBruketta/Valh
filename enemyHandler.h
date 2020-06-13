@@ -29,7 +29,7 @@ public:
 	void SpawnEnemies();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
-		TSubclassOf<class AenemyBaseClass> enemiesToInclude;
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		int numberOfEnemies;
@@ -87,9 +87,18 @@ public:
 	void CreateDataFromSeed(int BlockNumber);
 	void SaveDeloadingBlock();
 	void SaveCurrentBlocks();
+	void SpawnFromBlockData(int BlockNumber);
+
+	FVector GenerateSpawnPoint(int xMin, int xMax, int yMin, int yMax);
 	
 	UPROPERTY(EditAnywhere, BlueprintreadWrite, category = "Data")
 		int NumberOfBlocks;
 
+	void BlockManager();
+
+	ACharacter* playerCharacterReference;
+	int CurrentPlayerBlock;
+
+	TArray<FString> GetBlockCoords(int BlockNumber);
 
 };
