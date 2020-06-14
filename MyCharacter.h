@@ -232,4 +232,35 @@ public:
 		FVector GunOffset;
 	
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = time)
+		int Hour;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = time)
+		int Minutes;
+
+	void SetHoursMinutes(int H, int M);
+
+	void GenerateClockText();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = time)
+		FString ClockText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float HEALTH;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float STAMINA;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float WATER;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float HUNGER;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float FATIGUE;
+
+	void UpdateStats();
+		
+
 };

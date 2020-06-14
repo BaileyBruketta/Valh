@@ -106,8 +106,7 @@ AMyCharacter::AMyCharacter()
 
 	RelativeMagazineLocation.Set(0.0f, 0.0f, 0.0f);
 	AdsRelativeMagazineLocation.Set(0.0f, 0.0f, 0.0f);
-	MagazineRotation;
-	AdsMagazineRotation;
+	MagazineRotation;AdsMagazineRotation;
 	MagazineScale.Set(0.0f, 0.0f, 0.0f);
 
 	//Set to false 
@@ -115,10 +114,7 @@ AMyCharacter::AMyCharacter()
 
 	rateOfFire = 0.0f;
 
-	
-
-
-
+	HEALTH = 1; STAMINA = 1; HUNGER = 1; WATER = 1; FATIGUE = 1;
 }
 
 // Called when the game starts or when spawned
@@ -164,6 +160,51 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	
 
 }
+
+void AMyCharacter::SetHoursMinutes(int H, int M)
+{
+	Hour = H;
+	Minutes = M;
+	GenerateClockText();
+}
+
+//called by the widget ui and used to display the current game time
+void AMyCharacter::GenerateClockText()
+{
+	FString HourString = ""; FString M = "";
+	if (Hour < 10) { HourString = "0" + FString::FromInt(Hour); M = "A.M."; }
+	if (Hour >= 10) { if (Hour < 13) { HourString = FString::FromInt(Hour); M = "A.M."; } }
+	if (Hour >= 13) { if (Hour < 22) { HourString = "0" + FString::FromInt(Hour - 12); M = "P.M."; } }
+	if (Hour >= 22) { HourString = FString::FromInt(Hour); M = "P.M."; }
+
+	ClockText = ClockText + ":";
+	//01:, 11:, etc
+	if (Minutes > 9) { ClockText = HourString + ":" + FString::FromInt(Minutes) + " " + M; }
+	if (Minutes < 9) { ClockText = HourString + ":" + "0" + FString::FromInt(Minutes) + " " + M; }
+	//01:13, 13:17
+
+	UpdateStats();
+}
+
+//gradual increase of health and decrease of stats
+void AMyCharacter::UpdateStats()
+{
+	//These numbers are not arbitrary. They represent 3 days without water, 3 weeks without food, and 11 days without sleep
+	WATER  -= .0002315;
+	HUNGER -= .000033;
+	FATIGUE -= .000138;
+
+	if (HEALTH < 1) { HEALTH += .0003f; }
+	if (STAMINA < 1) { STAMINA += .01f; }
+	if (HUNGER < .20f) { HEALTH -= .0001; }
+	if (HUNGER < .01f) { HEALTH -= 0.005F; }
+	if (WATER < .40f) { HEALTH -= .0003f; }
+	if (WATER < .01f) { HEALTH -= .02f; }
+	if (FATIGUE < .60f) { HEALTH -= .0003f; }
+	if (FATIGUE < .01f) { HEALTH -= .02f; }
+
+}
+
 
 //Aiming
 void AMyCharacter::AimDownSights()
@@ -390,7 +431,7 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		gunBaseDamage = 20;
 		break;
 	case 3:
-		RelativeGunlocation.Set(-9.911915f, 54.848583f, 122.499985f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-9.0f, 80.0f, 125.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.956615f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
 

@@ -34,10 +34,10 @@ void AenemyHandler::BeginPlay()
 {
 	Super::BeginPlay();
 	//SpawnEnemies();
-	SaveDeloadingBlock();
-	SaveCurrentBlocks();
+	//SaveDeloadingBlock();
+	//SaveCurrentBlocks();
 	for (int i = 0; i < 6; i++) {
-		CreateDataFromSeed(i);
+		//CreateDataFromSeed(i);
 		SpawnFromBlockData(i);
 	}
 }
@@ -214,6 +214,7 @@ void AenemyHandler::BlockManager()
 
 	//Get bounds of current block
 	TArray<FString> CoordData = GetBlockCoords(CurrentPlayerBlock);
+	//if player.X > blockCoord.XMax =>changeBlock(north);
 }
 
 TArray<FString> AenemyHandler::GetBlockCoords(int BlockNumber)
