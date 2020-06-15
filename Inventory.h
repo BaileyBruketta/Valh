@@ -35,8 +35,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 	TArray<int> ItemsInInventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+	TArray<int> AmmoInWeapon;
+
 	//passes an itemdata object to the inventory object to add to the inventory array, performs analyzation of object
-	void AddToInventory(int ItemID);
+	void AddToInventory(int ItemID, int ammo);
 
 	//This will be used to run an item ID and return a name for an item
 	//These values should probably be stored in a text file and ripped line for line 
@@ -53,4 +56,11 @@ public:
 
 	//This is used to keep track of inventory spots available
 	int NumberOfItemsTotal;
+
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+		int GetAmmoInWeapon(int index);
+
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+		FString GetWeaponCaliber(int itemID);
+		
 };

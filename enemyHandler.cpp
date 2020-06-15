@@ -23,7 +23,7 @@ AenemyHandler::AenemyHandler()
 	enemyIDList.Init(0, numberOfEnemies);
 	timer = 60.0f;
 	revivalTimer.Init(300.0f, numberOfEnemies);
-	enemyType.Init(0, numberOfEnemies);
+	enemyTypeN.Init(0, numberOfEnemies);
 	enemyCurrentBlock.Init(0, numberOfEnemies);
 	playerCharacterReference = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	CurrentPlayerBlock = 0;
@@ -37,7 +37,7 @@ void AenemyHandler::BeginPlay()
 	//SaveDeloadingBlock();
 	//SaveCurrentBlocks();
 	for (int i = 0; i < 6; i++) {
-		//CreateDataFromSeed(i);
+		CreateDataFromSeed(i);
 		SpawnFromBlockData(i);
 	}
 }
@@ -153,11 +153,11 @@ FVector AenemyHandler::GenerateSpawnPoint(int xMin, int xMax, int yMin, int yMax
 		FVector EndTrace = HeightTest; EndTrace.Z = -800; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
 		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
 		{
-			spawnpoint.Z = HitResult->Location.Z; spawnpoint.Z += 400;
+			spawnpoint.Z = HitResult->Location.Z; //spawnpoint.Z += 400;
 		}
 
 		//avoids generating spawnpoints that are below the "water level"
-		if (spawnpoint.Z > 455) { underwater = false; }
+		if (spawnpoint.Z > 650) { underwater = false; }
 	}
 
 	return spawnpoint;
@@ -171,6 +171,19 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 	FString BlockDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + BlockDataFileName;
 	TArray<FString> LoadedData; FFileHelper::LoadANSITextFileToStrings(*BlockDataFilePath, NULL, LoadedData);
 
+	//Get default stats to assign to enemies
+	//an advantage of using this method is that, even though the inital creation of enemy data takes a bit, it is very easy to manually change default values 
+	//by simply editing numbers in the .txt reference files
+	FString EnemyTypeDataFileName = "/EnemyTypesSpreadsheet.txt";
+	FString EnemyTypeDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + EnemyTypeDataFileName;
+	TArray<FString> TypeFile; FFileHelper::LoadANSITextFileToStrings(*EnemyTypeDataFilePath, NULL, TypeFile);
+
+	//Initiate array of array of strings with a placeholder
+	//parse one line of the enemytypespreadsheet into each array element of the first layer
+	//an array containing an array of numbers for each enemy default
+	TArray<TArray<FString>> RamshackleDatatable; RamshackleDatatable.Init(TypeFile, TypeFile.Num());
+	for (int fff = 1; fff < TypeFile.Num(); fff++){TypeFile[fff].ParseIntoArray(RamshackleDatatable[fff], TEXT(","), 1);}
+	TArray<FString> EnemyRootData;
 	//iterate through every line of the BlockData               xyz, 345
 	/////////////////////////////////////////////////////////////////////////////The -1 is a hack, it looks like the previous lines grab an empty line from EnemyBlockData, causing an array access out of bounds
 	for (int i = 0; i < LoadedData.Num()-1; i++)
@@ -178,31 +191,48 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 		TArray<FString> EnemyData; LoadedData[i].ParseIntoArray(EnemyData, TEXT(","), 1);
 		FVector SpawnPoint; SpawnPoint.X = FCString::Atof(*EnemyData[3]); SpawnPoint.Y = FCString::Atof(*EnemyData[4]); SpawnPoint.Z = FCString::Atof(*EnemyData[5]);
 		FRotator SpawnRot;  SpawnRot.Roll = FCString::Atof(*EnemyData[6]); SpawnRot.Pitch = FCString::Atof(*EnemyData[7]); SpawnRot.Yaw = FCString::Atof(*EnemyData[8]);
-		AenemyBaseClass* newEnemy; FActorSpawnParameters SpawnParams;
+		AenemyBaseClass* newEnemy; FActorSpawnParameters SpawnParams; int enemyType = FCString::Atoi(*EnemyData[1]);
 
-		newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams);
+		newEnemy = Dummy; //this line avoids an "potentially uninitialized pointer variable used" error at compile. This would also prevent another developer from crashing the engine with a null pointer by forgetting to assign enemy blueprints in editor
 
-		//Iterate through the current list of spawned actors
-		bool attributed = false;
-		int x = 0;
-		while (attributed == false)
+		//see which type of enemy
+		switch (enemyType)
 		{
-			for (int JJJ = 0; JJJ < spawnedEnemyReferences.Num(); JJJ++)
-			{
-				if (spawnedEnemyReferences[JJJ] == NULL)
-				{
-					x = JJJ;
-					attributed = true;
-				}
-			}
+			case 0: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 4: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude4, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 5: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude5, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 6: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude6, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 7: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude7, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
 		}
+		//Iterate through the current list of spawned actors
+		if (newEnemy != NULL)
+		{
+			//assign enemy to holding array
+			bool attributed = false;int x = 0;
+			while (attributed == false)
+			{for (int JJJ = 0; JJJ < spawnedEnemyReferences.Num(); JJJ++){if (spawnedEnemyReferences[JJJ] == NULL){x = JJJ;attributed = true;}}}
 
-		health[x] = FCString::Atof(*EnemyData[2]);
-		spawnedEnemyReferences[x] = newEnemy;
-		spawnedEnemyReferences[x]->OnSpawn(this);
-		int enemyID = 715 + x;
-		spawnedEnemyReferences[x]->SetGlobalID(enemyID);
-		enemyIDList[x] = enemyID;
+			//set stats
+			for (int def = 0; def < RamshackleDatatable.Num(); def++)
+			{	//set our datareference array to be the element of the ramshackle whose [1]st element's int conversion = the enemytpe of the previously spawned entity
+				if (FCString::Atoi(*RamshackleDatatable[def][1]) == enemyType) { EnemyRootData = RamshackleDatatable[def]; }
+			}
+			newEnemy->SetStats(FCString::Atoi(*EnemyRootData[3]), FCString::Atoi(*EnemyRootData[4]), 
+							   FCString::Atoi(*EnemyRootData[5]), FCString::Atoi(*EnemyRootData[6]), 
+							   FCString::Atoi(*EnemyRootData[9]), FCString::Atoi(*EnemyRootData[10]));
+
+			//rescale
+			FVector ScaleToUse; ScaleToUse.X = FCString::Atof(*EnemyData[11]); ScaleToUse.Y = FCString::Atof(*EnemyData[11]); ScaleToUse.Z = FCString::Atof(*EnemyData[11]); newEnemy->SetActorScale3D(ScaleToUse);
+
+			enemyTypeN[x] = enemyType;
+			health[x] = FCString::Atof(*EnemyData[2]);
+			spawnedEnemyReferences[x] = newEnemy;
+			spawnedEnemyReferences[x]->OnSpawn(this);
+			int enemyID = 715 + x;
+			spawnedEnemyReferences[x]->SetGlobalID(enemyID);
+			enemyIDList[x] = enemyID;
+		}
 	}
 
 	UpdateEnemies();
@@ -281,7 +311,7 @@ void AenemyHandler::SaveCurrentBlocks()
 	{
 		if (enemyCurrentBlock[i] == BlockToSave)
 		{
-			FString FileContent = "NAME," + FString::FromInt(enemyType[i]) + "," + FString::FromInt(health[i]) + "," + "\n";
+			FString FileContent = "NAME," + FString::FromInt(enemyTypeN[i]) + "," + FString::FromInt(health[i]) + "," + "\n";
 			FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 		}
 	}
@@ -371,7 +401,7 @@ void AenemyHandler::DecreaseHealth(int enemyNumber, int healthDecrease)
 		currentNumber = numberToUse; AenemyBaseClass* EnemyToUpdate = Cast<AenemyBaseClass>(spawnedEnemyReferences[numberToUse]);
 
 		//spawn loot and ragdoll meshes
-		FVector LocationToSpawn = EnemyToUpdate->GetActorLocation();int enemyTypeNumber = enemyType[numberToUse];
+		FVector LocationToSpawn = EnemyToUpdate->GetActorLocation();int enemyTypeNumber = enemyTypeN[numberToUse];
 		EnemyDeathDrops(numberToUse, enemyTypeNumber, LocationToSpawn);
 		
 		float timer = 20;
@@ -407,12 +437,36 @@ void AenemyHandler::Revive(int oneToRevive)
 void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLocation)
 {
 	FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
+	AActor* FirstDrop = Dummy; AActor* SecondDrop = Dummy; AActor* Ragdoll = Dummy;
 	switch (enemyType)
 	{
-	case 0 :
-		AActor* FirstDrop  = GetWorld()->SpawnActor<AActor>(LootDrop0, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);
-		AActor* SecondDrop = GetWorld()->SpawnActor<AActor>(LootDrop1, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);
-		AActor* Ragdoll    = GetWorld()->SpawnActor<AActor>(Enemy0Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);
-	break;
+	case 0 :SpawnMeat(enemyLocation, 1);SpawnFur(enemyLocation, 1);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy0Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	case 4: SpawnMeat(enemyLocation, 3);SpawnFur(enemyLocation, 3);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy4Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	case 5: SpawnMeat(enemyLocation, 1);SpawnFur(enemyLocation, 1);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy5Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	case 6: SpawnMeat(enemyLocation, 3);SpawnFur(enemyLocation, 3);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy6Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	case 7: SpawnMeat(enemyLocation, 2);SpawnFur(enemyLocation, 2);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy7Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	case 8: SpawnMeat(enemyLocation, 5);SpawnFur(enemyLocation, 5);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy8Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
+	}
+}
+
+void AenemyHandler::SpawnMeat(FVector Location, int NumberToSpawn)
+{
+	int x = NumberToSpawn;
+	if (NumberToSpawn > 0)
+	{
+		FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
+		AActor* Dropx = GetWorld()->SpawnActor<AActor>(LootDrop1, Location, PlaceholderRotation, PlaceholderSpawnParams);
+		x -= 1; SpawnMeat(Location, x);
+	}
+}
+
+void AenemyHandler::SpawnFur(FVector Location, int NumberToSpawn)
+{
+	int x = NumberToSpawn;
+	if (NumberToSpawn > 0)
+	{
+		FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
+		AActor* Drop = GetWorld()->SpawnActor<AActor>(LootDrop0, Location, PlaceholderRotation, PlaceholderSpawnParams);
+		x -= 1; SpawnFur(Location, x);
 	}
 }

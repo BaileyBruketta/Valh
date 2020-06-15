@@ -241,9 +241,13 @@ public:
 	void SetHoursMinutes(int H, int M);
 
 	void GenerateClockText();
+	void GenerateWeaponText();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = time)
 		FString ClockText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = guns)
+		FString WeaponText;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 		float HEALTH;
@@ -261,6 +265,20 @@ public:
 		float FATIGUE;
 
 	void UpdateStats();
+
+	
+	///////////////////////////////////////////////////////////////
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Paused")
+		bool Paused;
+
+		int pausecheck;
+
+		//press E, run check, "Paused" grabbed by UI widget
+		void PauseCheck();
 		
+		UFUNCTION(BlueprintCallable, Category = Guns)
+			void SetAmmoInMag(int itemID);
+
+		int CurrentEquippedWeapon;
 
 };

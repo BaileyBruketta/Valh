@@ -35,3 +35,13 @@ int AItemPickup::PickUpItem()
 
 	return ID;
 }
+
+int AItemPickup::GetAmmo()
+{
+	if (ammoInWeapon == NULL)
+	{
+		ID = 0;
+	}
+
+	return ammoInWeapon;
+}

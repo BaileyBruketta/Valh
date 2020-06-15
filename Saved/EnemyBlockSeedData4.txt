@@ -1,1 +1,6 @@
 Rabbit,4,6,0
+Goat,1,3,4
+Chicken,3,8,5
+Sheep,1,4,6
+Fox,2,3,7
+Deer,1,3,8

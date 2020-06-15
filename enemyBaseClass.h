@@ -76,4 +76,14 @@ public:
 
 	ACharacter* playerCharacterReference;
 
+	int walkingSpeed;
+	int walkingTimer;
+	int runningSpeed;
+	int runningTimer;
+	int waitingTimer;
+	int distanceThreshold;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThresh);
+
 };

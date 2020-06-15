@@ -47,6 +47,12 @@ AenemyBaseClass::AenemyBaseClass()
 	StateTimer = 10;
 	Speed = 20;
 	playerCharacterReference = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	walkingSpeed = 0;
+	walkingTimer = 0;
+	runningSpeed = 0;
+	runningTimer = 0;
+	waitingTimer = 0;
 }
 
 // Called when the game starts or when spawned
@@ -121,9 +127,15 @@ void AenemyBaseClass::FindNextDestination()
 	//Find a new location very close to the current location
 	FVector CurrentLocation = GetActorLocation();
 	FVector NewLocation = CurrentLocation;
-	NewLocation.X += (floor(rand() % 3 + 10) - floor(rand() % 3 + 10));
-	NewLocation.Y += (floor(rand() % 3 + 10) - floor(rand() % 3 + 10));
-	FRotator newRot; newRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), NewLocation);
+
+
+		NewLocation.X += (floor(rand() % 3 + 10) - floor(rand() % 3 + 10));
+		NewLocation.Y += (floor(rand() % 3 + 10) - floor(rand() % 3 + 10));
+		FRotator newRot; newRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), NewLocation);
+
+
+
+
 	SetActorRotation(newRot);
 
 }
@@ -149,7 +161,17 @@ void AenemyBaseClass::UpdateReceived()
 			FVector forwardvect = GetActorForwardVector(); forwardvect = forwardvect * Speed;
 			FVector Loc = GetActorLocation();
 			FVector newvec = Loc + forwardvect;
-			SetActorLocation(newvec);
+			//prevents stepping in water
+			FHitResult* HitResult = new FHitResult(); FVector StartTrace = newvec; newvec.Z = 5000.0f;
+			FVector EndTrace = newvec; EndTrace.Z -= 8000; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+			if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+			{newvec.Z = HitResult->Location.Z;}
+			//avoids generating spawnpoints that are below the "water level"
+			if (newvec.Z > 650) { SetActorLocation(newvec); }
+			//if next step would be in water, rotate
+			if (newvec.Z < 650) { FindNextDestination(); }
+
+			//SetActorLocation(newvec);
 			break;
 	}
 
@@ -168,12 +190,12 @@ void AenemyBaseClass::UpdateReceived()
 void AenemyBaseClass::NewState()
 {
 	int newState = floor(rand() % 2 );
-	Speed = 20;
+	Speed = walkingSpeed;
 
 	switch (newState)
 	{
-	case 0: State = 0;  StateTimer += 60; break;
-	case 1: State = 1;  FindNextDestination(); StateTimer += 10; break;
+	case 0: State = 0;  StateTimer = waitingTimer; break;
+	case 1: State = 1;  FindNextDestination(); StateTimer = walkingTimer; break;
 	}
 	
 }
@@ -207,7 +229,7 @@ void AenemyBaseClass::PlayerDistanceCheck()
 		//UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation();
 	float   distance       = FVector::Dist(ThisLocation, PlayerLocation);
 
-	if (distance < 1000)
+	if (distance < distanceThreshold)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("An enemy has been alerted to your presence")));
 		RunFromPlayer();
@@ -218,12 +240,18 @@ void AenemyBaseClass::PlayerDistanceCheck()
 //change direction to face away from the player
 void AenemyBaseClass::RunFromPlayer()
 {
-	Speed = 35;  //increase speed when running away, this is lowered when the run phase ends
-	State = 1; StateTimer = 60;
+	Speed = runningSpeed;  //increase speed when running away, this is lowered when the run phase ends
+	State = 1; StateTimer = runningTimer;
 
 	FVector  PlayerLocation = playerCharacterReference->GetActorLocation();
 		//UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation();
 	FVector  ThisLocation   = GetActorLocation();
 	FRotator newRot; newRot = UKismetMathLibrary::FindLookAtRotation(PlayerLocation, ThisLocation);
 	SetActorRotation(newRot);
+}
+
+void AenemyBaseClass::SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThresh)
+{
+	walkingSpeed = walkspeed;walkingTimer = walktimer;runningSpeed = runspeed;runningTimer = runtimer;
+	waitingTimer = waittimer; distanceThreshold = distanceThresh; NewState();
 }

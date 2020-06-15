@@ -31,6 +31,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		TSubclassOf<class AenemyBaseClass> enemiesToInclude0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude6;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude7;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude8;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		int numberOfEnemies;
 
@@ -49,7 +64,7 @@ public:
 
 	//used to perform fucntions relating to enemy statii
 	TArray<FVector> spawnedEnemyLocations;
-	TArray<int> enemyType;
+	TArray<int> enemyTypeN;
 	TArray<bool> withinRange;
 	TArray<bool> alerted;
 	TArray<float> health;
@@ -74,6 +89,21 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
 		TSubclassOf<AActor> Enemy0Ragdoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy4Ragdoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy5Ragdoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy6Ragdoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy7Ragdoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "death")
+		TSubclassOf<AActor> Enemy8Ragdoll;
 
 
 	//meat slab
@@ -100,5 +130,11 @@ public:
 	int CurrentPlayerBlock;
 
 	TArray<FString> GetBlockCoords(int BlockNumber);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "spawn")
+		AenemyBaseClass* Dummy;
+
+	void SpawnMeat(FVector Location, int NumberToSpawn);
+	void SpawnFur(FVector Location, int NumberToSpawn);
 
 };

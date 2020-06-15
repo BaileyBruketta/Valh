@@ -10,6 +10,7 @@ AInventory::AInventory()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	ItemsInInventory.Init(6666, 100);
+	AmmoInWeapon.Init(0, 100);
 	NumberOfItemsTotal = 0;
 }
 
@@ -30,11 +31,11 @@ void AInventory::Tick(float DeltaTime)
 }
 
 //Add the int for an item ID 
-void AInventory::AddToInventory(int ItemID)
+void AInventory::AddToInventory(int ItemID, int ammo)
 {
 	
 		ItemsInInventory[NumberOfItemsTotal] = ItemID;
-
+		AmmoInWeapon[NumberOfItemsTotal] = ammo;
 		NumberOfItemsTotal += 1;
 	
 
@@ -53,10 +54,10 @@ FString AInventory::GetItemName(int ItemID)
 		break;
 	case 2 :
 	case 3 :
-		itemName = "The Nazi Fucker";
+		itemName = "Old English";
 		break;
 	case 7 :
-		itemName = "Draco, Soldier of Kings";
+		itemName = "Short Stack";
 		break;
 	}
 
@@ -110,5 +111,23 @@ int AInventory::GetGunDamage(int ItemID)
 	return gunDamage;
 }
 
+int AInventory::GetAmmoInWeapon(int index)
+{
+	return AmmoInWeapon[index];
+}
 
+FString AInventory::GetWeaponCaliber(int itemID)
+{
+	FString ItemCaliber = "";
+	switch (itemID)
+	{
+	case 0: ItemCaliber = ".45 ACP"; break;
+	case 1: ItemCaliber = "7.62 Russian Short"; break;
+	case 3: ItemCaliber = "9 x 19 Parabellum"; break;
+	case 7: ItemCaliber = "5.45 x 39 Devil's Bullet "; break;
+	case 6666: ItemCaliber = "empty hands"; break;
+	}
+
+	return ItemCaliber;
+}
 

@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ItemPickup.generated.h"
+#include "Destructable.generated.h"
 
 UCLASS()
-class VALH_API AItemPickup : public AActor
+class VALH_API ADestructable : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AItemPickup();
+	ADestructable();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,18 +22,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
-	UFUNCTION(BlueprintCallable, Category = "item grabbed")
-		int PickUpItem();
-
-	UFUNCTION(BlueprintCallable, Category = "item grabbed")
-		int GetAmmo();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemID")
-		int ID;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemID")
-		int ammoInWeapon;
 
 };

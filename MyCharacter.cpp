@@ -99,7 +99,7 @@ AMyCharacter::AMyCharacter()
 	AdsGunRotation;
 	GunScale.Set(0.0f, 0.0f, 0.0f);
 	gunBaseDamage          = 0;
-	ammoInMagazine         = 1000;
+	ammoInMagazine         = 0;
 	currentFireType        = 0;
 	isFiring               = false;
 	GunOffset.Set(100.0f, 0.0f, 10.0f);
@@ -115,6 +115,11 @@ AMyCharacter::AMyCharacter()
 	rateOfFire = 0.0f;
 
 	HEALTH = 1; STAMINA = 1; HUNGER = 1; WATER = 1; FATIGUE = 1;
+
+	pausecheck = 1;
+	Paused = false;
+	CurrentEquippedWeapon = 6666;
+	GenerateWeaponText();
 }
 
 // Called when the game starts or when spawned
@@ -147,6 +152,8 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("AdsIn", IE_Pressed, this, &AMyCharacter::AimDownSights);
 	PlayerInputComponent->BindAction("AdsIn", IE_Released, this, &AMyCharacter::RelaxAim);
 
+	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &AMyCharacter::PauseCheck);
+
 	//Movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
@@ -159,6 +166,13 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	
 
+}
+
+void AMyCharacter::PauseCheck()
+{
+	pausecheck += 1;
+	if (pausecheck % 2 == 0) { Paused = true;  }
+	if (pausecheck % 2 != 0) { Paused = false; }
 }
 
 void AMyCharacter::SetHoursMinutes(int H, int M)
@@ -264,11 +278,12 @@ void AMyCharacter::Interact()
 		{
 			//pick up item
 			int ItemID = TestTarget->PickUpItem();
+			int ammu   = TestTarget->GetAmmo();
 
 			//if (ItemID != NULL) 
 			//{
 				
-				Inventory->AddToInventory(ItemID);
+				Inventory->AddToInventory(ItemID, ammu);
 
 				//play pickup sound
 				if (PickupSound != NULL)
@@ -360,6 +375,10 @@ void AMyCharacter::MoveRight(float Value)
 
 
 //Guns
+void AMyCharacter::SetAmmoInMag(int itemID)
+{
+	ammoInMagazine = itemID;
+}
 
 void AMyCharacter::ChangeGunEquipped(int gunNumber)
 {
@@ -391,6 +410,8 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 			currentFireType = 1; rateOfFire = 0.07f;
 		break;
 	}
+
+	CurrentEquippedWeapon = gunNumber;
 
 	
 }
@@ -499,26 +520,29 @@ void AMyCharacter::FireWeaponOrTool()
 	FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
 	AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
 
-	//this is a raycast from the player character camera
-	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
-	{
-		//makes line
-		//DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
-		//makes message
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
-
-		AenemyBaseClass* TestTarget = Cast<AenemyBaseClass>(HitResult->Actor.Get());
-
-		if (TestTarget != NULL && !TestTarget->IsPendingKill())
+	if (ammoInMagazine > 0) {
+		//this is a raycast from the player character camera
+		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
 		{
-			TestTarget->DamageTarget(gunBaseDamage);
+			//makes line
+			//DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
+			//makes message
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
+
+			AenemyBaseClass* TestTarget = Cast<AenemyBaseClass>(HitResult->Actor.Get());
+
+			if (TestTarget != NULL && !TestTarget->IsPendingKill())
+			{
+				TestTarget->DamageTarget(gunBaseDamage);
+			}
+
+			FVector_NetQuantizeNormal Locs;
+			FRotator Rots;
+			Locs = HitResult->Location;
+			SpawnBulletImpact(Locs, Rots);
+			
+
 		}
-
-		FVector_NetQuantizeNormal Locs;
-		FRotator Rots;
-		Locs = HitResult->Location;
-		SpawnBulletImpact(Locs, Rots);
-
 	}
 
 }
@@ -536,6 +560,7 @@ void AMyCharacter::SemiAutomaticFire()
 	//FireSoundAndAnimation();
 	SpawnGunSmoke();
 	ammoInMagazine -= 1;
+	GenerateWeaponText();
 
 }
 void AMyCharacter::FullyAutomaticFire()
@@ -547,6 +572,7 @@ void AMyCharacter::FullyAutomaticFire()
 		//FireSoundAndAnimation();
 		SpawnGunSmoke();
 		ammoInMagazine -= 1;
+		GenerateWeaponText();
 		GetWorld()->GetTimerManager().SetTimer(firingPin, this, &AMyCharacter::FullyAutomaticFire, rateOfFire, false);
 			
 	}
@@ -581,4 +607,11 @@ void AMyCharacter::OnFire()
 }
 
 void AMyCharacter::ReleaseTrigger(){ isFiring = false; }
+
+void AMyCharacter::GenerateWeaponText()
+{
+	FString Caliber = Inventory->GetWeaponCaliber(CurrentEquippedWeapon);
+
+	WeaponText = FString::FromInt(ammoInMagazine) + "/" + "0" + " " + "[ " + Caliber + " ]";
+}
 
