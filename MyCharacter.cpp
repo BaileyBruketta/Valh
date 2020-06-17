@@ -279,11 +279,15 @@ void AMyCharacter::Interact()
 			//pick up item
 			int ItemID = TestTarget->PickUpItem();
 			int ammu   = TestTarget->GetAmmo();
+			bool cons  = TestTarget->GetConsum();
+			bool equip = TestTarget->GetWep();
+			bool res   = TestTarget->GetRes();
+			bool cont  = TestTarget->GetCont();
 
 			//if (ItemID != NULL) 
 			//{
 				
-				Inventory->AddToInventory(ItemID, ammu);
+				Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont);
 
 				//play pickup sound
 				if (PickupSound != NULL)
@@ -409,6 +413,11 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 			FireAnimation = Gun7FireAnimation;
 			currentFireType = 1; rateOfFire = 0.07f;
 		break;
+
+	case 8: Gun->SetSkeletalMesh(Gun8MeshReference); SetGunVariables(8);
+			Gun->SetAnimClass(Gun8AnimReference->GetAnimBlueprintGeneratedClass());
+			FireAnimation = Gun8FireAnimation;
+			currentFireType = 2;
 	}
 
 	CurrentEquippedWeapon = gunNumber;
@@ -420,6 +429,7 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 void AMyCharacter::SetGunVariables(int gunNumber)
 {
 	//set location, adslocation, rotation, ads rotation, scale, gunbasedamage, rateoffire
+	//should be handled by loading text files into array of array at start and referencing during runtime
 	
 	switch (gunNumber)
 	{
@@ -478,6 +488,8 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 
 		gunBaseDamage = 17;
 		break;
+
+	case 8: break;
 	}
 }
 
@@ -593,17 +605,58 @@ void AMyCharacter::OnFire()
 {
 	isFiring = true;
 	//check for ammo and gun type to determine rate of fire
-	if (ammoInMagazine > 0)
+	//if (ammoInMagazine > 0)
+	//{
+	//	if (currentFireType == 0) //semi-automatic
+	//	{
+	//		SemiAutomaticFire();
+	//	}
+	//	else if (currentFireType == 1) //fully automatic
+	//	{
+	//		FullyAutomaticFire();
+	//	}
+	//}
+
+	switch (currentFireType)
 	{
-		if (currentFireType == 0) //semi-automatic
+	case 0: if (ammoInMagazine > 0) {SemiAutomaticFire(); } break;
+	case 1: if (ammoInMagazine > 0) {FullyAutomaticFire();} break;
+	case 2: GatherWater(); break;
+	}
+}
+
+//This is called when the player clicks the LMB while holding any container capable of holding water
+void AMyCharacter::GatherWater()
+{
+
+	//See if player is appropriately close to a body of water
+	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+	FHitResult* HitResult = new FHitResult();
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
+	FVector EndTrace = ((forwardVector*20000.f) + StartTrace);
+	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+	{
+		AActor* TestTarget = Cast<AActor>(HitResult->Actor.Get());
+
+		if (TestTarget != NULL && !TestTarget->IsPendingKill())
 		{
-			SemiAutomaticFire();
-		}
-		else if (currentFireType == 1) //fully automatic
-		{
-			FullyAutomaticFire();
+			FString x = TestTarget->GetName();
+
+			//bodies of water are named "Water" + n
+			if (x.Contains("Water"))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
+				//we refer to both the slot in the inventory where our container resides, and 1, the identifier for fresh water in the context of the inventory context array
+				Inventory->SetContainerContents(InventoryIndexEquipped, 1); Inventory->SetContainerAmount(InventoryIndexEquipped, 1);
+			}
 		}
 	}
+	//perform animation and play sound
+
+	//set contents variable in inventory and in item - though we have stablished passing the information to the invntory, we must still pass it back to the item slot in the UI WITHOUT forcing a manual refresh of the UI by the user
+
+	//set contents amount 
 }
 
 void AMyCharacter::ReleaseTrigger(){ isFiring = false; }
@@ -613,5 +666,13 @@ void AMyCharacter::GenerateWeaponText()
 	FString Caliber = Inventory->GetWeaponCaliber(CurrentEquippedWeapon);
 
 	WeaponText = FString::FromInt(ammoInMagazine) + "/" + "0" + " " + "[ " + Caliber + " ]";
+}
+
+//Initially created for the "water gathering" mechanic, this is used to store where in the inventory the player's current tool or weapon resides.
+//Why? This way, when something like water gathering occurs, we can set the arrays in the inventory refering to item contents and amounts at the appropriate index
+//EG: the inventory may hold value [8] in a slot 7 of the item ID array. as 8 refer to plastic containers, when we gather water, we can set slot 7 of the contents array to "unboiled water."
+void AMyCharacter::ChangeItemIndexEquipped(int IndexNumber)
+{
+	InventoryIndexEquipped = IndexNumber;
 }
 

@@ -35,8 +35,8 @@ void ADayNightCycle::Tick(float DeltaTime)
 }
 
 void ADayNightCycle::UpdateTime()
-{
-	min += 1;
+{	//1.0->.25->.0625 then, i cut the amount of minutes increase in half while keeping the timer set to .0625. .0625 is good and smooth for refresh, but too fast for the actual time of day
+	min += .015625f;
 	if (min > 59) { hour += 1; ResetMinutes(); }
 	if (hour >= 25) { hour = 1; }
 
@@ -44,7 +44,8 @@ void ADayNightCycle::UpdateTime()
 	AMyCharacter* MyChar = Cast<AMyCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MyChar->SetHoursMinutes(hour, min);
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADayNightCycle::UpdateTime, 1.0f, false);
+	//initally every 1.0f; turned min to dloat and set to .25f for smoothness
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADayNightCycle::UpdateTime, .0625f, false);
 }
 
 void ADayNightCycle::ResetMinutes()

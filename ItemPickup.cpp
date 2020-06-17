@@ -45,3 +45,8 @@ int AItemPickup::GetAmmo()
 
 	return ammoInWeapon;
 }
+
+bool AItemPickup::GetConsum(){return isConsumable;  }
+bool AItemPickup::GetWep()   {return isWeaponOrTool;}
+bool AItemPickup::GetRes()   {return isResource;    }
+int AItemPickup::GetCont()   {return ContentsID;    }

@@ -436,6 +436,7 @@ void AenemyHandler::Revive(int oneToRevive)
 //TODO: CODE IN SOMETHING INITIATE A RESPAWN TIMER///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLocation)
 {
+	AActor* DownedEnemy = spawnedEnemyReferences[enemyID]; FVector ScaleToSpawn = DownedEnemy->GetActorScale3D();
 	FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
 	AActor* FirstDrop = Dummy; AActor* SecondDrop = Dummy; AActor* Ragdoll = Dummy;
 	switch (enemyType)
@@ -447,6 +448,8 @@ void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLoc
 	case 7: SpawnMeat(enemyLocation, 2);SpawnFur(enemyLocation, 2);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy7Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
 	case 8: SpawnMeat(enemyLocation, 5);SpawnFur(enemyLocation, 5);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy8Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
 	}
+
+	Ragdoll->SetActorScale3D(ScaleToSpawn);
 }
 
 void AenemyHandler::SpawnMeat(FVector Location, int NumberToSpawn)

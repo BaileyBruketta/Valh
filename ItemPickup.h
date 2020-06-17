@@ -36,4 +36,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemID")
 		int ammoInWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		bool isConsumable;
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		bool GetConsum();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		bool isWeaponOrTool;
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		bool GetWep();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		bool isResource;
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		bool GetRes();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		int ContentsID;  //eg. -fresh water is 1, empty is 0
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		int GetCont();
+
 };

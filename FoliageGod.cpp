@@ -12,6 +12,7 @@
 #include "Engine.h"
 #include "FileHelper.h"
 #include "Paths.h"
+#include "Math/UnrealMathUtility.h"
 #include "Misc/FileHelper.h"
 
 
@@ -85,7 +86,8 @@ void AFoliageGod::GeneratePlantData(int Block)
 		TArray<int>     PlantInts; PlantInts.Init(1,4);
 		for (int z = 0; z < PlantData.Num(); z++) { PlantInts[z] = FCString::Atoi(*PlantData[z]); }
 
-		int numberOfPlants = floor(rand() % PlantInts[1] + PlantInts[2]);
+		//int numberOfPlants = floor(rand() % PlantInts[1] + PlantInts[2]);
+		int numberOfPlants = floor(FMath::FRandRange(PlantInts[1], PlantInts[2]));
 
 		for (int j = 0; j < numberOfPlants; j++)
 		{
@@ -146,7 +148,7 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 	{
 		TArray<FString> PlantDataStr; PlantData[i].ParseIntoArray(PlantDataStr, TEXT(","), 1);
 		TArray<int> PlantIntegers; PlantIntegers.Init(1, 6); for (int j = 0; j < 6; j++) { PlantIntegers[j] = FCString::Atoi(*PlantDataStr[j]); }
-		Locs.X = PlantIntegers[2]; Locs.Y = PlantIntegers[3]; Locs.Z = PlantIntegers[4]; Rots.Roll = 0.0f;  Rots.Yaw = PlantIntegers[5]; float s = FCString::Atof(*PlantDataStr[1]);
+		Locs.X = PlantIntegers[2]; Locs.Y = PlantIntegers[3]; Locs.Z = PlantIntegers[4]; Rots.Pitch = 0.0f; Rots.Roll = 0.0f;  Rots.Yaw = PlantIntegers[5]; float s = FCString::Atof(*PlantDataStr[1]);
 		Scale.X = s; Scale.Y = s; Scale.Z = s;
 
 		AActor* SpawnedActorRef;
@@ -169,6 +171,8 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 		case 12: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 		case 13: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 		case 14: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+
+		case 15: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant10, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 		}
 
 	}

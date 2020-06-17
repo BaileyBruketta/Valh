@@ -102,9 +102,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* FireAnimation;
 
-	//GUNS
+	// TOOLS, WEAPONS, EQUIPMENT
 
-	/////////////////////////////////////////////////////////////////////////////////       "Whitewater Special"
+	/////////////////////////////////////////////////////////////////////////////////       "Whitewater Special" (revolver)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun0MeshReference;					//gun 0 revolver
 
@@ -115,7 +115,7 @@ public:
 		class UAnimMontage* Gun0FireAnimation;
 
 	
-	/////////////////////////////////////////////////////////////////////////////////       "Rebel's Rifle"
+	/////////////////////////////////////////////////////////////////////////////////       "Freedom Fighter" (ak 103)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun1MeshReference;        
 
@@ -128,7 +128,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun1FireAnimation;
 
-	//////////////////////////////////////////////////////////////////////////////////       "The Nazi Fucker"
+	//////////////////////////////////////////////////////////////////////////////////       "Old English" (sten mk5)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun3MeshReference;                 // smg
 
@@ -138,7 +138,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun3FireAnimation;
 
-	/////////////////////////////////////////////////////////////////////////////////        "Draco, Soldier of Kings"
+	/////////////////////////////////////////////////////////////////////////////////        "Short Stack" (aks74u draco)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun7MeshReference;
 
@@ -150,6 +150,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun7FireAnimation;
+
+	////////////////////////////////////////////////////////////////////////////////         "Plastic Container"
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun8MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun8AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun8FireAnimation;
+
 
 
 
@@ -163,6 +174,9 @@ public:
 	//These secondary functions will set scale andf location/ rotation global variables that will be accessed by an ADS trigger
 	UFUNCTION(BlueprintCallable, Category = "Guns")
 		void ChangeGunEquipped(int gunNumber);
+
+	//CEW is repeated item identifier. 3 items may have the same CEW. "WHAT" is it
+	int CurrentEquippedWeapon;
 
 	UFUNCTION(BlueprintCallable, Category = "Guns")
 		void SetGunVariables(int gunNumber);
@@ -223,6 +237,7 @@ public:
 
 	void OnFire();
 	bool isFiring;
+	void GatherWater();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		int currentFireType;
@@ -279,6 +294,13 @@ public:
 		UFUNCTION(BlueprintCallable, Category = Guns)
 			void SetAmmoInMag(int itemID);
 
-		int CurrentEquippedWeapon;
+		
+		//When we change weapons or tools, it is helpful to know which slot in the inventory it occupies
+		UFUNCTION(BlueprintCallable, Category = "Guns")
+		void ChangeItemIndexEquipped(int IndexNumber);
+		//IIE refers to element # in inventory array system, as this number can be used to manipulate multiple arrays and corresponding values. "WHERE" is it
+		int InventoryIndexEquipped;
+
+		
 
 };

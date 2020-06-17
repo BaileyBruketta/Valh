@@ -36,7 +36,7 @@ public:
 	//BP_Sky_Sphere_C* SKySphere;
 
 	int hour;
-	int min;
+	float min;
 	int sec;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = sun)

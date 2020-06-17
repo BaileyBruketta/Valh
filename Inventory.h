@@ -38,8 +38,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 	TArray<int> AmmoInWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<bool> isConsum;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<bool> isWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<bool> isRes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<int> ContentsID;  //eg. -fresh water is 1, empty is 0
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<int> containerAmounts;
+
 	//passes an itemdata object to the inventory object to add to the inventory array, performs analyzation of object
-	void AddToInventory(int ItemID, int ammo);
+	void AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents);
 
 	//This will be used to run an item ID and return a name for an item
 	//These values should probably be stored in a text file and ripped line for line 
@@ -62,5 +77,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "item stats")
 		FString GetWeaponCaliber(int itemID);
+
+	//we set what type of thing is hekd by a container
+	UFUNCTION()
+	void SetContainerContents(int IndexNumber, int ContentsIdentifier);
+
+	//we set how much of a thing is held by a container
+	UFUNCTION()
+	void SetContainerAmount(int IndexNumber, int amount);
+
 		
 };
