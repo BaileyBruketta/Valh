@@ -10,6 +10,7 @@ AInventory::AInventory()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	ItemsInInventory.Init(6666, 100);
+	ItemCount.Init(0, 100);
 	AmmoInWeapon.Init(0, 100);
 	isConsum.Init(false, 100);
 	isWeapon.Init(false, 100);
@@ -26,15 +27,44 @@ void AInventory::BeginPlay(){Super::BeginPlay();}
 void AInventory::Tick(float DeltaTime){Super::Tick(DeltaTime);}
 
 //Add the int for an item ID 
-void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents)
+void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents, bool stackable)
 {	
+	if (stackable == true)
+	{
+		bool check = false;
+		for (int i = 0; ItemsInInventory.Num() - 1; i++)
+		{
+			if (ItemsInInventory[i] == ItemID)
+			{
+				//add a count to an item type already represented in inventory
+				ItemCount[i] += 1;
+				check = true;
+			}
+		}
+
+		if (check == false)
+		{
+			//create new item in inventory
+			ItemsInInventory[NumberOfItemsTotal] = ItemID;
+			AmmoInWeapon[NumberOfItemsTotal] = ammo;
+			isConsum[NumberOfItemsTotal] = consumable;
+			isWeapon[NumberOfItemsTotal] = equippable;
+			isRes[NumberOfItemsTotal] = resource;
+			ContentsID[NumberOfItemsTotal] = contents;
+			NumberOfItemsTotal += 1;
+		}
+	}
+	if (stackable == false) 
+	{
+		//create new item in inventory
 		ItemsInInventory[NumberOfItemsTotal] = ItemID;
-		AmmoInWeapon[NumberOfItemsTotal]     = ammo;
-		isConsum[NumberOfItemsTotal]         = consumable;
-		isWeapon[NumberOfItemsTotal]         = equippable;
-		isRes[NumberOfItemsTotal]            = resource;
-		ContentsID[NumberOfItemsTotal]       = contents;
+		AmmoInWeapon[NumberOfItemsTotal] = ammo;
+		isConsum[NumberOfItemsTotal] = consumable;
+		isWeapon[NumberOfItemsTotal] = equippable;
+		isRes[NumberOfItemsTotal] = resource;
+		ContentsID[NumberOfItemsTotal] = contents;
 		NumberOfItemsTotal += 1;
+	}
 }
 
 FString AInventory::GetItemName(int ItemID)
@@ -50,6 +80,10 @@ FString AInventory::GetItemName(int ItemID)
 	case 6: itemName = "Meat Steak"; break;
 	case 7 :itemName = "Short Stack";break;
 	case 8:itemName = "Plastic Container"; break;
+	case 9: itemName = "Log"; break;
+	case 10: itemName = "Branch"; break;
+	case 11: itemName = "Branch"; break;
+	case 12: itemName = "Branch"; break;
 	}
 
 	return itemName;

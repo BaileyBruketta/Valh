@@ -46,7 +46,24 @@ int AItemPickup::GetAmmo()
 	return ammoInWeapon;
 }
 
-bool AItemPickup::GetConsum(){return isConsumable;  }
-bool AItemPickup::GetWep()   {return isWeaponOrTool;}
-bool AItemPickup::GetRes()   {return isResource;    }
-int AItemPickup::GetCont()   {return ContentsID;    }
+bool AItemPickup::GetConsum()    {return isConsumable;  }
+bool AItemPickup::GetWep()       {return isWeaponOrTool;}
+bool AItemPickup::GetRes()       {return isResource;    }
+bool AItemPickup::GetStackable() {return isStackable;   }
+int AItemPickup::GetCont()       {return ContentsID;    }
+
+void AItemPickup::InitiateDefaults(TArray<FString> Defaults)
+{
+	
+		ammoInWeapon = FCString::Atoi(*Defaults[2]);
+		isConsumable = BoolConvert(Defaults[3]);
+		isWeaponOrTool = BoolConvert(Defaults[4]);
+		isResource = BoolConvert(Defaults[5]);
+		ContentsID = FCString::Atoi(*Defaults[6]);
+}
+
+bool AItemPickup::BoolConvert(FString parameter)
+{
+	if (parameter == "False") { return false; }
+	else return true;
+}

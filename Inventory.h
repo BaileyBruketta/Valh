@@ -53,8 +53,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		TArray<int> containerAmounts;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<int> ItemCount;
+
 	//passes an itemdata object to the inventory object to add to the inventory array, performs analyzation of object
-	void AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents);
+	void AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents, bool stackable);
 
 	//This will be used to run an item ID and return a name for an item
 	//These values should probably be stored in a text file and ripped line for line 

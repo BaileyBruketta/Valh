@@ -33,7 +33,7 @@ void AFoliageGod::BeginPlay()
 	//SpawnFunction();
 	for (int i = 0; i < 6; i++) 
 	{
-		//GeneratePlantData(i);
+		GeneratePlantData(i);
 		SpawnPlantsFromData(i);
 	}
 	

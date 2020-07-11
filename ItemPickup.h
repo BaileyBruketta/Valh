@@ -51,6 +51,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		bool isResource;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		bool isStackable;
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		bool GetStackable();
+
 	UFUNCTION(BlueprintCallable, Category = "item grabbed")
 		bool GetRes();
 
@@ -59,5 +65,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "item grabbed")
 		int GetCont();
+
+	UFUNCTION(BlueprintCallable, Category = "Initiation")
+		void InitiateDefaults(TArray<FString> Defaults);
+
+	bool BoolConvert(FString parameter);
 
 };

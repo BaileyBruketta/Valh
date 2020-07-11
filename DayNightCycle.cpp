@@ -11,7 +11,7 @@ ADayNightCycle::ADayNightCycle()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	hour = 10;
+	hour = 6;
 	min = 0;
 	//hour = 3;
 	//min = 55;
@@ -68,10 +68,10 @@ void ADayNightCycle::UpdateIntensity()
 		if (hour >= 5) { if (hour < 8) { Sun->SetIntensity(2.0f + (2.0f * ((hour - 5.0f) / 3.0f)) + (2.0f * ((min / 60.0f) / 3.0f))); 
 		Rotat.Pitch = (182.0f + (40.0f * ((hour - 5.0f) / 3.0f)) + (40.0f * ((min / 60.0f) / 3.0f))); SetActorRotation(Rotat);
 		} }
-		if (hour >= 8) { if (hour < 12) { Sun->SetIntensity(4.0f + (2.0f * ((hour - 8.0f) / 4.0f)) + (2.0f * ((min / 60.0f) / 4.0f))); 
+		if (hour >= 8) { if (hour < 12) { Sun->SetIntensity(4.0f + (1.0f * ((hour - 8.0f) / 4.0f)) + (2.0f * ((min / 60.0f) / 4.0f))); 
 		Rotat.Pitch = (222.0f + (40.0f * ((hour - 8.0f) / 4.0f)) + (40.0f * ((min / 60.0f) / 4.0f))); SetActorRotation(Rotat);
 		}}
-		if (hour >= 12) { if (hour < 16) { Sun->SetIntensity(6.0f - (2.0f * ((hour - 12.0f) / 4.0f)) - (2.0f * ((min / 60.0f) / 4.0f))); 
+		if (hour >= 12) { if (hour < 16) { Sun->SetIntensity(5.0f - (2.0f * ((hour - 12.0f) / 4.0f)) - (2.0f * ((min / 60.0f) / 4.0f))); 
 		Rotat.Pitch = (266.0f + (35.0f * ((hour -12.0f) / 4.0f)) - (35.0f * ((min / 60.0f) / 4.0f))); SetActorRotation(Rotat);
 		} }
 		if (hour >= 16) { if (hour < 19) { Sun->SetIntensity(4.0f - (2.0f * ((hour - 16.0f) / 3.0f)) - (2.0f * ((min / 60.0f) / 3.0f))); 

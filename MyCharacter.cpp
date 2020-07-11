@@ -194,7 +194,7 @@ void AMyCharacter::GenerateClockText()
 	ClockText = ClockText + ":";
 	//01:, 11:, etc
 	if (Minutes > 9) { ClockText = HourString + ":" + FString::FromInt(Minutes) + " " + M; }
-	if (Minutes < 9) { ClockText = HourString + ":" + "0" + FString::FromInt(Minutes) + " " + M; }
+	if (Minutes <= 9) { ClockText = HourString + ":" + "0" + FString::FromInt(Minutes) + " " + M; }
 	//01:13, 13:17
 
 	UpdateStats();
@@ -204,9 +204,9 @@ void AMyCharacter::GenerateClockText()
 void AMyCharacter::UpdateStats()
 {
 	//These numbers are not arbitrary. They represent 3 days without water, 3 weeks without food, and 11 days without sleep
-	WATER  -= .0002315;
-	HUNGER -= .000033;
-	FATIGUE -= .000138;
+	WATER -= .0000266875;//.0002315;
+	HUNGER -= .000004125;//.000033
+	FATIGUE -= .00001725;//.000138     these were all divided by 8 as the time scale was changed
 
 	if (HEALTH < 1) { HEALTH += .0003f; }
 	if (STAMINA < 1) { STAMINA += .01f; }
@@ -283,11 +283,12 @@ void AMyCharacter::Interact()
 			bool equip = TestTarget->GetWep();
 			bool res   = TestTarget->GetRes();
 			bool cont  = TestTarget->GetCont();
+			bool stak  = TestTarget->GetStackable();
 
 			//if (ItemID != NULL) 
 			//{
 				
-				Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont);
+				Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont, stak);
 
 				//play pickup sound
 				if (PickupSound != NULL)
@@ -306,8 +307,9 @@ void AMyCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
+		float x = Value * 3.5f;
 		// add movement in that direction
-		AddMovementInput(GetActorForwardVector(), Value);
+		AddMovementInput(GetActorForwardVector(), x);
 
 		
 			//Set gun anim BP to walk
@@ -343,8 +345,9 @@ void AMyCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
+		float x = Value * 3.5f;
 		// add movement in that direction
-		AddMovementInput(GetActorRightVector(), Value);
+		AddMovementInput(GetActorRightVector(), x);
 
 		
 			//Set gun anim BP to walk
@@ -434,7 +437,7 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 	switch (gunNumber)
 	{
 	case 0:
-		RelativeGunlocation.Set(-6.666f, 27.0f, 154.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-16.0f, 43.0f, 150.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = .2f; GunScale.Y = .2f; GunScale.Z = .2f; Gun->SetRelativeScale3D(GunScale);
 
@@ -446,7 +449,7 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		gunBaseDamage = 40;
 		break;
 	case 1:
-		RelativeGunlocation.Set(-10.0f, 56.0f, 123.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-14.0f, 56.0f, 122.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.8f; GunScale.Y = 1.8f; GunScale.Z = 1.8f; Gun->SetRelativeScale3D(GunScale);
@@ -475,7 +478,7 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		break;
 
 	case 7:
-		RelativeGunlocation.Set(-119.0f, 79.0f, 145.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		RelativeGunlocation.Set(-119.0f, 79.0f, 131.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 0.15f; GunScale.Y = 0.15f; GunScale.Z = 0.15f; Gun->SetRelativeScale3D(GunScale);
 
@@ -605,18 +608,6 @@ void AMyCharacter::OnFire()
 {
 	isFiring = true;
 	//check for ammo and gun type to determine rate of fire
-	//if (ammoInMagazine > 0)
-	//{
-	//	if (currentFireType == 0) //semi-automatic
-	//	{
-	//		SemiAutomaticFire();
-	//	}
-	//	else if (currentFireType == 1) //fully automatic
-	//	{
-	//		FullyAutomaticFire();
-	//	}
-	//}
-
 	switch (currentFireType)
 	{
 	case 0: if (ammoInMagazine > 0) {SemiAutomaticFire(); } break;
