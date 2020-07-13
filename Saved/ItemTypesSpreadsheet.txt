@@ -1,0 +1,6 @@
+NAME,ID,AmmoInWeapon,IsConsumable,IsWeaponOrTool,IsResource,ContentsID
+PlasticContainer,8,0,False,True,False,0
+Log,9,0,False,False,True,0
+TreeBranch,10,0,False,False,True,0
+TreeBranch,11,0,False,False,True,0
+TreeBranch,12,0,False,False,True,0

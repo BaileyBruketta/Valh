@@ -32,7 +32,7 @@ void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equi
 	if (stackable == true)
 	{
 		bool check = false;
-		for (int i = 0; ItemsInInventory.Num() - 1; i++)
+		for (int i = 0; i < ItemsInInventory.Num() - 1; i++)
 		{
 			if (ItemsInInventory[i] == ItemID)
 			{
@@ -51,6 +51,7 @@ void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equi
 			isWeapon[NumberOfItemsTotal] = equippable;
 			isRes[NumberOfItemsTotal] = resource;
 			ContentsID[NumberOfItemsTotal] = contents;
+			ItemCount[NumberOfItemsTotal] += 1;
 			NumberOfItemsTotal += 1;
 		}
 	}
@@ -63,6 +64,7 @@ void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equi
 		isWeapon[NumberOfItemsTotal] = equippable;
 		isRes[NumberOfItemsTotal] = resource;
 		ContentsID[NumberOfItemsTotal] = contents;
+		ItemCount[NumberOfItemsTotal] += 1;
 		NumberOfItemsTotal += 1;
 	}
 }
@@ -80,10 +82,7 @@ FString AInventory::GetItemName(int ItemID)
 	case 6: itemName = "Meat Steak"; break;
 	case 7 :itemName = "Short Stack";break;
 	case 8:itemName = "Plastic Container"; break;
-	case 9: itemName = "Log"; break;
-	case 10: itemName = "Branch"; break;
-	case 11: itemName = "Branch"; break;
-	case 12: itemName = "Branch"; break;
+	case 9: itemName = "Wood ("; int x = 0; for (int i = 0; i < ItemsInInventory.Num(); i++) { if (ItemsInInventory[i] == ItemID) { x = ItemCount[i]; } } itemName += FString::FromInt(x) + ")"; break;
 	}
 
 	return itemName;

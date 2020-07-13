@@ -157,22 +157,10 @@ void AenemyBaseClass::UpdateReceived()
 			break;
 
 		//walking
-		case 1 :
-			FVector forwardvect = GetActorForwardVector(); forwardvect = forwardvect * Speed;
-			FVector Loc = GetActorLocation();
-			FVector newvec = Loc + forwardvect;
-			//prevents stepping in water
-			FHitResult* HitResult = new FHitResult(); FVector StartTrace = newvec; newvec.Z = 5000.0f;
-			FVector EndTrace = newvec; EndTrace.Z -= 8000; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
-			if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
-			{newvec.Z = HitResult->Location.Z;}
-			//avoids generating spawnpoints that are below the "water level"
-			if (newvec.Z > 650) { SetActorLocation(newvec); }
-			//if next step would be in water, rotate
-			if (newvec.Z < 650) { FindNextDestination(); }
-
-			//SetActorLocation(newvec);
-			break;
+		case 1 : WalkFunction(); break;
+		
+			//aggressive
+		case 2: switch (damagetype) { case 1: RangedAttack(); break; } break;
 	}
 
 	//reduce state timer
@@ -184,7 +172,6 @@ void AenemyBaseClass::UpdateReceived()
 		NewState();
 	}
 }
-
 
 //does a random number to give the unit a new state
 void AenemyBaseClass::NewState()
@@ -209,7 +196,7 @@ void AenemyBaseClass::ClipToGround()
 	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
 	{
 		FVector NewLoc = StartTrace;
-		NewLoc.Z = HitResult->Location.Z; NewLoc.Z += 75.0f;
+		NewLoc.Z = HitResult->Location.Z; NewLoc.Z += 25.0f;
 		SetActorLocation(NewLoc);
 
 	}
@@ -232,9 +219,20 @@ void AenemyBaseClass::PlayerDistanceCheck()
 	if (distance < distanceThreshold)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("An enemy has been alerted to your presence")));
-		RunFromPlayer();
+
+		switch (aggressive)
+		{
+		case 0: RunFromPlayer(); break;
+		case 1: Aggress(); break;
+		}
+		
 	}
 	
+}
+//Turn the enemy aggressive
+void AenemyBaseClass::Aggress()
+{
+	State = 2;
 }
 
 //change direction to face away from the player
@@ -250,8 +248,65 @@ void AenemyBaseClass::RunFromPlayer()
 	SetActorRotation(newRot);
 }
 
-void AenemyBaseClass::SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThresh)
+void AenemyBaseClass::SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThresh, int Aggressive, int DamageType, int Damage, int FireRate)
 {
-	walkingSpeed = walkspeed;walkingTimer = walktimer;runningSpeed = runspeed;runningTimer = runtimer;
-	waitingTimer = waittimer; distanceThreshold = distanceThresh; NewState();
+	walkingSpeed = walkspeed; walkingTimer = walktimer; runningSpeed = runspeed; runningTimer = runtimer;
+	waitingTimer = waittimer; distanceThreshold = distanceThresh; aggressive = Aggressive; damagetype = DamageType; damage = Damage; firerate = FireRate; AttackCountdown = firerate;  NewState();
+}
+
+void AenemyBaseClass::RangedAttack()
+{
+	//make look at player
+	FVector  PlayerLocation = playerCharacterReference->GetActorLocation();
+	//UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation();
+	FVector  ThisLocation = GetActorLocation();
+	FRotator newRot; newRot = UKismetMathLibrary::FindLookAtRotation(ThisLocation, PlayerLocation);
+	SetActorRotation(newRot);
+	//shoot at player
+	AttackCountdown -= 1;
+	if (AttackCountdown < 2)
+	{
+		FHitResult* HitResult = new FHitResult();
+		FVector StartTrace = this->GetActorLocation();
+		FVector forwardVector = this->GetActorForwardVector();
+		FVector EndTrace = PlayerLocation;
+		FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+
+		FRotator xx; FVector zz = this->GetActorLocation(); FActorSpawnParameters SpawnParams;
+		AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
+
+		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+		{
+			//makes line
+			//DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
+			//makes message
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
+
+			AMyCharacter* TestTarget = Cast<AMyCharacter>(HitResult->Actor.Get());
+
+			if (TestTarget != NULL && !TestTarget->IsPendingKill())
+			{
+				TestTarget->DamageTarget(damage);
+			}
+		}
+	}
+
+}
+
+void AenemyBaseClass::WalkFunction()
+{
+	FVector forwardvect = GetActorForwardVector(); forwardvect = forwardvect * Speed;
+	FVector Loc = GetActorLocation();
+	FVector newvec = Loc + forwardvect;
+	//prevents stepping in water
+	FHitResult* HitResult = new FHitResult(); FVector StartTrace = newvec; newvec.Z = 5000.0f;
+	FVector EndTrace = newvec; EndTrace.Z -= 8000; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+	{
+		newvec.Z = HitResult->Location.Z;
+	}
+	//avoids generating spawnpoints that are below the "water level"
+	if (newvec.Z > 650) { SetActorLocation(newvec); }
+	//if next step would be in water, rotate
+	if (newvec.Z < 650) { FindNextDestination(); }
 }

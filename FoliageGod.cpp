@@ -173,6 +173,9 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 		case 14: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 
 		case 15: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant10, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+		case 16: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant11, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+		case 17: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant12, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+		case 18: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant13, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 		}
 
 	}

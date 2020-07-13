@@ -100,6 +100,7 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 			for (int LineInTypeFile = 1; LineInTypeFile < TypeFile.Num(); LineInTypeFile++)
 			{
 				TArray<FString> Temp;
+				TypeFile[LineInTypeFile] = TypeFile[LineInTypeFile].Replace(TEXT(" "),TEXT(""));
 				TypeFile[LineInTypeFile].ParseIntoArray(Temp, TEXT(","), 1);
 				//We save the specific enemy data to an array
 				if (FCString::Atoi(*Temp[1]) == EnemyType) { EnemyRootData = Temp; }
@@ -199,6 +200,7 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 		switch (enemyType)
 		{
 			case 0: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams); break;
+			case 2: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude2, SpawnPoint, SpawnRot, SpawnParams); break;
 			case 4: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude4, SpawnPoint, SpawnRot, SpawnParams); break;
 			case 5: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude5, SpawnPoint, SpawnRot, SpawnParams); break;
 			case 6: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude6, SpawnPoint, SpawnRot, SpawnParams); break;
@@ -220,7 +222,9 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 			}
 			newEnemy->SetStats(FCString::Atoi(*EnemyRootData[3]), FCString::Atoi(*EnemyRootData[4]), 
 							   FCString::Atoi(*EnemyRootData[5]), FCString::Atoi(*EnemyRootData[6]), 
-							   FCString::Atoi(*EnemyRootData[9]), FCString::Atoi(*EnemyRootData[10]));
+							   FCString::Atoi(*EnemyRootData[9]), FCString::Atoi(*EnemyRootData[10]),
+							   FCString::Atoi(*EnemyRootData[11]), FCString::Atoi(*EnemyRootData[12]),
+				               FCString::Atoi(*EnemyRootData[13]), FCString::Atoi(*EnemyRootData[14]));
 
 			//rescale
 			FVector ScaleToUse; ScaleToUse.X = FCString::Atof(*EnemyData[11]); ScaleToUse.Y = FCString::Atof(*EnemyData[11]); ScaleToUse.Z = FCString::Atof(*EnemyData[11]); newEnemy->SetActorScale3D(ScaleToUse);

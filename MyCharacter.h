@@ -102,6 +102,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* FireAnimation;
 
+	
+
 	// TOOLS, WEAPONS, EQUIPMENT
 
 	/////////////////////////////////////////////////////////////////////////////////       "Whitewater Special" (revolver)
@@ -113,6 +115,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun0FireAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class USoundBase* Gun0FireSound;
 
 	
 	/////////////////////////////////////////////////////////////////////////////////       "Freedom Fighter" (ak 103)
@@ -201,6 +206,9 @@ public:
 	//spawns bulletsmoke at point of impact when firing
 	UFUNCTION()
 		void SpawnBulletImpact(FVector Loc, FRotator Rot);
+
+	UFUNCTION()
+		void DamageTarget(int damage);
 
 	//bullet smoke 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")

@@ -71,6 +71,9 @@ public:
 	void NewState();
 	void PlayerDistanceCheck();
 	void RunFromPlayer();
+	void Aggress();
+	void RangedAttack();
+	void WalkFunction();
 
 	int Speed;
 
@@ -82,8 +85,17 @@ public:
 	int runningTimer;
 	int waitingTimer;
 	int distanceThreshold;
+	int aggressive;
+	int damagetype;
+	int damage;
+	int firerate;
+	int AttackCountdown;
+
+	//Gun Flash
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		TSubclassOf<AActor> GunFlash;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
-		void SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThresh);
+		void SetStats(int walkspeed, int walktimer, int runspeed, int runtimer, int waittimer, int distanceThreshint, int Aggressive, int DamageType, int Damage, int FireRate);
 
 };

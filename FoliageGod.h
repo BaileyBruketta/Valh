@@ -59,6 +59,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> plant10;
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		TSubclassOf<AActor> plant11;
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		TSubclassOf<AActor> plant12;
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		TSubclassOf<AActor> plant13;
+	
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void SpawnFunction();

@@ -164,6 +164,10 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	// Bind jump events
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	
 
 }
@@ -535,6 +539,11 @@ void AMyCharacter::FireWeaponOrTool()
 	FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
 	AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
 
+	if (Gun0FireSound != NULL)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, Gun0FireSound, GetActorLocation());
+	}
+
 	if (ammoInMagazine > 0) {
 		//this is a raycast from the player character camera
 		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
@@ -665,5 +674,11 @@ void AMyCharacter::GenerateWeaponText()
 void AMyCharacter::ChangeItemIndexEquipped(int IndexNumber)
 {
 	InventoryIndexEquipped = IndexNumber;
+}
+
+//take damage
+void AMyCharacter::DamageTarget(int damage)
+{
+	HEALTH -= damage;
 }
 
