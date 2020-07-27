@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine.h"
+#include "FoliageInstancedStaticMeshComponent.h"
 #include "FoliageGod.generated.h"
 
 UCLASS()
@@ -65,6 +66,70 @@ public:
 		TSubclassOf<AActor> plant12;
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> plant13;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh0;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh1;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh2;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh3;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh4;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh5;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh6;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh7;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh8;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh9;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh10;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh11;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh12;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh13;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh14;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh15;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh16;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh17;
+	UPROPERTY(EditDefaultsOnly, Category = "Meshing")
+		class UStaticMesh* MyMesh18;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Foliage")
+		TArray<UStaticMesh*> Meshes;
+
+	TArray<UInstancedStaticMeshComponent*> MeshComponents;
+
+	UInstancedStaticMeshComponent* meshComponent0;
+	UInstancedStaticMeshComponent* meshComponent1;
+	UInstancedStaticMeshComponent* meshComponent2;
+	UInstancedStaticMeshComponent* meshComponent3;
+	UInstancedStaticMeshComponent* meshComponent4;
+	UInstancedStaticMeshComponent* meshComponent5;
+	UInstancedStaticMeshComponent* meshComponent6;
+	UInstancedStaticMeshComponent* meshComponent7;
+	UInstancedStaticMeshComponent* meshComponent8;
+	UInstancedStaticMeshComponent* meshComponent9;
+	UInstancedStaticMeshComponent* meshComponent10;
+	UInstancedStaticMeshComponent* meshComponent11;
+	UInstancedStaticMeshComponent* meshComponent12;
+	UInstancedStaticMeshComponent* meshComponent13;
+	UInstancedStaticMeshComponent* meshComponent14;
+	UInstancedStaticMeshComponent* meshComponent15;
+	UInstancedStaticMeshComponent* meshComponent16;
+	UInstancedStaticMeshComponent* meshComponent17;
+	UInstancedStaticMeshComponent* meshComponent18;
 	
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
@@ -83,5 +148,9 @@ public:
 	void AppendPlantToDataFile(int BlockNumber, TArray<FString> PlantInfo);
 	TArray<FString> GetPlantData(int BlockNumber);
 
-	
+	AInstancedFoliageActor* Foll;
+
+private:
+	TArray<UFoliageInstancedStaticMeshComponent*> InstancedStaticMeshComp;
+
 };

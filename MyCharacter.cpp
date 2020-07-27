@@ -311,7 +311,7 @@ void AMyCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		float x = Value * 3.5f;
+		float x = Value * 0.20f;
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), x);
 
@@ -349,7 +349,7 @@ void AMyCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
-		float x = Value * 3.5f;
+		float x = Value * 0.20f;
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), x);
 

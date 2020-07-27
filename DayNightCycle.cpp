@@ -11,7 +11,7 @@ ADayNightCycle::ADayNightCycle()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	hour = 6;
+	hour = 9;
 	min = 0;
 	//hour = 3;
 	//min = 55;

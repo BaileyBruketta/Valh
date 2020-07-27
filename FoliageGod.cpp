@@ -14,6 +14,10 @@
 #include "Paths.h"
 #include "Math/UnrealMathUtility.h"
 #include "Misc/FileHelper.h"
+#include "Runtime/Foliage/Public/InstancedFoliageActor.h"
+#include "InstancedFoliageActor.h"
+#include "FoliageInstancedStaticMeshComponent.h"
+
 
 
 // Sets default values
@@ -30,6 +34,32 @@ AFoliageGod::AFoliageGod()
 void AFoliageGod::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TArray<AActor*> x;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInstancedFoliageActor::StaticClass(), x);
+
+	Foll = Cast<AInstancedFoliageActor>(x[0]);
+	Foll->GetComponents<UFoliageInstancedStaticMeshComponent>(InstancedStaticMeshComp);
+	if (Foll != NULL) { GEngine->AddOnScreenDebugMessage(-1, 20000.0f, FColor::Red, TEXT("We have a foliage object")); }
+
+	int xx = Meshes.Num(); UInstancedStaticMeshComponent* placeholder = NewObject<UInstancedStaticMeshComponent>(Foll, UInstancedStaticMeshComponent::StaticClass(), NAME_None, RF_Transactional);
+	MeshComponents.Init(NULL, xx);
+	
+	for (int i = 0; i < xx; i++)
+	{
+		FString NewNameString = "FoliActorName"; NewNameString += FString::FromInt(i); FName NewName = FName(*NewNameString);
+		MeshComponents[i] = NewObject<UFoliageInstancedStaticMeshComponent>(Foll, UFoliageInstancedStaticMeshComponent::StaticClass(), NAME_None, RF_Transactional);
+		MeshComponents[i]->AttachTo(Foll->GetRootComponent());
+		MeshComponents[i]->SetStaticMesh(Meshes[i]);
+		//MeshComponents[i]->SetCachedMaxDrawDistance(10000.0f)
+		MeshComponents[i]->SetCastShadow(true);
+		MeshComponents[i]->RegisterComponent();
+	}
+
+	//TESTEND
+
+
+
 	//SpawnFunction();
 	for (int i = 0; i < 6; i++) 
 	{
@@ -142,41 +172,96 @@ TArray<FString> AFoliageGod::GetPlantData(int BlockNumber)
 
 void AFoliageGod::SpawnPlantsFromData(int Block)
 {
+	//try {
+	//	TArray<AActor*> x;
+	//	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInstancedFoliageActor::StaticClass(), x);
+
+	//	Foll = Cast<AInstancedFoliageActor>(x[0]);
+	//}
+	//catch (...) { throw; }
+
 	FVector Locs; FRotator Rots; FVector Scale; FActorSpawnParameters SpawnParams;
+
+	//TArray<UInstancedStaticMeshComponent*> meshes; Foll->GetComponents<UInstancedStaticMeshComponent>(meshes);
+
 	TArray<FString> PlantData = GetPlantData(Block);
 	for (int i = 0; i < PlantData.Num()-1; i++)
 	{
 		TArray<FString> PlantDataStr; PlantData[i].ParseIntoArray(PlantDataStr, TEXT(","), 1);
 		TArray<int> PlantIntegers; PlantIntegers.Init(1, 6); for (int j = 0; j < 6; j++) { PlantIntegers[j] = FCString::Atoi(*PlantDataStr[j]); }
 		Locs.X = PlantIntegers[2]; Locs.Y = PlantIntegers[3]; Locs.Z = PlantIntegers[4]; Rots.Pitch = 0.0f; Rots.Roll = 0.0f;  Rots.Yaw = PlantIntegers[5]; float s = FCString::Atof(*PlantDataStr[1]);
+		s += FMath::FRandRange(-0.3f, 0.3f);
 		Scale.X = s; Scale.Y = s; Scale.Z = s;
+		//FQuat q = FQuat(Rots);
 
-		AActor* SpawnedActorRef;
+		//AActor* SpawnedActorRef;
+		
+		FTransform xxx; xxx.SetLocation(Locs); //xxx.SetRotation(q); 
+		xxx.SetScale3D(Scale);
 
-		switch (PlantIntegers[0])
-		{
-		case 0: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 1: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 2: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 3: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 4: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 5: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant5, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 6: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant6, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 7: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant7, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 8: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant8, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 9: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant9, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-
-		case 10: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 11: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 12: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 13: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 14: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-
-		case 15: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant10, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 16: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant11, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 17: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant12, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		case 18: SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant13, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
-		}
+		//try {
+			switch (PlantIntegers[0])
+			{
+			case 0:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[0]->AddInstance(xxx); break;
+			case 1:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[1]->AddInstance(xxx); break;
+			case 2:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[2]->AddInstance(xxx); break;
+			case 3:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[3]->AddInstance(xxx); break;
+			case 4:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[4]->AddInstance(xxx); break;
+			case 5:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant5, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[5]->AddInstance(xxx); break;
+			case 6:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant6, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[6]->AddInstance(xxx); break;
+			case 7:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant7, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[7]->AddInstance(xxx); break;
+			case 8:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant8, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[8]->AddInstance(xxx); break;
+			case 9:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant9, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[9]->AddInstance(xxx); break;
+			case 10:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[10]->AddInstance(xxx); break;
+			case 11:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[11]->AddInstance(xxx); break;
+			case 12:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[12]->AddInstance(xxx); break;
+			case 13:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[13]->AddInstance(xxx); break;
+			case 14:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock4, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[14]->AddInstance(xxx); break;
+			case 15:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant10, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[15]->AddInstance(xxx); break;
+			case 16:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant11, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[16]->AddInstance(xxx); break;
+			case 17:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant12, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[17]->AddInstance(xxx); break;
+			case 18:
+				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant13, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
+				MeshComponents[18]->AddInstance(xxx); break;
+			}
+		//}
+		//catch (...) { throw; }
 
 	}
 
