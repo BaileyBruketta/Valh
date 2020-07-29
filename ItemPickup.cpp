@@ -51,6 +51,8 @@ bool AItemPickup::GetWep()       {return isWeaponOrTool;}
 bool AItemPickup::GetRes()       {return isResource;    }
 bool AItemPickup::GetStackable() {return isStackable;   }
 int AItemPickup::GetCont()       {return ContentsID;    }
+int AItemPickup::GetNumberAdded() { return QuestNumberAddedByPickingThisUp; }
+int AItemPickup::GetNumberCompleted() { return QuestNumberCompletedByPickingThisUp; }
 
 void AItemPickup::InitiateDefaults(TArray<FString> Defaults)
 {

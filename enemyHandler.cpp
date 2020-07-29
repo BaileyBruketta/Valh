@@ -227,7 +227,9 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 				               FCString::Atoi(*EnemyRootData[13]), FCString::Atoi(*EnemyRootData[14]));
 
 			//rescale
-			FVector ScaleToUse; ScaleToUse.X = FCString::Atof(*EnemyData[11]); ScaleToUse.Y = FCString::Atof(*EnemyData[11]); ScaleToUse.Z = FCString::Atof(*EnemyData[11]); newEnemy->SetActorScale3D(ScaleToUse);
+			FVector ScaleToUse; ScaleToUse.X = FCString::Atof(*EnemyData[11]); ScaleToUse.Y = FCString::Atof(*EnemyData[11]); ScaleToUse.Z = FCString::Atof(*EnemyData[11]); 
+			FVector otherscale = newEnemy->GetActorScale3D();
+			ScaleToUse = ScaleToUse * otherscale; newEnemy->SetActorScale3D(ScaleToUse);
 
 			enemyTypeN[x] = enemyType;
 			health[x] = FCString::Atof(*EnemyData[2]);
@@ -406,10 +408,11 @@ void AenemyHandler::DecreaseHealth(int enemyNumber, int healthDecrease)
 
 		//spawn loot and ragdoll meshes
 		FVector LocationToSpawn = EnemyToUpdate->GetActorLocation();int enemyTypeNumber = enemyTypeN[numberToUse];
-		EnemyDeathDrops(numberToUse, enemyTypeNumber, LocationToSpawn);
+		
 		
 		float timer = 20;
 		spawnedEnemyReferences[numberToUse]->Destroy();
+		EnemyDeathDrops(numberToUse, enemyTypeNumber, LocationToSpawn);
 	}
 }
 
@@ -440,6 +443,7 @@ void AenemyHandler::Revive(int oneToRevive)
 //TODO: CODE IN SOMETHING INITIATE A RESPAWN TIMER///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLocation)
 {
+	FVector newSpot = enemyLocation; newSpot.Z += 2.0f;
 	AActor* DownedEnemy = spawnedEnemyReferences[enemyID]; FVector ScaleToSpawn = DownedEnemy->GetActorScale3D();
 	FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
 	AActor* FirstDrop = Dummy; AActor* SecondDrop = Dummy; AActor* Ragdoll = Dummy;
@@ -453,7 +457,8 @@ void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLoc
 	case 8: SpawnMeat(enemyLocation, 5);SpawnFur(enemyLocation, 5);Ragdoll = GetWorld()->SpawnActor<AActor>(Enemy8Ragdoll, enemyLocation, PlaceholderRotation, PlaceholderSpawnParams);break;
 	}
 
-	Ragdoll->SetActorScale3D(ScaleToSpawn);
+	//Ragdoll->SetActorScale3D(ScaleToSpawn);
+
 }
 
 void AenemyHandler::SpawnMeat(FVector Location, int NumberToSpawn)

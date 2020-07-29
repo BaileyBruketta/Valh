@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Inventory.h"
+#include "QuestManager.h"
 #include "MyCharacter.generated.h"
 
 UCLASS()
@@ -31,6 +32,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 public:	
 	// Called every frame
@@ -60,8 +62,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 		class AInventory* Inventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "QuestManager")
+		class AQuestManager* QuestManager;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> InventoryDefault;
+
+	UPROPERTY(EditDefaultsOnly, Category = "QuestManager")
+		TSubclassOf<AActor> QuestManagerDefault;
 
 	/** Sound to play each time we pick up an item */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -309,6 +317,8 @@ public:
 		//IIE refers to element # in inventory array system, as this number can be used to manipulate multiple arrays and corresponding values. "WHERE" is it
 		int InventoryIndexEquipped;
 
-		
+	
+		UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
+			void ResetMenuVisibility();
 
 };

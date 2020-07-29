@@ -1,0 +1,2 @@
+0,You've been wandering aimlessly since [redacted]. Walk over to the stack of pallets using WASD and pick up the gun using E.,50,50,1,Good Beginnings 
+1,The eyes given to you at birth were augmented to make up for your genetically deficient vision. As these eyes are powered biomechanically - failure to maintain satisfactory levels of nutrition will result in decreased visual acuity. Track down an animal and hunt it for its meat.,100,0,2,The Hunger

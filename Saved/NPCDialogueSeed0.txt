@@ -1,0 +1,13 @@
+R0:"Fuck do you want?"
+PDO0:1$"Tell me something.",2$"I got some shit to trade.",3$"What do you know about the mechs?.",8$"I need to leave." TriggerExit
+R1:"THIS TRIGGERS A COMPUTER GENERATED QUEST."
+PDO1:4$"Accept",5$"Decline",8$"I need to leave." TriggerExit
+R5:"Fuck off then" TriggerExit
+R2:"I have nothing to trade you."
+PDO2:1$"Tell me something.",2$"I got some shit to trade.",3$"What do you know about the mechs?.",8$"I need to leave." TriggerExit
+R3:"Whole bunch of fuckheads started building robot armies back in the day. Couple of the bigger tech companies had themselves a de facto arms race. To this day no one knows why."
+PDO3:6$"How'd they turn hostile?",7$"No shit? That's crazy.",8$"I need to leave." TriggerExit
+R6:"It was the fuckin Algians. Some state funded cyberattack campaign. Hell they hacked more than half the robots. That's when shit went sideways. Security flattened, robots went wild, people started releasing open source hacking algorithms for these things. We used to hunt them down to "turn" em. Anyways, their autonomous nature caused massive warfare. Ugliest thing the planet's ever seen, and it wasn't even humans running the damn show by the end of it."
+PDO6:1$"Tell me something.",2$"I got some shit to trade.",3$"Remind me about the mechs.",8$"I need to leave."
+R7:"Yep"
+PDO7:1$"Tell me something.",2$"I got some shit to trade.",3$"How'd this happen again?",8$"I need to leave."

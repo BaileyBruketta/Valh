@@ -152,7 +152,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("AdsIn", IE_Pressed, this, &AMyCharacter::AimDownSights);
 	PlayerInputComponent->BindAction("AdsIn", IE_Released, this, &AMyCharacter::RelaxAim);
 
-	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &AMyCharacter::PauseCheck);
+	PlayerInputComponent->BindAction("PressQ", IE_Pressed, this, &AMyCharacter::PauseCheck);
 
 	//Movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
@@ -172,11 +172,14 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+
+//setignorelookinput setignoremoveinput true/false
 void AMyCharacter::PauseCheck()
 {
+	ResetMenuVisibility();
 	pausecheck += 1;
-	if (pausecheck % 2 == 0) { Paused = true;  }
-	if (pausecheck % 2 != 0) { Paused = false; }
+	if (pausecheck % 2 == 0) { UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetIgnoreLookInput(true); UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetIgnoreMoveInput(true); Paused = true; }
+	if (pausecheck % 2 != 0) { UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetIgnoreLookInput(false); UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetIgnoreMoveInput(false); Paused = false; }
 }
 
 void AMyCharacter::SetHoursMinutes(int H, int M)
@@ -288,20 +291,23 @@ void AMyCharacter::Interact()
 			bool res   = TestTarget->GetRes();
 			bool cont  = TestTarget->GetCont();
 			bool stak  = TestTarget->GetStackable();
-
-			//if (ItemID != NULL) 
-			//{
+			int QuestToAdd = TestTarget->GetNumberAdded();
+			int QuestToComplete = TestTarget->GetNumberCompleted();
 				
-				Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont, stak);
+			Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont, stak);
 
-				//play pickup sound
-				if (PickupSound != NULL)
-				{
-					UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
-				}
+			//play pickup sound
+			if (PickupSound != NULL)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
+			}
 
-				TestTarget->Destroy();
-			//}
+			//initaite functions to check and see if picking up this item adds or completes any quests
+
+			if (QuestToAdd      != 6666) { QuestManager->AddQuestByNumber(QuestToAdd);   }
+			if (QuestToComplete != 6666) { QuestManager->CompleteQuest(QuestToComplete); }
+
+			TestTarget->Destroy();
 		}
 	}
 }
@@ -615,13 +621,16 @@ void AMyCharacter::SpawnGunSmoke()
 
 void AMyCharacter::OnFire()
 {
-	isFiring = true;
-	//check for ammo and gun type to determine rate of fire
-	switch (currentFireType)
+	if (Paused == false) 
 	{
-	case 0: if (ammoInMagazine > 0) {SemiAutomaticFire(); } break;
-	case 1: if (ammoInMagazine > 0) {FullyAutomaticFire();} break;
-	case 2: GatherWater(); break;
+		isFiring = true;
+		//check for ammo and gun type to determine rate of fire
+		switch (currentFireType)
+		{
+		case 0: if (ammoInMagazine > 0) { SemiAutomaticFire(); } break;
+		case 1: if (ammoInMagazine > 0) { FullyAutomaticFire(); } break;
+		case 2: GatherWater(); break;
+		}
 	}
 }
 
@@ -681,4 +690,7 @@ void AMyCharacter::DamageTarget(int damage)
 {
 	HEALTH -= damage;
 }
+
+
+
 

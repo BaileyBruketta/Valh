@@ -71,4 +71,16 @@ public:
 
 	bool BoolConvert(FString parameter);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Questing")
+		int QuestNumberAddedByPickingThisUp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Questing")
+		int QuestNumberCompletedByPickingThisUp;
+
+	UFUNCTION(BlueprintCallable, Category = "Questing")
+		int GetNumberAdded();
+
+	UFUNCTION(BlueprintCallable, Category = "Questing")
+		int GetNumberCompleted();
+
 };

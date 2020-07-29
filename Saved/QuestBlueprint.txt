@@ -1,0 +1,1 @@
+QuestNumber, QuestText, Experience Gained, Valherian Credits Gained, Next QuestNumber, Quest Name
