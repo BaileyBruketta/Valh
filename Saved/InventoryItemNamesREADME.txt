@@ -1,0 +1,1 @@
+ItemID(global), name of item, ItemID of ammunition type relevant to this weapon, Magazine size

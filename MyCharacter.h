@@ -174,6 +174,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun8FireAnimation;
 
+	//////////////////////////////////////////////////////////////////////////////           "American Metal (M4A1)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun10MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun10AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun10FireAnimation;
+
+	//Body Parts
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body Parts")
+		class USkeletalMesh* RightArmPart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body Parts")
+		class USkeletalMesh* LeftArmPart;
 
 
 
@@ -200,6 +216,12 @@ public:
 	FRotator AdsGunRotation;
 	FVector GunScale;
 
+	FVector RelativeLeftArmLocation;
+	FRotator RelativeLeftArmRotation;
+	FVector RelativeRightArmLocation;
+	FRotator RelativeRightArmRotation;
+	FVector ArmScale;
+
 	FVector RelativeMagazineLocation;
 	FVector AdsRelativeMagazineLocation;
 	FRotator MagazineRotation;
@@ -225,6 +247,9 @@ public:
 	//this is what is expelled from the guns barrel upon firing as smoke
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<AActor> GunSmoke;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		TSubclassOf<AActor> BloodEffect;
 
 	//timer to be used by automatic weapon firing functions
 	float firearmTimer;
@@ -320,5 +345,48 @@ public:
 	
 		UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 			void ResetMenuVisibility();
+
+		void JumpStaminaDrain();
+
+		void StartRunning();
+		void StopRunning();
+		float walkspeed;
+		bool running;
+
+	/////////////////////////////////////////////////////////////////
+		//Weapon Sway//
+	////////////////////////////////////////////////////////////////
+		FVector LookVector;
+
+		void SwayScript(float Rate);
+		float Offset;
+
+		void NewTurnFunction(float Rate);
+		void NewLookFunction(float Rate);
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponSway")
+			float SwaySpeed;
+
+
+		void SwayScriptTwo(float Rate);
+
+		//set rotations on this to make weapon line up right 
+		UPROPERTY(EditAnywhere, Category = Mesh)
+			class USkeletalMeshComponent* Intermediary;
+
+		FVector IntermediaryLocation;
+		FVector ADSIntermediaryLocation;
+
+		////////////////////recoil
+		void WeaponRecoil();
+
+		void ScrollWheelUp();
+		void ScrollWheelDown();
+		void ScrollWheel(int dir);
+		int IndexSearching;
+
+		//reload
+		void Reload();
+		void AddBullet();
 
 };

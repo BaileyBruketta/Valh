@@ -25,7 +25,6 @@ public:
 
 
 	void UpdateEnemies();
-	void CheckInRange();
 	void SpawnEnemies();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
@@ -66,12 +65,18 @@ public:
 		TArray<AenemyBaseClass*> spawnedEnemyReferences;
 
 	//used to perform fucntions relating to enemy statii
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 	TArray<FVector> spawnedEnemyLocations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 	TArray<int> enemyTypeN;
 	TArray<bool> withinRange;
 	TArray<bool> alerted;
 	TArray<float> health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 	TArray<int> enemyIDList;
+
 	TArray<float> revivalTimer;
 	TArray<int> enemyCurrentBlock;
 
@@ -82,7 +87,7 @@ public:
 
 	void DecreaseHealth(int enemyNumber, int healthDecrease);
 
-	FTimerHandle updateTimer;
+	FTimerHandle updateTimer; FTimerHandle updateTimer2;
 	
 
 	//This handles loot and drops        
@@ -120,7 +125,9 @@ public:
 	void CreateDataFromSeed(int BlockNumber);
 	void SaveDeloadingBlock();
 	void SaveCurrentBlocks();
-	void SpawnFromBlockData(int BlockNumber);
+
+	public:
+	virtual void SpawnFromBlockData(int BlockNumber);
 
 	FVector GenerateSpawnPoint(int xMin, int xMax, int yMin, int yMax);
 	
@@ -139,5 +146,17 @@ public:
 
 	void SpawnMeat(FVector Location, int NumberToSpawn);
 	void SpawnFur(FVector Location, int NumberToSpawn);
+
+	void SeeWhichEnemiesInRange();
+	int NumberOfEnemiesInRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+	TArray<int> IdsOfEnemiesInRange;
+
+	virtual void SpawnEnemyById(int idToSpawn);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+	TArray<FString> StatStringByID;
+
 
 };

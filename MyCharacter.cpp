@@ -6,6 +6,7 @@
 #include "Components/InputComponent.h"
 #include "ItemPickup.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Engine.h"
 #include "enemybaseClass.h"
 #include "GameFramework/InputSettings.h"
@@ -61,36 +62,36 @@ AMyCharacter::AMyCharacter()
 	Arms->CastShadow = true;
 	Arms->SetupAttachment(FirstPersonCameraComponent);
 
+	//Intermediary
+	Intermediary = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RotationCorrection"));
+	Intermediary->SetupAttachment(Arms);
+	Intermediary->SetRelativeLocation(FVector(0.0f, 0.0f, 270.0f));
+
 	//Gun 
 	Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunWithArms"));
 	Gun->bCastDynamicShadow = true;
 	Gun->CastShadow = true;
-	Gun->SetupAttachment(Arms);
+	Gun->SetupAttachment(Intermediary);
 
 	//Arms
 	LeftArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftArm"));
 	LeftArm->bCastDynamicShadow = true;
 	LeftArm->CastShadow = true;
-	LeftArm->SetupAttachment(Gun);
+	LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 
 	RightArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArm"));
 	RightArm->bCastDynamicShadow = true;
 	RightArm->CastShadow = true;
-	RightArm->SetupAttachment(Gun);
+	RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 
 	//Magazine
 	MeshMagazine = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Magazine"));
 	MeshMagazine->bCastDynamicShadow = true;
 	MeshMagazine->CastShadow = true;
 	MeshMagazine->SetupAttachment(Gun, TEXT("SOCK"));
-	
-	//MeshMag = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gun Mag"));
-	//MeshMag->bCastDynamicShadow = true;
-	//MeshMag->CastShadow = true;
-	//MeshMag->AttachToComponent(Gun, "SOCK");
 
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	FP_MuzzleLocation->SetupAttachment(Gun);
+	FP_MuzzleLocation->SetupAttachment(Gun, TEXT("MUZZLE"));
 	FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
 
 	RelativeGunlocation.Set(0.0f,0.0f,0.0f);
@@ -119,7 +120,13 @@ AMyCharacter::AMyCharacter()
 	pausecheck = 1;
 	Paused = false;
 	CurrentEquippedWeapon = 6666;
-	GenerateWeaponText();
+	//GenerateWeaponText();
+	walkspeed = 0.2f;
+
+	SwaySpeed = 10.0f;
+
+	IntermediaryLocation.Set(0.0f, 0.0f, 0.0f); ADSIntermediaryLocation.Set(0.0f, 0.0f, 0.0f);
+	IndexSearching = 0;
 }
 
 // Called when the game starts or when spawned
@@ -161,15 +168,162 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &AMyCharacter::NewTurnFunction);
+	//PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AMyCharacter::NewLookFunction);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMyCharacter::JumpStaminaDrain);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	//running
+	PlayerInputComponent->BindAction("LeftShift", IE_Pressed, this, &AMyCharacter::StartRunning);
+	PlayerInputComponent->BindAction("LeftShift", IE_Released, this, &AMyCharacter::StopRunning);
+
+	//scroll wheel for weapon switching
+	PlayerInputComponent->BindAction("ScrollUp", IE_Pressed, this, &AMyCharacter::ScrollWheelUp);
+	PlayerInputComponent->BindAction("ScrollDown", IE_Pressed, this, &AMyCharacter::ScrollWheelDown);
+
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AMyCharacter::Reload);
 	
 
+}
+//reloading
+void AMyCharacter::Reload()
+{
+	int currentMagazineMax = Inventory->GetMagazineMax(Inventory->ItemsInInventory[InventoryIndexEquipped]);
+	while (ammoInMagazine < currentMagazineMax && Inventory->GetAmmoAvailableForGivenWeapon(CurrentEquippedWeapon) > 0)
+	{
+		AddBullet();
+	}
+}
+void AMyCharacter::AddBullet()
+{
+	ammoInMagazine += 1; Inventory->AmmoInWeapon[InventoryIndexEquipped] += 1;
+	Inventory->SpendBullet(Inventory->GetItemIDForAmmoSpecificToWeaponItemID(CurrentEquippedWeapon));
+	GenerateWeaponText();
+
+
+}
+//Weapon switching with scroll wheel
+void AMyCharacter::ScrollWheelUp()
+{
+	IndexSearching = InventoryIndexEquipped;
+	ScrollWheel(-1);
+}
+void AMyCharacter::ScrollWheelDown()
+{
+	IndexSearching = InventoryIndexEquipped;
+	ScrollWheel(1);
+}
+void AMyCharacter::ScrollWheel(int dir)
+{
+	if (CurrentEquippedWeapon != 6666) {
+		//1 = up, -1 = down
+		IndexSearching = IndexSearching + dir;
+		int indexWithWeapon = 0;
+
+		if (IndexSearching <= 99 && IndexSearching > -1)
+		{
+			if (Inventory->isWeapon[IndexSearching] == true)
+			{
+				int gunNumber = Inventory->GetGunNumber(Inventory->ItemsInInventory[IndexSearching]);
+				ChangeGunEquipped(gunNumber);
+				SetAmmoInMag(Inventory->AmmoInWeapon[IndexSearching]);
+				ChangeItemIndexEquipped(IndexSearching);
+			}
+			else { ScrollWheel(dir); }
+		}
+		//else if (IndexSearching > 99) { IndexSearching = -1; ScrollWheel(dir); }
+		//else if (IndexSearching <= -1) { IndexSearching = 100; ScrollWheel(dir); }
+		switch (IndexSearching)
+		{
+		case -1: IndexSearching = 100; ScrollWheel(dir); break;
+		case 100: IndexSearching = -1; ScrollWheel(dir); break;
+		}
+	}
+
+}
+
+//Turning and Weapon Sway/////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+void AMyCharacter::NewTurnFunction(float Rate) {
+	AddControllerYawInput(Rate); LookVector.X = Rate; SwayScript(Rate); SwayScriptTwo(Rate); 
+}
+void AMyCharacter::NewLookFunction(float Rate) {
+	AddControllerPitchInput(Rate); LookVector.Y = Rate; SwayScriptTwo(Rate);
+}
+void AMyCharacter::SwayScript(float Rate)
+{
+	FRotator newRot;
+	newRot = Arms->GetRelativeRotation();
+	float ZValue = newRot.Yaw;
+	float newOffset = ZValue - Rate;
+	Offset = newOffset;
+	newRot.Yaw = Offset;
+	Arms->SetRelativeRotation(newRot);
+
+	newRot = Arms->GetRelativeRotation();
+	FRotator newRot4 = newRot;
+	newRot4.Yaw = FirstPersonCameraComponent->GetRelativeRotation().Yaw;
+
+	FVector xVec1 = UKismetMathLibrary::Conv_RotatorToVector(newRot);
+	FVector xVec2 = UKismetMathLibrary::Conv_RotatorToVector(newRot4);
+	FVector calcu = xVec1 - xVec2;
+	FVector norm = calcu.GetSafeNormal();
+	float length = norm.Size();
+	float speed = length * SwaySpeed;
+
+
+	FRotator newRot2 = FMath::RInterpTo(newRot, newRot4, GetWorld()->GetDeltaSeconds(), speed);
+	Arms->SetRelativeRotation(newRot2);
+}
+
+void AMyCharacter::SwayScriptTwo(float Rate)
+{
+	FVector newLoc = Gun->GetRelativeLocation();
+	if (LookVector.X != 0.0f)
+	{
+		float moveX = -LookVector.X * 2.0f;
+		float newY = FMath::FInterpTo(newLoc.Y, moveX, GetWorld()->GetDeltaSeconds(), 5.0f);
+		newLoc.Y = newY;
+		Gun->SetRelativeLocation(newLoc);
+	}
+	else
+	{
+		float newY = FMath::FInterpTo(newLoc.Y, 0.0f, GetWorld()->GetDeltaSeconds(), 10.0f);
+		newLoc.Y = newY;
+		Gun->SetRelativeLocation(newLoc);
+	}
+
+	if (LookVector.Y != 0.0f)
+	{
+		float moveY = LookVector.Y * 2.0f;
+		float newZ = FMath::FInterpTo(newLoc.Z, moveY, GetWorld()->GetDeltaSeconds(), 5.0f);
+		newLoc.Z = newZ;
+		Gun->SetRelativeLocation(newLoc);
+	}
+	else
+	{
+		float newZ = FMath::FInterpTo(newLoc.Z, 0.0f, GetWorld()->GetDeltaSeconds(), 10.0f);
+		newLoc.Z = newZ;
+		Gun->SetRelativeLocation(newLoc);
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AMyCharacter::StartRunning() { running = true; }
+void AMyCharacter::StopRunning() { running = false; }
+
+void AMyCharacter::JumpStaminaDrain()
+{
+	if (STAMINA > .05)
+	{
+		Jump();
+		STAMINA -= .05;
+		FATIGUE -= .0005;
+	}
 }
 
 
@@ -216,13 +370,14 @@ void AMyCharacter::UpdateStats()
 	FATIGUE -= .00001725;//.000138     these were all divided by 8 as the time scale was changed
 
 	if (HEALTH < 1) { HEALTH += .0003f; }
-	if (STAMINA < 1) { STAMINA += .01f; }
+	if (STAMINA < 1) { STAMINA += .0005f; }
 	if (HUNGER < .20f) { HEALTH -= .0001; }
 	if (HUNGER < .01f) { HEALTH -= 0.005F; }
 	if (WATER < .40f) { HEALTH -= .0003f; }
 	if (WATER < .01f) { HEALTH -= .02f; }
 	if (FATIGUE < .60f) { HEALTH -= .0003f; }
 	if (FATIGUE < .01f) { HEALTH -= .02f; }
+	if (running == true) { STAMINA -= .003f; FATIGUE -= .00002; }
 
 }
 
@@ -231,8 +386,10 @@ void AMyCharacter::UpdateStats()
 void AMyCharacter::AimDownSights()
 {
 	//manipulate gun locations
-	Gun->SetRelativeLocation(AdsRelativeGunLocation);
-	Gun->SetRelativeRotation(AdsGunRotation);
+	//Gun->SetRelativeLocation(AdsRelativeGunLocation);
+	//Gun->SetRelativeRotation(AdsGunRotation);
+	Intermediary->SetRelativeLocation(ADSIntermediaryLocation);
+	
 
 	//send signal for movement blueprint
 	FName AnimPropName = TEXT("isADS");
@@ -251,8 +408,9 @@ void AMyCharacter::AimDownSights()
 
 void AMyCharacter::RelaxAim()
 {
-	Gun->SetRelativeLocation(RelativeGunlocation);
-	Gun->SetRelativeRotation(GunRotation);
+	//Gun->SetRelativeLocation(RelativeGunlocation);
+	//Gun->SetRelativeRotation(GunRotation);
+	Intermediary->SetRelativeLocation(IntermediaryLocation);
 
 	//send signal for movement blueprint
 	FName AnimPropName = TEXT("isADS");
@@ -291,10 +449,11 @@ void AMyCharacter::Interact()
 			bool res   = TestTarget->GetRes();
 			bool cont  = TestTarget->GetCont();
 			bool stak  = TestTarget->GetStackable();
+			bool isam = TestTarget->GetAmm();
 			int QuestToAdd = TestTarget->GetNumberAdded();
 			int QuestToComplete = TestTarget->GetNumberCompleted();
 				
-			Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont, stak);
+			Inventory->AddToInventory(ItemID, ammu, cons, equip, res, cont, stak, isam);
 
 			//play pickup sound
 			if (PickupSound != NULL)
@@ -315,9 +474,11 @@ void AMyCharacter::Interact()
 // MOVEMENT RELATED ************************************************************************************************************
 void AMyCharacter::MoveForward(float Value)
 {
+	if (running == true) { if (STAMINA > 0.011f) { walkspeed = .4f; } else walkspeed = .2f; }
+	else walkspeed = .2f;
 	if (Value != 0.0f)
 	{
-		float x = Value * 0.20f;
+		float x = Value * walkspeed;
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), x);
 
@@ -353,9 +514,11 @@ void AMyCharacter::MoveForward(float Value)
 
 void AMyCharacter::MoveRight(float Value)
 {
+	if (running == true) { if (STAMINA > 0.011f) { walkspeed = .4f; } else walkspeed = .2f; }
+	else walkspeed = .2f;
 	if (Value != 0.0f)
 	{
-		float x = Value * 0.20f;
+		float x = Value * walkspeed;
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), x);
 
@@ -395,16 +558,21 @@ void AMyCharacter::MoveRight(float Value)
 void AMyCharacter::SetAmmoInMag(int itemID)
 {
 	ammoInMagazine = itemID;
+	GenerateWeaponText();
 }
 
 void AMyCharacter::ChangeGunEquipped(int gunNumber)
 {
+	LeftArm->SetSkeletalMesh(LeftArmPart);
+	RightArm->SetSkeletalMesh(RightArmPart);
 	//set the mesh
 	switch (gunNumber) 
 	{
 	case 0: Gun->SetSkeletalMesh(Gun0MeshReference); SetGunVariables(0);
 			Gun->SetAnimClass(Gun0AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun0FireAnimation;
+			LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+			RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 			currentFireType = 0; 
 		break;
 
@@ -412,29 +580,42 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 			Gun->SetAnimClass(Gun1AnimReference->GetAnimBlueprintGeneratedClass());
 			MeshMagazine->SetupAttachment(Gun, TEXT("SOCK"));
 			FireAnimation = Gun1FireAnimation;
+			LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+			RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 			currentFireType = 1; rateOfFire = 0.08f; 
 		break;
 
 	case 3: Gun->SetSkeletalMesh(Gun3MeshReference); SetGunVariables(3);
 			Gun->SetAnimClass(Gun3AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun3FireAnimation;
+			LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+			RightArm->SetupAttachment(Gun, TEXT("RightArm")); 
 			currentFireType = 1; rateOfFire = 0.06f; 
 		break;
 
 	case 7: Gun->SetSkeletalMesh(Gun7MeshReference); MeshMagazine->SetSkeletalMesh(Gun7WoodenParts); SetGunVariables(7);
 			Gun->SetAnimClass(Gun7AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun7FireAnimation;
-			currentFireType = 1; rateOfFire = 0.07f;
+			LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+			RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+			currentFireType = 1; rateOfFire = 0.08f;
 		break;
 
 	case 8: Gun->SetSkeletalMesh(Gun8MeshReference); SetGunVariables(8);
 			Gun->SetAnimClass(Gun8AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun8FireAnimation;
 			currentFireType = 2;
+
+	case 10: Gun->SetSkeletalMesh(Gun10MeshReference); SetGunVariables(10);
+		Gun->SetAnimClass(Gun10AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun10FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 1; rateOfFire = 0.07f;
 	}
 
 	CurrentEquippedWeapon = gunNumber;
-
+	GenerateWeaponText();
 	
 }
 
@@ -443,23 +624,33 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 {
 	//set location, adslocation, rotation, ads rotation, scale, gunbasedamage, rateoffire
 	//should be handled by loading text files into array of array at start and referencing during runtime
-	
+
 	switch (gunNumber)
 	{
 	case 0:
-		RelativeGunlocation.Set(-16.0f, 43.0f, 150.0f); Gun->SetRelativeLocation(RelativeGunlocation);
-		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
+		//RelativeGunlocation.Set(-3.0f, 43.0f, 150.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 88.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = .2f; GunScale.Y = .2f; GunScale.Z = .2f; Gun->SetRelativeScale3D(GunScale);
 
 		MagazineScale.X = 0.0f; MagazineScale.Y = 0.0f; MagazineScale.Z = 0.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
 
-		AdsRelativeGunLocation.X = 0.076412f; AdsRelativeGunLocation.Y = 35.255905f; AdsRelativeGunLocation.Z = 154.0f;
+		AdsRelativeGunLocation.X = 0.076412f; AdsRelativeGunLocation.Y = 43.0f; AdsRelativeGunLocation.Z = 154.0f;
 		AdsGunRotation.Roll = -0.000001f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 90.000008f;
+
+		//arms
+		ArmScale.X = .05f; ArmScale.Y = .05f; ArmScale.Z = .05f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = -1.387729f; RelativeLeftArmLocation.Y = -0.004257f; RelativeLeftArmLocation.Z = 0.087819f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -0.710680f; RelativeLeftArmRotation.Yaw = 98.032173f; RelativeLeftArmRotation.Roll = 82.647003f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -1.447519f; RelativeRightArmLocation.Y = 0.149462f; RelativeRightArmLocation.Z = 0.451750f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = 11.960870f; RelativeRightArmRotation.Yaw = 84.421829f; RelativeRightArmRotation.Roll = 78.219543f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(61.0f, -9.0f, 145.0f); ADSIntermediaryLocation.Set(49.0f, -9.0f, 150.0f);
 
 		gunBaseDamage = 40;
 		break;
 	case 1:
-		RelativeGunlocation.Set(-14.0f, 56.0f, 122.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		//RelativeGunlocation.Set(-14.0f, 85.0f, 116.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.8f; GunScale.Y = 1.8f; GunScale.Z = 1.8f; Gun->SetRelativeScale3D(GunScale);
@@ -468,27 +659,47 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		MagazineScale.X = 0.01f; MagazineScale.Y = 0.01f; MagazineScale.Z = 0.01f; MeshMagazine->SetRelativeScale3D(MagazineScale);
 		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
 
-		AdsRelativeGunLocation.X = 0.03f; AdsRelativeGunLocation.Y = 15.924101f; AdsRelativeGunLocation.Z = 120.5f;
+		AdsRelativeGunLocation.X = 0.03f; AdsRelativeGunLocation.Y = 103.0f; AdsRelativeGunLocation.Z = 120.5f;
 		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 89.999f;
 		
+		//arms
+		ArmScale.X = 0.005f; ArmScale.Y = 0.005f; ArmScale.Z = 0.005f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = -0.136914f; RelativeLeftArmLocation.Y = 0.130597f; RelativeLeftArmLocation.Z = -0.028364f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = 29.988533f; RelativeLeftArmRotation.Yaw = 156.783386f; RelativeLeftArmRotation.Roll = -112.455589f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -0.141102f; RelativeRightArmLocation.Y = 0.015456f; RelativeRightArmLocation.Z = 0.014103f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = 7.867325f; RelativeRightArmRotation.Yaw = 95.053917f; RelativeRightArmRotation.Roll = 89.999779f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(77.0f, -8.0f, 108.0f); ADSIntermediaryLocation.Set(77.0f, -14.1f, 120.5f);
 
 		gunBaseDamage = 20;
 		break;
 	case 3:
-		RelativeGunlocation.Set(-9.0f, 80.0f, 125.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		//RelativeGunlocation.Set(-9.0f, 80.0f, 125.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.956615f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
 
 		MagazineScale.X = 0.0f; MagazineScale.Y = 0.0f; MagazineScale.Z = 0.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
 
-		AdsRelativeGunLocation.X = 2.229065f; AdsRelativeGunLocation.Y = 47.279953f; AdsRelativeGunLocation.Z = 125.199997f;
+		AdsRelativeGunLocation.X = 2.20f; AdsRelativeGunLocation.Y = 84.0f; AdsRelativeGunLocation.Z = 125.4f;
 		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 0.0f;
+
+		//arms
+		ArmScale.X = .025; ArmScale.Y = .025; ArmScale.Z = .025;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = 0.258656f; RelativeLeftArmLocation.Y = -0.749805f; RelativeLeftArmLocation.Z = -0.048086f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -58.591228f; RelativeLeftArmRotation.Yaw = 32.205643f; RelativeLeftArmRotation.Roll = -116.262787f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -0.284246f; RelativeRightArmLocation.Y = -0.727555f; RelativeRightArmLocation.Z = -0.251357f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -68.481956f; RelativeRightArmRotation.Yaw = 107.846153f; RelativeRightArmRotation.Roll = 148.189743f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(77.0f, -4.0f, 120.5f); ADSIntermediaryLocation.Set(59.0f, -15.9f, 125.f);
 
 		gunBaseDamage = 10;
 		break;
 
 	case 7:
-		RelativeGunlocation.Set(-119.0f, 79.0f, 131.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		//RelativeGunlocation.Set(-115.0f, 77.0f, 133.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 90.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 0.15f; GunScale.Y = 0.15f; GunScale.Z = 0.15f; Gun->SetRelativeScale3D(GunScale);
 
@@ -496,14 +707,52 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		MagazineScale.X = 0.175f; MagazineScale.Y = 0.175f; MagazineScale.Z = 0.175f; MeshMagazine->SetRelativeScale3D(MagazineScale);
 		RelativeMagazineLocation.X = 120.4985f; RelativeMagazineLocation.Y = 28.1396f; RelativeMagazineLocation.Z = -19.056f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
 
-		AdsRelativeGunLocation.X = -104.7f; AdsRelativeGunLocation.Y = 27.0f; AdsRelativeGunLocation.Z = 145.0f;
+		AdsRelativeGunLocation.X = -104.7f; AdsRelativeGunLocation.Y = 68.0f; AdsRelativeGunLocation.Z = 145.0f;
 		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 90.0f;
+
+		//arms
+		ArmScale.X = 1.5f; ArmScale.Y = 1.5f; ArmScale.Z = 1.5f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = -19.0f; RelativeLeftArmLocation.Y = -7.0f; RelativeLeftArmLocation.Z = -35.0f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -11.5f; RelativeLeftArmRotation.Yaw = 72.3f; RelativeLeftArmRotation.Roll = 150.0f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = 7.7f; RelativeRightArmLocation.Y = 41.2f; RelativeRightArmLocation.Z = -16.5f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -76.0f; RelativeRightArmRotation.Yaw = 60.8f; RelativeRightArmRotation.Roll = 142.1f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(88.0f, 117.0f, 128.0f); ADSIntermediaryLocation.Set(60.0f, 90.5f, 145.0f);
 
 		gunBaseDamage = 17;
 		break;
 
 	case 8: break;
+
+	case 10:
+		//RelativeGunlocation.Set(-6.0f, 79.0f, 145.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 270.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 0.15f; GunScale.Y = 0.15f; GunScale.Z = 0.15f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = 0.0f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 270.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 0.0f; MagazineScale.Y = 0.0f; MagazineScale.Z = 0.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 120.4985f; RelativeMagazineLocation.Y = 28.1396f; RelativeMagazineLocation.Z = -19.056f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = .170652f; AdsRelativeGunLocation.Y = 53.9986f; AdsRelativeGunLocation.Z = 153.8394f;
+		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.1f; AdsGunRotation.Yaw = 269.999f;
+
+		//arms
+		ArmScale.X = 0.3f; ArmScale.Y = 0.3f; ArmScale.Z = 0.3f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = -2.9f; RelativeLeftArmLocation.Y = 2.1f; RelativeLeftArmLocation.Z = -7.1f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Roll = 161.832001f; RelativeLeftArmRotation.Pitch = -1.19371f; RelativeLeftArmRotation.Yaw = -22.642088f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = 10.4f; RelativeRightArmLocation.Y = -0.5f; RelativeRightArmLocation.Z = -0.7f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -84.358635f; RelativeRightArmRotation.Yaw = -179.999969f; RelativeRightArmRotation.Roll = -179.999634f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(76.0f, 0.0f, 140.0f); ADSIntermediaryLocation.Set(51.0f,-14.5f,154.2f);
+
+		gunBaseDamage = 17;
+		break;
 	}
+
+	Intermediary->SetRelativeLocation(IntermediaryLocation);
+	//GenerateWeaponText();
 }
 
 void AMyCharacter::FireWeaponOrTool()
@@ -541,6 +790,8 @@ void AMyCharacter::FireWeaponOrTool()
 		AnimInstance->Montage_Play(FireAnimation, 1.f);
 	}
 
+	WeaponRecoil();
+
 	//spawn gun flash
 	FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
 	AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
@@ -564,6 +815,7 @@ void AMyCharacter::FireWeaponOrTool()
 			if (TestTarget != NULL && !TestTarget->IsPendingKill())
 			{
 				TestTarget->DamageTarget(gunBaseDamage);
+				FRotator PlaceHolder; FActorSpawnParameters SpawnParams; AActor* SpawnBloodEffect = GetWorld()->SpawnActor<AActor>(BloodEffect, HitResult->ImpactPoint, PlaceHolder, SpawnParams);
 			}
 
 			FVector_NetQuantizeNormal Locs;
@@ -574,6 +826,8 @@ void AMyCharacter::FireWeaponOrTool()
 
 		}
 	}
+
+	Inventory->AmmoInWeapon[InventoryIndexEquipped] -= 1;
 
 }
 
@@ -597,13 +851,14 @@ void AMyCharacter::FullyAutomaticFire()
 {
 	if (isFiring == true) {
 
-		
-		FireWeaponOrTool();
-		//FireSoundAndAnimation();
-		SpawnGunSmoke();
-		ammoInMagazine -= 1;
-		GenerateWeaponText();
-		GetWorld()->GetTimerManager().SetTimer(firingPin, this, &AMyCharacter::FullyAutomaticFire, rateOfFire, false);
+		if (ammoInMagazine > 0) {
+			FireWeaponOrTool();
+			//FireSoundAndAnimation();
+			SpawnGunSmoke();
+			ammoInMagazine -= 1;
+			GenerateWeaponText();
+			GetWorld()->GetTimerManager().SetTimer(firingPin, this, &AMyCharacter::FullyAutomaticFire, rateOfFire, false);
+		}
 			
 	}
 }
@@ -673,8 +928,12 @@ void AMyCharacter::ReleaseTrigger(){ isFiring = false; }
 void AMyCharacter::GenerateWeaponText()
 {
 	FString Caliber = Inventory->GetWeaponCaliber(CurrentEquippedWeapon);
-
-	WeaponText = FString::FromInt(ammoInMagazine) + "/" + "0" + " " + "[ " + Caliber + " ]";
+	int availableAmmunition = 0;
+	if (CurrentEquippedWeapon != 6666) {
+		availableAmmunition = Inventory->GetAmmoAvailableForGivenWeapon(CurrentEquippedWeapon);
+	}
+	FString availammo = FString::FromInt(availableAmmunition);
+	WeaponText = FString::FromInt(ammoInMagazine) + "/" + availammo + " " + "[ " + Caliber + " ]";
 }
 
 //Initially created for the "water gathering" mechanic, this is used to store where in the inventory the player's current tool or weapon resides.
@@ -692,5 +951,10 @@ void AMyCharacter::DamageTarget(int damage)
 }
 
 
-
+void AMyCharacter::WeaponRecoil()
+{
+	FVector Loc = Gun->GetRelativeLocation();
+	Loc.Z += 1.0f;
+	Gun->SetRelativeLocation(Loc);
+}
 

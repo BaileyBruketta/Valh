@@ -56,8 +56,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		TArray<int> ItemCount;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<int> isAmmo;
+
 	//passes an itemdata object to the inventory object to add to the inventory array, performs analyzation of object
-	void AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents, bool stackable);
+	void AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents, bool stackable, bool isam);
 
 	//This will be used to run an item ID and return a name for an item
 	//These values should probably be stored in a text file and ripped line for line 
@@ -72,6 +75,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "item stats")
 	int GetGunDamage(int ItemID);
 
+	//Given an item number, assuming the item is a weapon, this will return the int value of the itemID which represents this weapons ammo type. all non weapon queries return 6666
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+		int GetItemIDForAmmoSpecificToWeaponItemID(int ItemID);
+
 	//This is used to keep track of inventory spots available
 	int NumberOfItemsTotal;
 
@@ -81,6 +88,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "item stats")
 		FString GetWeaponCaliber(int itemID);
 
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+		FString GetAmmoCaliber(int index);
+
 	//we set what type of thing is hekd by a container
 	UFUNCTION()
 	void SetContainerContents(int IndexNumber, int ContentsIdentifier);
@@ -89,5 +99,18 @@ public:
 	UFUNCTION()
 	void SetContainerAmount(int IndexNumber, int amount);
 
+	FString AppendAmountToString(int ItemId);
+
+	UFUNCTION(BlueprintCallable, Category = "Item Stats")
+		int GetItemCountForSpecificItemID(int ItemID);
+
+	//Given the ItemID of a weapon, this returns ID of the ammo used by this weapon
+	UFUNCTION(BlueprintCallable, Category = "Item Stats")
+		int GetAmmoAvailableForGivenWeapon(int ItemID);
+
+	UFUNCTION(BlueprintCallable, Category = "Item Stats")
+		int GetMagazineMax(int ItemID);
+
+	void SpendBullet(int ItemID);
 		
 };

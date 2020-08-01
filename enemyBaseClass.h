@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "enemyHandler.h"
+#include "Engine.h"
 #include "enemyBaseClass.generated.h"
 
 UCLASS()
@@ -28,7 +29,7 @@ public:
 		AenemyHandler* theHandler;
 
 	UFUNCTION(BlueprintCallable, Category = "Management")
-		void OnSpawn(AenemyHandler* theOne);
+		virtual void OnSpawn(AenemyHandler* theOne);
 
 	void DamageTarget(float damage);
 

@@ -1,7 +1,7 @@
-Rabbit,4,6,0
-Goat,1,3,4
-Chicken,3,8,5
-Sheep,1,4,6
-Fox,2,3,7
-Deer,1,3,8
-Sentry,1,3,2
+Rabbit,15,20,0
+Goat,5,8,4
+Chicken,10,18,5
+Sheep,12,24,6
+Fox,2,8,7
+Deer,5,8,8
+Sentry,2,6,2

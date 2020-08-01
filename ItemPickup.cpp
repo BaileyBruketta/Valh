@@ -50,6 +50,7 @@ bool AItemPickup::GetConsum()    {return isConsumable;  }
 bool AItemPickup::GetWep()       {return isWeaponOrTool;}
 bool AItemPickup::GetRes()       {return isResource;    }
 bool AItemPickup::GetStackable() {return isStackable;   }
+bool AItemPickup::GetAmm() { return isAmmo; }
 int AItemPickup::GetCont()       {return ContentsID;    }
 int AItemPickup::GetNumberAdded() { return QuestNumberAddedByPickingThisUp; }
 int AItemPickup::GetNumberCompleted() { return QuestNumberCompletedByPickingThisUp; }

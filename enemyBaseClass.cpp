@@ -15,7 +15,7 @@
 AenemyBaseClass::AenemyBaseClass()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	//capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	//capsule->SetupAttachment(RootComponent);
@@ -196,7 +196,7 @@ void AenemyBaseClass::ClipToGround()
 	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
 	{
 		FVector NewLoc = StartTrace;
-		NewLoc.Z = HitResult->Location.Z; NewLoc.Z += 25.0f;
+		NewLoc.Z = HitResult->Location.Z; NewLoc.Z += 12.5f;
 		SetActorLocation(NewLoc);
 
 	}
@@ -218,7 +218,7 @@ void AenemyBaseClass::PlayerDistanceCheck()
 
 	if (distance < distanceThreshold)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("An enemy has been alerted to your presence")));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("An enemy has been alerted to your presence")));
 
 		switch (aggressive)
 		{

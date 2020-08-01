@@ -36,6 +36,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemID")
 		int ammoInWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemID")
+		bool isAmmo;
+
+	UFUNCTION(BlueprintCallable, Category = "item grabbed")
+		bool GetAmm();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		bool isConsumable;
 

@@ -23,4 +23,15 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
+		class USkeletalMesh* DefaultMaleMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
+		class USkeletalMesh* DefaultFemaleMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body")
+		class USkeletalMeshComponent* NPCBody;
+
+	void InitiatePrebbuiltCharacter(int CharacterNumber);
+
 };

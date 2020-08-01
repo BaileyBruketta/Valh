@@ -14,19 +14,26 @@
 AenemyHandler::AenemyHandler()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	//These will be changed to be enemy type specific and feature randomization like "foliagegod," but this is sufficient for testing
 	numberOfEnemies = 4000;
 	health.Init(100.0f, numberOfEnemies);
 	spawnedEnemyReferences.Init(nullptr, numberOfEnemies);
 	enemyIDList.Init(0, numberOfEnemies);
+	IdsOfEnemiesInRange.Init(0, numberOfEnemies);
 	timer = 60.0f;
 	revivalTimer.Init(300.0f, numberOfEnemies);
 	enemyTypeN.Init(0, numberOfEnemies);
 	enemyCurrentBlock.Init(0, numberOfEnemies);
 	playerCharacterReference = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	CurrentPlayerBlock = 0;
+
+	NumberOfEnemiesInRange = 0;
+
+	FVector PlaceHolder; PlaceHolder.X = 0; PlaceHolder.Y = 0; PlaceHolder.Z = 0; spawnedEnemyLocations.Init(PlaceHolder, numberOfEnemies);
+
+	StatStringByID.Init("", numberOfEnemies);
 }
 
 // Called when the game starts or when spawned
@@ -192,55 +199,38 @@ void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 		TArray<FString> EnemyData; LoadedData[i].ParseIntoArray(EnemyData, TEXT(","), 1);
 		FVector SpawnPoint; SpawnPoint.X = FCString::Atof(*EnemyData[3]); SpawnPoint.Y = FCString::Atof(*EnemyData[4]); SpawnPoint.Z = FCString::Atof(*EnemyData[5]);
 		FRotator SpawnRot;  SpawnRot.Roll = FCString::Atof(*EnemyData[6]); SpawnRot.Pitch = FCString::Atof(*EnemyData[7]); SpawnRot.Yaw = FCString::Atof(*EnemyData[8]);
-		AenemyBaseClass* newEnemy; FActorSpawnParameters SpawnParams; int enemyType = FCString::Atoi(*EnemyData[1]);
+		//AenemyBaseClass* newEnemy;
+		FActorSpawnParameters SpawnParams; int enemyType = FCString::Atoi(*EnemyData[1]);
 
-		newEnemy = Dummy; //this line avoids an "potentially uninitialized pointer variable used" error at compile. This would also prevent another developer from crashing the engine with a null pointer by forgetting to assign enemy blueprints in editor
 
-		//see which type of enemy
-		switch (enemyType)
-		{
-			case 0: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 2: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude2, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 4: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude4, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 5: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude5, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 6: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude6, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 7: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude7, SpawnPoint, SpawnRot, SpawnParams); break;
-			case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
-		}
-		//Iterate through the current list of spawned actors
-		if (newEnemy != NULL)
-		{
 			//assign enemy to holding array
 			bool attributed = false;int x = 0;
 			while (attributed == false)
-			{for (int JJJ = 0; JJJ < spawnedEnemyReferences.Num(); JJJ++){if (spawnedEnemyReferences[JJJ] == NULL){x = JJJ;attributed = true;}}}
-
+			//{for (int JJJ = 0; JJJ < spawnedEnemyReferences.Num(); JJJ++){if (spawnedEnemyReferences[JJJ] == NULL){x = JJJ;attributed = true;}}}
+			{for (int JJJ = 0; JJJ < spawnedEnemyLocations.Num(); JJJ++) { if (spawnedEnemyLocations[JJJ] == FVector(0,0,0)) { x = JJJ; attributed = true; } }}
 			//set stats
 			for (int def = 0; def < RamshackleDatatable.Num(); def++)
 			{	//set our datareference array to be the element of the ramshackle whose [1]st element's int conversion = the enemytpe of the previously spawned entity
 				if (FCString::Atoi(*RamshackleDatatable[def][1]) == enemyType) { EnemyRootData = RamshackleDatatable[def]; }
 			}
-			newEnemy->SetStats(FCString::Atoi(*EnemyRootData[3]), FCString::Atoi(*EnemyRootData[4]), 
-							   FCString::Atoi(*EnemyRootData[5]), FCString::Atoi(*EnemyRootData[6]), 
-							   FCString::Atoi(*EnemyRootData[9]), FCString::Atoi(*EnemyRootData[10]),
-							   FCString::Atoi(*EnemyRootData[11]), FCString::Atoi(*EnemyRootData[12]),
-				               FCString::Atoi(*EnemyRootData[13]), FCString::Atoi(*EnemyRootData[14]));
 
-			//rescale
-			FVector ScaleToUse; ScaleToUse.X = FCString::Atof(*EnemyData[11]); ScaleToUse.Y = FCString::Atof(*EnemyData[11]); ScaleToUse.Z = FCString::Atof(*EnemyData[11]); 
-			FVector otherscale = newEnemy->GetActorScale3D();
-			ScaleToUse = ScaleToUse * otherscale; newEnemy->SetActorScale3D(ScaleToUse);
 
+			FString newStatString = "";
+			newStatString += EnemyRootData[3] + "," + EnemyRootData[4] + "," + EnemyRootData[5] + "," + EnemyRootData[6] + "," + EnemyRootData[9] + "," + EnemyRootData[10] + ","
+				          + EnemyRootData[11] + "," + EnemyRootData[12] + "," + EnemyRootData[13] + "," + EnemyRootData[14] + ",";
+
+			StatStringByID[x] = newStatString;
 			enemyTypeN[x] = enemyType;
 			health[x] = FCString::Atof(*EnemyData[2]);
-			spawnedEnemyReferences[x] = newEnemy;
-			spawnedEnemyReferences[x]->OnSpawn(this);
+			//spawnedEnemyReferences[x] = newEnemy;
+			//spawnedEnemyReferences[x]->OnSpawn(this);
 			int enemyID = 715 + x;
-			spawnedEnemyReferences[x]->SetGlobalID(enemyID);
+			//spawnedEnemyReferences[x]->SetGlobalID(enemyID);
 			enemyIDList[x] = enemyID;
-		}
+			spawnedEnemyLocations[x] = SpawnPoint;
+		//}
 	}
-
+	SeeWhichEnemiesInRange();
 	UpdateEnemies();
 }
 
@@ -384,16 +374,13 @@ void AenemyHandler::SpawnEnemies()
 void AenemyHandler::UpdateEnemies()
 {
 	//Send update signal to all spawned enemies
-	for (int i = 0; i < numberOfEnemies; i++) { if (spawnedEnemyReferences[i] != NULL) { spawnedEnemyReferences[i]->UpdateReceived(); } }
+	//for (int i = 0; i < numberOfEnemies; i++) { if (spawnedEnemyReferences[i] != NULL) { spawnedEnemyReferences[i]->UpdateReceived(); } }
+	for (int i = 0; i < NumberOfEnemiesInRange; i++) { if (spawnedEnemyReferences[IdsOfEnemiesInRange[i]] != NULL) { spawnedEnemyReferences[IdsOfEnemiesInRange[i]]->UpdateReceived(); } }
 
 	//Call this function again every 1 second
-	GetWorld()->GetTimerManager().SetTimer(updateTimer, this, &AenemyHandler::UpdateEnemies, 0.05f, false);
+	GetWorld()->GetTimerManager().SetTimer(updateTimer, this, &AenemyHandler::UpdateEnemies, .05f, false);
 }
 
-void AenemyHandler::CheckInRange()
-{
-
-}
 
 void AenemyHandler::DecreaseHealth(int enemyNumber, int healthDecrease)
 {
@@ -481,4 +468,68 @@ void AenemyHandler::SpawnFur(FVector Location, int NumberToSpawn)
 		AActor* Drop = GetWorld()->SpawnActor<AActor>(LootDrop0, Location, PlaceholderRotation, PlaceholderSpawnParams);
 		x -= 1; SpawnFur(Location, x);
 	}
+}
+
+void AenemyHandler::SeeWhichEnemiesInRange()
+{
+	NumberOfEnemiesInRange = 0;
+
+	//distance checks
+	for (int i = 0; i < numberOfEnemies; i++)
+	{
+		if (spawnedEnemyLocations[i] != FVector(0,0,0))
+		{
+			FVector enemyLoc = spawnedEnemyLocations[i];
+		
+			//This cannot run until playercharacter has been spawned, so because of this, we must make player character spawn; it cannot be hand placed while this line remains in code
+			FVector PlayerLocation = playerCharacterReference->GetActorLocation();
+			float   distance = FVector::Dist(enemyLoc, PlayerLocation);
+			if (distance < 7500)
+			{
+				IdsOfEnemiesInRange[NumberOfEnemiesInRange] = i;
+				NumberOfEnemiesInRange += 1;
+				//spawnedEnemyReferences[i]->SetActorHiddenInGame(false);
+				if (spawnedEnemyReferences[i] == NULL){
+				SpawnEnemyById(i); }
+
+			}
+			else if (distance > 7500) {
+				if (spawnedEnemyReferences[i] != NULL) { spawnedEnemyReferences[i]->Destroy(); }
+			}
+		}
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(updateTimer2, this, &AenemyHandler::SeeWhichEnemiesInRange, 20.0f, false);
+	
+}
+
+void AenemyHandler::SpawnEnemyById(int idToSpawn)
+{
+	
+	AenemyBaseClass* newEnemy; newEnemy = Dummy;
+	FActorSpawnParameters SpawnParams; FRotator SpawnRot; FVector SpawnPoint = spawnedEnemyLocations[idToSpawn];
+
+	int Idx = enemyTypeN[idToSpawn];
+
+	switch (Idx)
+	{
+	case 0: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude0, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 2: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude2, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 4: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude4, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 5: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude5, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 6: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude6, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 7: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude7, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
+	}
+
+	spawnedEnemyReferences[idToSpawn] = newEnemy;
+
+	TArray<FString> EnemyData; StatStringByID[idToSpawn].ParseIntoArray(EnemyData, TEXT(","), 1);
+	newEnemy->SetStats(FCString::Atoi(*EnemyData[0]), FCString::Atoi(*EnemyData[1]), FCString::Atoi(*EnemyData[2]),
+		FCString::Atoi(*EnemyData[3]), FCString::Atoi(*EnemyData[4]), FCString::Atoi(*EnemyData[5]),
+		FCString::Atoi(*EnemyData[6]), FCString::Atoi(*EnemyData[7]), FCString::Atoi(*EnemyData[8]),
+		FCString::Atoi(*EnemyData[9]));
+
+	spawnedEnemyReferences[idToSpawn]->OnSpawn(this);
+	spawnedEnemyReferences[idToSpawn]->SetGlobalID(idToSpawn + 715);
 }
