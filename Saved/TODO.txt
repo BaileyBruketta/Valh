@@ -1,0 +1,78 @@
+differentiate foliage rotation - 9/22
+add food cans - 9/23
+add cube bots - 9/24
+hitmarker on weapon hit + hit sound & number - 9/25
+add axe - 9/26
+add cutting down trees - 9/27 
+add fires - 9/28
+add shovel, plowed dirt and farm mechanism - 9/29
+add 50 npc names - 9/30 
+add wolves - 10/1
+add 15 npc locations - 10/2
+add wavy dogs - 10/3
+add rain & cloud levels - 10/4
+add 20 npc locations - 10/5
+add centipede - 10/6
+add 50 npc names - 10/7
+make sentinel shoot right - 10/8
+add gas lantern and electric flashlight - 10/9
+add 20 npc locations - 10/10
+rig animations for rabbit,deer,sheep,goat,wolf,wavy,centipede - 10/11
+add 50 npc names - 10/12
+differentiate trees - 10/13
+add 20 npc locations - 10/14
+LODs for trees - 10/15
+add alcohol bottles - 10/16
+add 50 npc names - 10/17
+add shirts - 10/18
+add 20 npc locations - 10/19
+add cloth scraps - 10/20
+add 50 npc names - 10/21
+add gas lighter - 10/22
+add 20 npc locations - 10/23
+add molotov cocktails - 10/24
+add matches - 10/25
+add 50 npc names - 10/26
+add cigarette packs and loosies - 10/27
+add 20 npc locations - 10/28
+add cooked meat - 10/29
+add 50 npc names - 10/30
+add metal pots and meat stew - 10/31
+add 20 npc locations - 11/1
+add 3 vegetables - 11/2
+add 20 npc locations - 11/3
+add 3 vegetables - 11/4
+add 20 npc locations - 11/5
+add 3 vegetables - 11/6
+add 20 npc locations - 11/7
+add buildable walls - 11/8
+add 20 npc locations - 11/9
+add huntable birds and bird eggs + nest - 11/10
+add 20 npc locations - 11/11
+add fried eggs - 11/12
+add 20 npc locations - 11/13
+add bandages and infection status - 11/14
+add 20 npc locations - 11/15
+add 3 more weapons - 11/16
+add 20 npc locations - 11/17
+npc glue limb + clothe to skeleton with IK - 11/18
+add 20 npc locations - 11/19
+add 3 vegetables - 11/20
+add 20 npc locations - 11/21
+add grenades - 11/22
+add 20 npc locations - 11/23
+add 49 npc names - 11/24
+add ceilings, temperature, and cold status - 11/25
+add 20 npc locations - 11/26
+add seasons, snow, linked weather & farming - 11/27
+add 20 npc locations - 11/28
+add 2 robots - 11/29
+add 12 npc locations - 11/30
+add dialogue and quests 
+add merchants 
+add sneaking 
+add raider classification
+decorate houses + loose object locations
+add more weapons
+npc glue limb + clothe to skeleton
+make foliage self regulate

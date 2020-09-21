@@ -19,7 +19,7 @@ id, Name,               Age,   Gender, Skin Tone, Country of Origin,            
 17, Marigold Writlaw,   65,    Female, White,     Jerbrarian Council of Affiliated States (Jerthro),      Shtalton,              Blitzkrau,         Wife,       Herriot Halloway F (deceased) & Telabeve Halloway M (deceased)
 18, Marcius Writlaw,    67,    Male,   Tan,       Jerbrarian Council of Affiliated States (Jerthro),      Shtalton,              Blitzkrau,         Statesman,  Helen Writlaw F (deceased) & Garold Writlaw M (deceased)
 19, Hitlo Brennerm,     78,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              wilds,             Farmer,     unknown & unknown 
-20, Harbor Bradwick,    50,    Male,   Brown,     East Tuldonia,                                          Shtalton,              Eastpoint,         City Guard, Yeffina Bradwick F (deceased) & Chelor Bradwick M (deceased)
+20, Harbor Bradwick,    50,    Male,   Brown,     East Tuldonia,                                          Shtalton,              Eastpointe,        City Guard, Yeffina Bradwick F (deceased) & Chelor Bradwick M (deceased)
 21, Cedor Hapfield,     35,    Male,   White,     Jarrono,                                                Shtalton,              Cebwon,            Farmer,     Belinda Hapfield F & Grason Hapfield
 22, Belinda Hapfield,   66,    Female, Tan,       Jarrono,                                                Shtalton,              Cebwon,            Gunsmith,   Macie Gracewind F (deceased) & Hixon Gracewind M (deceased)
 23, Grason Hapfield,    67,    Male,   White,     Jarrono,                                                Shtalton,              Cebwon,            Armorer,    Mathis Hapfield F (deceased) & Halgus Hapfield M
@@ -42,18 +42,139 @@ id, Name,               Age,   Gender, Skin Tone, Country of Origin,            
 40, Glinda Yenelburg,   73,    Female, White,     Tendoron,                                               Shtalton,              Cebwon,            Chemist,    Yuli Hapwas F (deceased) & Glen Hapwas M (deceased)            
 41, Wilswin Yenelburg,  68,    Male,   White,     Tendoron,                                               Shtalton,              Cebwon,            City Guard, Hequwa Yenelburg F (deceased) & Chipwat Yenelburg M (deceased)
 42, Halbon Settlesworth,23,    Male,   Tan,       Valh,                                                   Shtalton,              Cebwon,            Mercenary,  unknown & unknown 
-43, Selena Milestone,   31,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Cebwon,            Farmer,     Millesa Milestone F & Feroh Milestone M
+43, Selena Milestone,   31,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Farmer,     Millesa Milestone F & Feroh Milestone M
 44, Millesa Milestone,  52,    Female, Tan,       The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Farmer,     Selama Archdesa F & Xuhkhan Archdesa M
 45, Feroh Milestone,    55,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Welder,     Peloh Milestone F & Weston Milestone M
 46, Selama Archdesa,    83,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpoint,         Wife,       Ial Dethelburg F (deceased) & Hebbensmith Dethelburg M (deceased) 
 47, Xuhkhan Archdesa,   75,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpoint,         Mechanic,   Halci Archdesa F (deceased) & Ghoro Archdesa M (deceased)
 48, Peloh Milestone,    65,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpoint,         Wife,       Jerfa Cradswith F (deceased) & Tulsi Cradswith M (deceased)
-49, Westone Milestone,  72,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpoint,         Priest,     Heuje Milestone F (deceased) & Ghereth Milestone M (deceased)  
+49, Westone Milestone,  72,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpoint,         Monk,  Heuje Milestone F (deceased) & Ghereth Milestone M (deceased)  
 50, Volthir Talgis,     35,    Male,   Tan,       East Tuldonia,                                          Shtalton,              Blitzkrau,         City Guard, unknown & unknown
 51, Tabitha Lightwrith, 42,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Armorer,    Agis Lightwrith F & Golce Lightwrith M
 52, Agis Lightwrith,    63,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Herbalist,  Malphie Krotsworn F & Jitt Krotsworn M (deceased)
 53, Golce Lightwrith,   64,    Male,   White,     The United Republic of East ALchoron,                   Shtalton,              Blitzkrau,         Hunter,     Habbis Lightwrith F (deceased) & Gobber Lightwrith M (deceased)
 54, Malphie Krotsworn,  85,    Female, Tan,       The Holy Second Kingdom of West Alchoron,               Shtalton,              Blitzkrau,         Oracle,     unknown & unknown
 55, Habus Maltrice,     23,    Female, White,     Valh,                                                   Shtalton,              Blitzkrau,         Grocer,     Helphie Hester F & Herbert Maltrice M 
-56, Helphie Hester,     45,    Female, White,     East Tuldonia,                                          Shtalton,              Blitzkrau,         Innkeep,
-57, Herbert Maltrice,   47,    Male,   White,     Tendoron,                                               Shtalton,              Blitzkrau,         Innkeep,                                                               
+56, Helphie Hester,     45,    Female, White,     East Tuldonia,                                          Shtalton,              Blitzkrau,         Innkeep,    unknown & unknown
+57, Herbert Maltrice,   47,    Male,   White,     Tendoron,                                               Shtalton,              Blitzkrau,         Innkeep,    unknown & unknown                  
+58, Halifax Nontomor,   35,    Male,   Brown,     East Tuldonia,                                          Shtalton,              Eastpointe,        Windows,    Melechi Nontomer M & Arbie Nontomer F
+59, Melechi Nontomer,   62,    Male,   Brown,     The Holy Second Kingdom of West Alchoron,               Shtalton,              Eastpointe,        Farmer,     unknown & unknown        
+60, Arbie Nontomer,     65,    Female, Tan,       East Tuldonia,                                          Shtalton,              Eastpointe,        Guard,      unknown & unknown     
+61, Maltreya Malcheli,  23,    Male,   White,     Valh,                                                   Shtalton,              Eastpointe,        Farmer,     Hester Malcheli M & Abone Malcheli
+62, Hester Malcheli,    51,    Male,   White,     United Federation of Communal Tuldonian States (Efton), Shtalton,              Eastpointe,        Farmer,     unknown & unknown 
+63, Abone Malcheli,     45,    Female, Tan,       United Federation of Communal Tuldonian States (Helna), Shtalton,              Eastpointe,        Merchnant,  unknown & unknown
+64, Fendal Donger,      35,    Male,   Brown,     Alchor,                                                 Shtalton,              Eastpointe,        Hunter,     unknown & unknown 
+65, Elizabeth Haywire,  23,    Female, White,     Valh,                                                   Shtalton,              Eastpointe,        Doctor,     unknown & unknown
+66, Gerald Hacksmith,   45,    Male,   Black,     Alchor,                                                 Shrion,                Doville,           Gunsmith,   unknown & unknown 
+67, Heldine Hacksmith,  43,    Female, Tan,       United Federation of Communal Tuldonian States (Efton), Shrion,                Doville,           Farner,     unknown & unknown 
+68, Galpus Monfester,   27,    Male,   White,     Tendoron,                                               Shrion,                Doville,           Hunter,     unknown & unknown
+69, Lacie Monfester,    29,    Female, White,     The Holy Second Kingdom of West Alchoron,               Shrion,                Doville,           Merchant,   unknown & unknown
+70, Jothab Tenkreh,     27,    Male,   Black,     East Tuldonia,                                          Shrion,                Doville,           Arms Dealer, unknown & unknown
+71, Hollywood Effus,    25,    Female, White,     Tendoron,                                               Shrion,                Doville,           Catchpole,  unknown & unknown
+72, Kellen Sporger,     33,    Male,   Brown,     Alchor,                                                 Shrion,                Doville,           Innkeep,    unknown & unknown
+73, Helen Sporger,      29,    Female, Tan,       East Tuldonia,                                          Shrion,                Doville,           Farmer,     unknown & unknown 
+74, Wicker Smith,       35,    Male,   White,     The Holy Second Kingdom of West Alchoron,               Shrion,                Doville,           City Guard, unknown & unknown
+75, Quellen Knockers,   47,    Male,   Brown,     Jerbrarian Council of Affiliated States (Habus),        Shrion,                Doville,           Grocer,     unknown & unknown   
+76, Honce Feullon,      59,    Female, White,     Alchor,                                                 Shrion,                Doville,           Clothemaker,unknown & unknown
+77, Khent Feullon,      63,    Male,   White,     United Federation of Communal Tuldonian States (Efton), Shrion,                Doville,           City Guard, unknown & unknown
+78, Falcon Geur,        27,    Male,   Tan,       Alchor,                                                 Shrion,                Doville,           Hunter,     unknown & unknown              
+79, Jorge Alamus,       29,    Male,   Brown,     United Federation of Communal Tuldonian States (Efton), Helpelia,              Falessa,           Innkeep,    unknown F & unknown M
+80, Alyssa Alamus,      32,    Female, White,     Jerbrarian Council of Affiliated States (Habus),        Helpelia,              Falessa,           farmer,     unknown F & unknown M
+81, Nixon Helkif,       52,    Male,   Brown,     United Federation of Communal Tuldonian States (Efton), Helpelia,              Falessa,           bartender,  unknown F & unknown M
+82, Jodie Helkif,       47,    Male,   Brown,     United Federation of Communal Tuldonian States (Efton), Helpelia,              Falessa,           Hunter,     unknown F & unknown M
+83, Brice Helkif,       27,    Male,   Brown,     United Federation of Communal Tuldonian States (Efton), Helpelia,              Falessa,           Farmer,     unknown F & unknown M
+84, Joyce Nanton,       35,    Female, White,     Jarrono,                                                Helpelia,              Falessa,           Farmer,     unknown F & unknown M
+85, Nancie Tucket,      35,    Female, White,     Jarrono,                                                Helpelia,              Falessa,           Doctor,     unknown F & unknown M
+86, Grey Tucket,        37,    Male,   White,     Jarrono,                                                Helpelia,              Falessa,           Gunsmith,   unknown F & unknown M
+87, Gerald White,       35,    Male,   White,     Jerbrarian Council of Affiliated States (Tahid),        Helpelia,              Falessa,           Armorer,    unknown F & unknown M
+89, Hickold McMann,     45,    Male,   White,     Jerbrarian Council of Affiliated States (Habus),        Helpelia,              Falessa,           Hunter,     unknown F & unknown M
+90, Gleese Hunter,      37,    Male,   Brown,     Jerbrarian Council of Affiliated States (Habus),        Helpelia,              Falessa,           Farmer,     unknown F & unknown M
+91, Jixy Hunter,        39,    Female, Brown,     Jarrono,                                                Helpelia,              Falessa,           Grocer,     unknown F & unknown M
+92, Heltiph Npunc,      42,    Female, White,     United Federation of Communal Tuldonian States (Efton), Helpelia,              Falessa,           farmer,     unknown F & unknown M
+93, Ghore Wilt,         35,    Male,   Brown,     Jerbrarian Council of Affiliated States (Tahid),        Helpelia,              Falessa,           computers,  unknown F & unknown M
+94, Yurt Tregg,         21,    Female, Brown,     Valh,                                                   Helpelia,              Falessa,           mechanic,   unknown F & unknown M
+95, Felt Ghiro,         37,    Male,   White,     Jerbrarian Council of Affiliated States (Jerthro),      Helpelia,              Falessa,           farmer,     unknown F & unknown M
+96, Jhek Khalek,        51,    Male,   Brown,     Jerbrarian Council of Affiliated States (Jerthro),      Helpelia,              Falessa,           merchant,   unknown F & unknown M
+97, Fior Helka,         63,    Male,   Brown,     The Holy Second Kingdom of West Alchoron,               Helpelia,              Falessa,           chemist,    unknown F & unknown M
+98, Gherq Gwkiw,        47,    Male,   Brown,     Jerbrarian Council of Affiliated States (Tahid),        Helpelia,              Falessa,           farmer,     unknown F & unknown M
+99, Khelqo Gherthe,     27,    Male,   Brown,     Jerbrarian Council of Affiliated States (Tahid),        Helpelia,              Falessa,           mercenary,  unknown F & unknown M
+100, Ghoro Hkil,        27,    Male,   Brown,     Jarrono,                                                Helpelia,              Falessa,           City Guard, unknown F & unknown M
+101, Fhelbrook Noncelwth, 35,  Female, Brown,     Jerbrarian Council of Affiliated States (Tahid),        Helpelia,              Falessa,           Beersmith,  unknown F & unknown M
+102, Gharth Hwewed,       32,  Male,   White,     East Tuldonia,                                          Helpelia,              Falessa,           Wine Maker,   unknown F & unknown M
+103, Jhared Hwewed,       31,  Male,   White,     East Tuldonia,                                          Helpelia,              Falessa,           Clothe Maker, unknown F & unknown M
+104, Gilenne Heltcx,      45,  Male,   White,     United Federation of Communal States (Efton),           Shrion,                Oasis,             Gunsmith,     unknown F & unknown M
+105, Maxwell Scepter,     47,  Male,   Tan,       Jarronno,                                               Shrion,                Oasis,             Roboticist,   unknown F & unknown M
+106, Gherald Hulto,       53,  Male,   Brown,     East Tuldonia,                                          Shrion,                Oasis,             Technologist, unknown F & unknown M
+107, Hulcix Felthu,       47,  Male,   Black,     The Holy Second Kingdom of West Alchoron,               Shrion,                Oasis,             Biochemist,   unknown F & unknown M
+108, Ghorcen Falkwrith,   55,  Male,   White,     Jerbrarian Council of Affiliated States (Jerthro),      Shrion,                Oasis,             Geneticist,   unknown F & unknown M            
+109, Ewid Gale,       13, Male,   Brown, Valh,                                            Grove, HighPointe, Default, mother F & father M
+110, Mary Gale,       25, Female, Brown, Jarrono,                                         Grove, HighPointe, Farmer, unknown F & unknown M
+111, Bruce Gale,      25, Male,   White, Jarrono,                                         Grove, HighPointe, Farmer, unknown F & unknown M
+112, Cole Hanson,     43, Male,   White, Jerbrarian Council of Affiliated States (Tahid), Grove, HighPointe, farmer, unknown F & unknown M
+113, Margaret Bown,   43, Female, Tan,   The Holy Second Kingdom of West Alchoron,        Grove, HighPointe, Chemist, unknown F & unknown M
+114, Dawson Falput,   24, Male,   Tan,   Jarrono,                                         Grove, HighPointe, Courier, unknown F & unknown M
+115, Glacie Windgate, 29, Female, White, The Holy Second Kingdom of West Alchoron,        Grove, HighPointe, Farmer, unknown F & unknown M
+116, Gals Hunter,     45, Male,   Brown, The Holy Second Kingdom of West Alchoron,        Grove, HighPointe, Mercenary, unknown F & unknown M
+117, Laison Rickroth,  27, Male,   White, United Federation of Communal Tuldonian States (Helna), Dackleroy, Dorsal Village, Computers, unknown F & unknown M
+118, Melanie Rickroth, 25, Female, White, Alchor,                                                 Dackleroy, Dorsal Village, Merchant, unknown F & unknown M
+119, Galpus McMann,    23, Female, White, Valh,                                                   Dackleroy, Dorsal Village, Mercenary, unknown F & unknown M
+120, Leroy Foxworth,   45, Male,   Brown, United Federation of Communal Tuldonian States (Helna), Dackleroy, Dorsal Village, Farmer, unknown F & unknown M
+121, Hthix Falon,      35, Female, White, United Federation of Communal Tuldonian States (Helna), Dackleroy, Dorsal Village, Chemist, unknown F & unknown M
+122, Jeneveve Hexis,   35, Female, Tan, United Federation of Communal Tuldonian States (Helna),   Dackleroy, Dorsal Village, Prostitute, unknown F & unknown M
+123, Charlotte Fleo,   24, Female, White, Jarrono,                                                Dackleroy, Dorsal Village, Prostitute, unknown F & unknown M
+124, Neon Ghelright,   26, Female, Tan, The Holy Second Kingdom of West Alchoron,                 Dackleroy, Dorsal Village, Prostitute, unknown F & unknown M
+125, Geltry Nomgen,      67, Female, White, United Federation of Communal Tuldonian States (Helna), Dackleroy, Skrib City, Fisher,                 unknown F & unknown M
+126, Rock Nomgen,        58, Female, White, United Federation of Communal Tuldonian States (Helna), Dackleroy, Skrib City, City Guard,             unknown F & unknown M
+127, Glacier Hamshack,   42, Male,   Tan,   The Holy Second Kingdom of West Alchoron,               Dackleroy, Skrib City, Armorer,                unknown F & unknown M
+128, Qocanbol Torshiuer, 28, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Interrogator,           unknown F & unknown M
+129, Hemwey Nafhs,       29, Female, Brown, United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Hunter,                 unknown F & unknown M
+130, Grock Nafhs,        32, Male,   Brown, United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Merchant,               unknown F & unknown M
+131, Duck Billbeak,      45, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, TechnoShaman,           unknown F & unknown M
+132, Gibbly Fhex,        45, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Unholy Brigade Captain, unknown F & unknown M
+133, Billroy Fhetter,    37, Male,   Brown, United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Unholy Brigade Soldier, unknown F & unknown M
+134, Massandra Hjkehg,   25, Female, White, United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Unholy Brigade Soldier, unknown F & unknown M
+135, Hefckel Jerghen,    35, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Unholy Brigade Soldier, unknown F & unknown M
+135, Gheh Shethet,       24, Male,   Brown, United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Computers,              unknown F & unknown M
+136, Greycie Feolora,    28, Female, Tan,   United Federation of Communal Tuldonian States (Efton), Dackleroy, Skrib City, Florist,                unknown F & unknown M
+137, Gertyr Shaythen,  43, Male,   Brown, Jerbrarian Council of Affiliated States (Tahid), Grove, Bowsmith, Farmer,          unknown F & unknown M
+138, Imrani Asnali,    25, Female, Tan,   Jarrono,                                         Grove, Bowsmith, Herbalist,       unknown F & unknown M
+139, Ethena Hgetu,     37, Female, Brown, Jarrono,                                         Grove, Bowsmith, City Guard,      unknown F & unknown M
+140, Willis Oskaren,   45, Male,   Brown, East Tuldonia,                                   Grove, Bowsmith, Farmer,          unknown F & unknown M
+141, Sumeet Vulfvhan,  32, Male,   Brown, East Tuldonia,                                   Grove, Bowsmith, Farmer,          unknown F & unknown M
+142, Niva Charre,      23, Female, Tan,   Valh,                                            Grove, Bowsmith, Fisher,          unknown F & unknown M
+143, Temps Charre,     25, Male,   White, Jerbrarian Council of Affiliated States (Habus), Grove, Bowsmith, Hunter,          unknown F & unknown M
+144, Johanne Galewind, 37, Female, White, Jarrono,                                         Grove, Bowsmith, Farmer,          unknown F & unknown M
+145, Brods Futhwhi,    38, Male,   White, Jarrono,                                         Grove, Bowsmith, Blacksmith,      unknown F & unknown M
+146, Ranful Teuth,     42, Male,   White, Jerbrarian Council of Affiliated States (Tahid), Grove, Bowsmith, Hunter,          unknown F & unknown M
+147, Jorther Shgen,    32, Male,   Brown, Tendoron,                                        Grove, Bowsmith, Laborer,         unknown F & unknown M
+148, Skhalis Akhama,   65, Female, White, Tendoron,                                        Grove, Bowsmith, Chemist,         unknown F & unknown M
+149, Herbert Gholdie,  72, Male,   Brown, Tendoron,                                        Grove, Bowsmith, Warrior Teacher, unknown F & unknown M
+150, Hiawtha Shethak,  52, Female, Brown, Tendoron,                                        Grove, Bowsmith, Farmer,          unknown F & unknown M
+151, Shaheek Thuex,    35, Female, White, The Holy Second Kingdom of West Alchoron,        Grove, Bowsmith, Merhcant,        unknown F & unknown M
+152, Colfax Massmaster, 57, Male,   White, United Federation of Communal Tuldonian States (Efton), Grove, Fort Headsworth, Doctor,       unknown F & unknown M
+153, Haufax Peytre,     25, Male,   Brown, United Federation of Communal Tuldonian States (Efton), Grove, Fort Headsworth, Mercenary,    unknown F & unknown M
+154, Mixel Goldtooth,   35, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Grove, Fort Headsworth, Farmer,       unknown F & unknown M
+155, Judix Alton,       43, Female, White, Jerbrarian Council of Affiliated States (Jerthro),      Grove, Fort Headsworth, Baker,        unknown F & unknown M
+156, Zita Sevaris,      24, Female, White, The Holy Second Kingdom of West Alchoron,               Grove, Fort Headsworth, Herbalist,    unknown F & unknown M
+157, Kalx Montrix,      34, Male,   White, Tendoron,                                               Grove, Fort Headsworth, City Guard,   unknown F & unknown M
+158, Samir Eeswar,      49, Male,   Tan,   United Federation of Communal Tuldonian States (Efton), Grove, Fort Headsworth, Merchant,     unknown F & unknown M
+159, Ahenobor Valdimis, 67, Male,   Tan,   Alchor,                                                 Grove, Fort Headsworth, Gunsmith,     unknown F & unknown M
+160, Bartolomeo Isokr,  53, Male,   Brown, Jarrono,                                                Grove, Fort Headsworth, Innkeeper,    unknown F & unknown M
+161, Idar Miso,         53, Female, Tan,   Jerbrarian Council of Affiliated States (Jerthro),      Grove, Fort Headsworth, Hunter,       unknown F & unknown M
+162, Oiso Ethexel,      38, Male,   Brown, Jerbrarian Council of Affiliated States (Jerthro),      Grove, Fort Headsworth, Lumberjack,   unknown F & unknown M
+163, Ganzo Gujiji,      25, Male,   Brown, Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, City Guard,   unknown F & unknown M
+164, Chiheme Lef,       18, Female, Tan,   Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, Hunter,       unknown F & unknown M
+165, Garrix Lef,        42, Male,   Tan,   Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, Farmer,       unknown F & unknown M
+166, Katrine Lef,       43, Female, Brown, Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, Technologist, unknown F & unknown M
+167, Chietis Albimus,   77, Male,   White, Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, Farmer,       unknown F & unknown M
+168, Hjj Ejwi,          51, Male,   White, Jerbrarian Council of Affiliated States (Habus),        Grove, Fort Headsworth, City Guard,   unknown F & unknown M
+169, Briax Alhir,       32, Male,   Brown, The Holy Second Kingdom of West Alchoron,               Grove, Fort Headsworth, Hunter,       unknown F & unknown M
+170, Grace Sullivan,    22, Female, Brown, Valh,                                                   Grove, Fort Headsworth, Merchant,     unknown F & unknown M
+171, Pip Fagely,        26, Female, White, The United Communal States of Alchor,                   Grove, Fort Headsworth, Mechanic,     unknown F & unknown M
+172, Lucile Eggeg,      55, Female, Brown, The United Communal States of Alchor,                   Grove, Fort Headsworth, Farmer,       unknown F & unknown M
+173, Horn Ficklesworth, 25, Male,   Tan,   Jerbrarian Council of Affiliated States (Tahid),        Grove, Fort Headsworth, Author,       unknown F & unknown M
+
+
+
+
+                                         
