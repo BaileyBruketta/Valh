@@ -398,8 +398,9 @@ void AenemyHandler::DecreaseHealth(int enemyNumber, int healthDecrease)
 		
 		
 		float timer = 20;
-		spawnedEnemyReferences[numberToUse]->Destroy();
+		
 		EnemyDeathDrops(numberToUse, enemyTypeNumber, LocationToSpawn);
+		spawnedEnemyReferences[numberToUse]->Destroy();
 	}
 }
 
@@ -432,7 +433,7 @@ void AenemyHandler::EnemyDeathDrops(int enemyID, int enemyType, FVector enemyLoc
 {
 	FVector newSpot = enemyLocation; newSpot.Z += 2.0f;
 	AActor* DownedEnemy = spawnedEnemyReferences[enemyID]; FVector ScaleToSpawn = DownedEnemy->GetActorScale3D();
-	FRotator PlaceholderRotation; FActorSpawnParameters PlaceholderSpawnParams;
+	FRotator PlaceholderRotation = DownedEnemy->GetActorRotation(); FActorSpawnParameters PlaceholderSpawnParams;
 	AActor* FirstDrop = Dummy; AActor* SecondDrop = Dummy; AActor* Ragdoll = Dummy;
 	switch (enemyType)
 	{
@@ -520,6 +521,7 @@ void AenemyHandler::SpawnEnemyById(int idToSpawn)
 	case 6: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude6, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 7: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude7, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 9: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude9, SpawnPoint, SpawnRot, SpawnParams); break;
 	}
 
 	spawnedEnemyReferences[idToSpawn] = newEnemy;

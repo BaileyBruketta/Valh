@@ -1,0 +1,2 @@
+itemname,   IdOfItemToCraft, IdOfIngredient(amount)
+small fire, 21,              [9 || 10 || 11 || 12 ](3)

@@ -41,7 +41,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = sun)
 		float SunHeight;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = sun)
+		float IntensityMultiplier;
 	void SetSunHeight();
 
 };

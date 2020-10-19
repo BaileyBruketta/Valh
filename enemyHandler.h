@@ -24,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	void UpdateEnemies();
+	virtual void UpdateEnemies();
 	void SpawnEnemies();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
@@ -47,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
 		TSubclassOf<class AenemyBaseClass> enemiesToInclude8;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude9;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		int numberOfEnemies;
@@ -147,7 +150,7 @@ public:
 	void SpawnMeat(FVector Location, int NumberToSpawn);
 	void SpawnFur(FVector Location, int NumberToSpawn);
 
-	void SeeWhichEnemiesInRange();
+	virtual void SeeWhichEnemiesInRange();
 	int NumberOfEnemiesInRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")

@@ -1,12 +1,11 @@
-differentiate foliage rotation - 9/22
-add food cans - 9/23
-add cube bots - 9/24
-hitmarker on weapon hit + hit sound & number - 9/25
-add axe - 9/26
-add cutting down trees - 9/27 
-add fires - 9/28
+add cube bot to spawner ------------------------------------------------------------------
+fix spawner-------------------------------------------------------------------------------
+hitmarker on weapon hit + hit sound & number - 9/25---------------------------------------
+axe animations----------------------------------------------------------------------------
+add cutting down trees - 9/27------------------------------------------------------------- 
+add crafting menu-------------------------------------------------------------------------
 add shovel, plowed dirt and farm mechanism - 9/29
-add 50 npc names - 9/30 
+add 28 NPC names--------------------------------------------------------------------------
 add wolves - 10/1
 add 15 npc locations - 10/2
 add wavy dogs - 10/3
@@ -21,7 +20,7 @@ rig animations for rabbit,deer,sheep,goat,wolf,wavy,centipede - 10/11
 add 50 npc names - 10/12
 differentiate trees - 10/13
 add 20 npc locations - 10/14
-LODs for trees - 10/15
+LODs for trees - autocompute or distance based - 10/15
 add alcohol bottles - 10/16
 add 50 npc names - 10/17
 add shirts - 10/18
@@ -68,6 +67,10 @@ add seasons, snow, linked weather & farming - 11/27
 add 20 npc locations - 11/28
 add 2 robots - 11/29
 add 12 npc locations - 11/30
+fix animal death rotation - 11/31
+consumable menu functions - 12/1
+improve enemy ai - 12/2
+resource culling - 12/3
 add dialogue and quests 
 add merchants 
 add sneaking 
@@ -76,3 +79,4 @@ decorate houses + loose object locations
 add more weapons
 npc glue limb + clothe to skeleton
 make foliage self regulate
+enemy interp to rotation

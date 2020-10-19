@@ -149,8 +149,8 @@ void AResourceSpawner::SpawnItemsFromData(int BlockNumber)
 		case 10: SpawnedActorRef = GetWorld()->SpawnActor<AItemPickup>(ItemNumber10, Locs, Rotacione, SpawnParams); SpawnedActorRef->InitiateDefaults(specificDefaults); break;
 		case 11: SpawnedActorRef = GetWorld()->SpawnActor<AItemPickup>(ItemNumber11, Locs, Rotacione, SpawnParams); SpawnedActorRef->InitiateDefaults(specificDefaults); break;
 		case 12: SpawnedActorRef = GetWorld()->SpawnActor<AItemPickup>(ItemNumber12, Locs, Rotacione, SpawnParams); SpawnedActorRef->InitiateDefaults(specificDefaults); break;
+		case 19: SpawnedActorRef = GetWorld()->SpawnActor<AItemPickup>(ItemNumber19, Locs, Rotacione, SpawnParams); SpawnedActorRef->InitiateDefaults(specificDefaults); break;
 		}
-
 	}
 }
 

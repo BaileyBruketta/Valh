@@ -127,6 +127,8 @@ AMyCharacter::AMyCharacter()
 
 	IntermediaryLocation.Set(0.0f, 0.0f, 0.0f); ADSIntermediaryLocation.Set(0.0f, 0.0f, 0.0f);
 	IndexSearching = 0;
+
+	pitchReset = 0;
 }
 
 // Called when the game starts or when spawned
@@ -612,6 +614,14 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 		currentFireType = 1; rateOfFire = 0.07f;
+
+	case 20: Gun->SetSkeletalMesh(Gun20MeshReference); MeshMagazine->SetSkeletalMesh(Gun20AxeHead); SetGunVariables(20);
+		Gun->SetAnimClass(Gun20AnimReference->GetAnimBlueprintGeneratedClass());
+		MeshMagazine->SetupAttachment(Gun, TEXT("SOCK"));
+		FireAnimation = Gun20FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 3; rateOfFire = 5.0f;
 	}
 
 	CurrentEquippedWeapon = gunNumber;
@@ -749,6 +759,31 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 
 		gunBaseDamage = 17;
 		break;
+
+	case 20: 
+		GunRotation.Roll = 230.0f; GunRotation.Pitch = 180.0f; GunRotation.Yaw = 0.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 0.1f; GunScale.Y = 0.1f; GunScale.Z = 0.1f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = -90.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 1.0f; MagazineScale.Y = 1.0f; MagazineScale.Z = 1.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = 0.03f; AdsRelativeGunLocation.Y = 103.0f; AdsRelativeGunLocation.Z = 120.5f;
+		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 89.999f;
+
+		//arms
+		ArmScale.X = 0.005f; ArmScale.Y = 0.005f; ArmScale.Z = 0.005f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = -0.136914f; RelativeLeftArmLocation.Y = 0.130597f; RelativeLeftArmLocation.Z = -0.028364f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = 29.988533f; RelativeLeftArmRotation.Yaw = 156.783386f; RelativeLeftArmRotation.Roll = -112.455589f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -0.141102f; RelativeRightArmLocation.Y = 0.015456f; RelativeRightArmLocation.Z = 0.014103f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = 7.867325f; RelativeRightArmRotation.Yaw = 95.053917f; RelativeRightArmRotation.Roll = 89.999779f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(45.0f, 8.0f, 145.029f); ADSIntermediaryLocation.Set(77.0f, -14.1f, 120.5f);
+
+		gunBaseDamage = 35;
+
 	}
 
 	Intermediary->SetRelativeLocation(IntermediaryLocation);
@@ -760,7 +795,16 @@ void AMyCharacter::FireWeaponOrTool()
 	FHitResult* HitResult = new FHitResult();
 	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
 	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
-	FVector EndTrace = ((forwardVector*20000.f) + StartTrace);
+
+
+	//bullet spread
+	float ranX = FMath::RandRange(-50, 50);
+	float ranY = FMath::RandRange(-50, 50);
+	float ranZ = FMath::RandRange(-50, 50);
+	FVector spreadAdjust = FVector(ranX, ranY, ranZ);
+
+	FVector EndTrace = ((forwardVector*20000.f) + StartTrace + spreadAdjust);
+
 	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
 
 	//play firing animation
@@ -923,7 +967,9 @@ void AMyCharacter::GatherWater()
 	//set contents amount 
 }
 
-void AMyCharacter::ReleaseTrigger(){ isFiring = false; }
+void AMyCharacter::ReleaseTrigger() {
+	isFiring = false; AddControllerPitchInput(.2f * pitchReset); pitchReset = 0;
+}
 
 void AMyCharacter::GenerateWeaponText()
 {
@@ -956,5 +1002,32 @@ void AMyCharacter::WeaponRecoil()
 	FVector Loc = Gun->GetRelativeLocation();
 	Loc.Z += 1.0f;
 	Gun->SetRelativeLocation(Loc);
+	AddControllerPitchInput(-.2f);
+	pitchReset += 1;
 }
 
+
+bool AMyCharacter::CheckLoaderChecker()
+{
+	bool retval = false;
+
+	FString Location = "/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
+	TArray<FString> LoadedFile;
+	//Load the file into an array, each line is saved as an array element. These lines are Comma Separated Values
+	FFileHelper::LoadANSITextFileToStrings(*Pathf, NULL, LoadedFile);
+	if (LoadedFile[0] == "true")
+	{
+		retval = true;
+	}
+
+
+	return retval;
+}
+
+
+void AMyCharacter::SetLoaderChecker()
+{
+	FString Location = "/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
+	FString savee = "false";
+	FFileHelper::SaveStringToFile(savee, *Pathf, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+}

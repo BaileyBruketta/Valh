@@ -84,8 +84,9 @@ void ADayNightCycle::UpdateIntensity()
 		Rotat.Pitch = 360.0f; SetActorRotation(Rotat);
 		
 		}
-
+		
 		SetSunHeight();
+		float intens = Sun->Intensity; Sun->SetIntensity(intens * IntensityMultiplier);
 	}
 }
 

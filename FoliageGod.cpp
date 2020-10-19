@@ -57,7 +57,7 @@ void AFoliageGod::BeginPlay()
 	}
 
 	//TESTEND
-
+	
 
 
 	//SpawnFunction();
@@ -192,11 +192,11 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 		Locs.X = PlantIntegers[2]; Locs.Y = PlantIntegers[3]; Locs.Z = PlantIntegers[4]; Rots.Pitch = 0.0f; Rots.Roll = 0.0f;  Rots.Yaw = PlantIntegers[5]; float s = FCString::Atof(*PlantDataStr[1]);
 		s += FMath::FRandRange(-0.3f, 0.3f);
 		Scale.X = s; Scale.Y = s; Scale.Z = s;
-		//FQuat q = FQuat(Rots);
+		FQuat q = FQuat(Rots);
 
 		//AActor* SpawnedActorRef;
 		
-		FTransform xxx; xxx.SetLocation(Locs); //xxx.SetRotation(q); 
+		FTransform xxx; xxx.SetLocation(Locs); xxx.SetRotation(q); 
 		xxx.SetScale3D(Scale);
 
 		//try {
@@ -259,6 +259,42 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 			case 18:
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant13, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[18]->AddInstance(xxx); break;
+			case 19:
+				MeshComponents[19]->AddInstance(xxx); break;
+			case 20:
+				MeshComponents[20]->AddInstance(xxx); break;
+			case 21:
+				MeshComponents[21]->AddInstance(xxx); break;
+			case 22:
+				MeshComponents[22]->AddInstance(xxx); break;
+			case 23:
+				MeshComponents[23]->AddInstance(xxx); break;
+			case 24:
+				MeshComponents[24]->AddInstance(xxx); break;
+			case 25:
+				MeshComponents[25]->AddInstance(xxx); break;
+			case 26:
+				MeshComponents[26]->AddInstance(xxx); break;
+			case 27:
+				MeshComponents[27]->AddInstance(xxx); break;
+			case 28:
+				MeshComponents[28]->AddInstance(xxx); break;
+			case 29:
+				MeshComponents[29]->AddInstance(xxx); break;
+			case 30:
+				MeshComponents[30]->AddInstance(xxx); break;
+			case 31:
+				MeshComponents[31]->AddInstance(xxx); break;
+			case 32:
+				MeshComponents[32]->AddInstance(xxx); break;
+			case 33:
+				MeshComponents[33]->AddInstance(xxx); break;
+			case 34:
+				MeshComponents[34]->AddInstance(xxx); break;
+			case 35:
+				MeshComponents[35]->AddInstance(xxx); break;
+			case 36:
+				MeshComponents[36]->AddInstance(xxx); break;
 			}
 		//}
 		//catch (...) { throw; }

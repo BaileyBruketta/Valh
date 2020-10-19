@@ -7,8 +7,10 @@ public class VALH : ModuleRules
 	public VALH(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "Slate", "SlateCore", "Foliage" });
+        bFasterWithoutUnity = true;
+        MinFilesUsingPrecompiledHeaderOverride = 1;
+
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "Slate", "SlateCore", "Foliage" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

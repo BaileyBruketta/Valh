@@ -8,9 +8,15 @@
 7, Short Stack, 14, 30
 8, Plastic Container, 6666, 6666
 9, Wood, 6666, 6666
-10, American Metal, 15, 30
-11, .45 ACP, 6666, 6666
-12, 7.62 Russian Short, 6666, 6666
-13, 9 x 19 Parabellum, 6666, 6666
-14, 5.45 x 39 Devil's Bullet, 6666, 6666
-15, 5.56 x 45 NATO .223, 6666, 6666
+10, Wood, 6666, 6666
+11, Wood, 6666, 6666
+12, Wood, 6666, 6666
+13, American Metal, 15, 30
+14, .45 ACP, 6666, 6666
+15, 7.62 Russian Short, 6666, 6666
+16, 9 x 19 Parabellum, 6666, 6666
+17, 5.45 x 39 Devil's Bullet, 6666, 6666
+18, 5.56 x 45 NATO .223, 6666, 6666
+19, Can of Beets, 6666, 6666
+20, Wooden Axe, 6666, 6666
+21, Small Fire, 6666, 6666

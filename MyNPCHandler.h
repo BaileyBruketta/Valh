@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "enemyHandler.h"
+#include "NPCBaseClass.h"
+#include "PawnNPC.h"
 #include "MyNPCHandler.generated.h"
 
 /**
@@ -21,6 +23,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SpawnFromBlockData(int BlockNumber) override;
 	virtual void SpawnEnemyById(int idToSpawn) override;
+	virtual void SeeWhichEnemiesInRange() override;
+	FTimerHandle updateTimer3;
 
 public:
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
@@ -29,12 +33,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
 		class USkeletalMesh* DefaultFemaleMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* MaleAnimBlueprintReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* FemaleAnimBlueprintReference;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
-		TSubclassOf<class AenemyBaseClass> DynamicDefaultNonPlayableCharacter;
+		TSubclassOf<class APawnNPC> DynamicDefaultNonPlayableCharacter;
 
 	TArray<FString> GetDefaultSpawnPoints();
 	TArray<FString> GetNPCDetails();
 	TArray<int> Gender;
+
+	//This is a list of enemies that have been spawned
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TArray<APawnNPC*> spawnedEnemyReferences2;
+
+	virtual void UpdateEnemies() override;
 
 
 	

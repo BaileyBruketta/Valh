@@ -3,3 +3,4 @@ Log,9,50,75
 TreeBranch,10,80,135
 TreeBranch,11,80,135
 TreeBranch,12,80,135
+CanOfBeets,19,2,5

@@ -55,6 +55,12 @@ public:
 
 	bool isADS;
 
+	UFUNCTION(BlueprintCallable, category = "meta")
+		bool CheckLoaderChecker();
+
+	UFUNCTION(BlueprintCallable, category = "meta")
+		void SetLoaderChecker();
+
 	
 
 	//float RateOfFire;
@@ -183,6 +189,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* Gun10FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////         Wooden Axe
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun20MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun20AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* Gun20FireAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun20AxeHead;
 
 	//Body Parts
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body Parts")
@@ -389,4 +408,5 @@ public:
 		void Reload();
 		void AddBullet();
 
+		int pitchReset;
 };

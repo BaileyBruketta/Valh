@@ -17,4 +17,8 @@ class VALH_API ANPCBaseClass : public AenemyBaseClass
 public:
 	void ChangeMesh(USkeletalMesh* MeshIn);
 	virtual void OnSpawn(AenemyHandler* theOne) override;
+	void SABP(UAnimBlueprint* animbp);
+	//void OnSpawn2(AMyNPCHandler* theOne);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Handler")
+	//	AMyNPCHandler* theHandler2;
 };

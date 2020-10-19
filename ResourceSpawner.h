@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 		TSubclassOf<class AItemPickup> ItemNumber12;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		TSubclassOf<class AItemPickup> ItemNumber19;
+
 	void GenerateItemData(int BlockNumber);
 	void SpawnItemsFromData(int BlockNumber);
 	TArray<FString> GetBlockCoords(int BlockNumber);

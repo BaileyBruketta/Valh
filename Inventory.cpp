@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Inventory.h"
@@ -142,6 +142,7 @@ int AInventory::GetGunNumber(int ItemID)
 	case 7:  gunNumber = 7;  break;
 	case 8:  gunNumber = 8;  break;
 	case 10: gunNumber = 10; break;
+	case 20: gunNumber = 20; break;
 	}
 
 	return gunNumber;
@@ -167,6 +168,7 @@ int AInventory::GetGunDamage(int ItemID)
 		break;
 	case 8: gunDamage = 0; break;
 	case 10: gunDamage = 17; break;
+	case 20: gunDamage = 35; break;
 	}
 
 	return gunDamage;
@@ -188,6 +190,7 @@ FString AInventory::GetWeaponCaliber(int itemID)
 	case 8: ItemCaliber = "Plastic Container"; break;
 	case 10: ItemCaliber = "5.56  x 45 NATO .223"; break;
 	case 6666: ItemCaliber = "empty hands"; break;
+	case 20: ItemCaliber = "Wooden Axe"; break;
 	}
 
 	return ItemCaliber;
