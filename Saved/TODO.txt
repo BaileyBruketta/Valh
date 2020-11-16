@@ -1,82 +1,83 @@
-add cube bot to spawner ------------------------------------------------------------------
-fix spawner-------------------------------------------------------------------------------
-hitmarker on weapon hit + hit sound & number - 9/25---------------------------------------
-axe animations----------------------------------------------------------------------------
-add cutting down trees - 9/27------------------------------------------------------------- 
-add crafting menu-------------------------------------------------------------------------
-add shovel, plowed dirt and farm mechanism - 9/29
-add 28 NPC names--------------------------------------------------------------------------
-add wolves - 10/1
-add 15 npc locations - 10/2
-add wavy dogs - 10/3
-add rain & cloud levels - 10/4
-add 20 npc locations - 10/5
-add centipede - 10/6
-add 50 npc names - 10/7
-make sentinel shoot right - 10/8
-add gas lantern and electric flashlight - 10/9
-add 20 npc locations - 10/10
-rig animations for rabbit,deer,sheep,goat,wolf,wavy,centipede - 10/11
-add 50 npc names - 10/12
-differentiate trees - 10/13
-add 20 npc locations - 10/14
-LODs for trees - autocompute or distance based - 10/15
-add alcohol bottles - 10/16
-add 50 npc names - 10/17
-add shirts - 10/18
-add 20 npc locations - 10/19
-add cloth scraps - 10/20
-add 50 npc names - 10/21
-add gas lighter - 10/22
-add 20 npc locations - 10/23
-add molotov cocktails - 10/24
-add matches - 10/25
-add 50 npc names - 10/26
-add cigarette packs and loosies - 10/27
-add 20 npc locations - 10/28
-add cooked meat - 10/29
-add 50 npc names - 10/30
-add metal pots and meat stew - 10/31
-add 20 npc locations - 11/1
-add 3 vegetables - 11/2
+axe animations 10/25
+add cutting down trees 10/26
+add crafting menu 10/27
+add shovel, plowed dirt and farm mechanism - 10/28
+add 15 npc locations - 10/31
+add wavy dogs to spawner & sizes 11/1
+add rain & cloud levels - 11/2
 add 20 npc locations - 11/3
-add 3 vegetables - 11/4
-add 20 npc locations - 11/5
-add 3 vegetables - 11/6
-add 20 npc locations - 11/7
-add buildable walls - 11/8
-add 20 npc locations - 11/9
-add huntable birds and bird eggs + nest - 11/10
-add 20 npc locations - 11/11
-add fried eggs - 11/12
-add 20 npc locations - 11/13
-add bandages and infection status - 11/14
-add 20 npc locations - 11/15
-add 3 more weapons - 11/16
+add centipede - 11/4
+add 50 npc names - 11/5
+make sentinel shoot right - 11/6
+add gas lantern and electric flashlight - 11/7
+add 20 npc locations - 11/8
+rig animations for rabbit,deer,sheep,goat,wolf,wavy,centipede - 11/9
+add 50 npc names - 11/10
+differentiate trees - 11/11
+add 20 npc locations - 11/12
+LODs for trees - autocompute or distance based - 11/13
+add 50 npc names - 11/15
+add shirts - 11/16
 add 20 npc locations - 11/17
-npc glue limb + clothe to skeleton with IK - 11/18
-add 20 npc locations - 11/19
-add 3 vegetables - 11/20
+add cloth scraps - 11/18
+add 50 npc names - 11/19
+add gas lighter - 11/20
 add 20 npc locations - 11/21
-add grenades - 11/22
-add 20 npc locations - 11/23
-add 49 npc names - 11/24
-add ceilings, temperature, and cold status - 11/25
+add molotov cocktails - 11/22
+add matches - 11/23
+add 50 npc names - 11/24
+add cigarette packs and loosies - 11/25
 add 20 npc locations - 11/26
-add seasons, snow, linked weather & farming - 11/27
-add 20 npc locations - 11/28
-add 2 robots - 11/29
-add 12 npc locations - 11/30
-fix animal death rotation - 11/31
-consumable menu functions - 12/1
-improve enemy ai - 12/2
-resource culling - 12/3
-add dialogue and quests 
-add merchants 
-add sneaking 
-add raider classification
-decorate houses + loose object locations
-add more weapons
-npc glue limb + clothe to skeleton
-make foliage self regulate
-enemy interp to rotation
+add cooked meat - 11/27
+add 50 npc names - 11/28
+add metal pots and meat stew - 11/29
+add 20 npc locations - 11/30
+add 3 vegetables - 12/1
+add 20 npc locations - 12/2
+add 3 vegetables - 12/3
+add 20 npc locations - 12/4
+add 3 vegetables - 12/5
+add 20 npc locations - 12/6
+add buildable walls - 12/7
+add 20 npc locations - 12/8
+add huntable birds and bird eggs + nest - 12/9
+add 20 npc locations - 12/10
+add fried eggs - 12/11
+add 20 npc locations - 12/12
+add bandages and infection status - 12/13
+add 20 npc locations - 12/14
+add 3 more weapons - 12/15
+add 20 npc locations - 12/16
+npc glue limb + clothe to skeleton with IK - 12/17
+add 20 npc locations - 12/18
+add 3 vegetables - 12/19
+add 20 npc locations - 12/20
+add grenades - 12/21
+add 20 npc locations - 12/22
+add 49 npc names - 12/23
+add ceilings, temperature, and cold status - 12/24
+add 20 npc locations - 12/25
+add seasons, snow, linked weather & farming - 12/26
+add 20 npc locations - 12/27
+add 2 robots - 12/28
+add 12 npc locations - 12/29
+fix animal death rotation - 12/30
+consumable menu functions - 12/31
+improve enemy ai - 1/1
+resource culling - 1/2
+add dialogue and quests 1/3
+add merchants 1/4
+add sneaking 1/5
+add raider classification 1/6
+decorate houses + loose object locations 1/7
+add more weapons 1/8
+npc glue limb + clothe to skeleton 1/9
+make foliage self regulate 1/10
+enemy interp to rotation 1/11
+add crow 1/12
+Save & Load files 1/13
+fishing lines 1/14
+loaded magazines vs loose ammo 1/15
+add ak47 - 1/16
+add mp40 - 1/17
+enemy 9 & 10 ragdolls - 1/18

@@ -522,6 +522,7 @@ void AenemyHandler::SpawnEnemyById(int idToSpawn)
 	case 7: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude7, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 9: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude9, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 10: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude10, SpawnPoint, SpawnRot, SpawnParams); break;
 	}
 
 	spawnedEnemyReferences[idToSpawn] = newEnemy;

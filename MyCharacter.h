@@ -61,6 +61,18 @@ public:
 	UFUNCTION(BlueprintCallable, category = "meta")
 		void SetLoaderChecker();
 
+	UFUNCTION(BlueprintImplementableEvent, category = Firing)
+		void HitmarkerOn();
+
+	UFUNCTION(BlueprintImplementableEvent, category = Firing)
+		void HitmarkerOff();
+
+	FTimerHandle hitmarkertimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "meta")
+	USoundBase* hitsound;
+
+
 	
 
 	//float RateOfFire;

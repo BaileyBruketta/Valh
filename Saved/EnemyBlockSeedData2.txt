@@ -6,3 +6,4 @@ Fox,5,9,7
 Deer,10,15,8
 Sentry,2,6,2
 Cubeot,1,3,9
+Wolf,2,5,10

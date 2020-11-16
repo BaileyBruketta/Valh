@@ -8,8 +8,8 @@ Harbortwon - 18/1/0/0  (Helpelia)
 Falessa    - 24/24/22/0 (Helpelia)
 Wilds Var. - 5/5/5/0
 Dorsal Village 8/8/0/0 (Dackleroy)
-Southville    18/0/0/0 (Dackleroy)
-Berg Island   15/0/0/0 (Dackleroy)
+Southville    18/18/0/0 (Dackleroy)
+Berg Island   15/15/0/0 (Dackleroy)
 Metropolis    25/0/0/0 (Dackleroy)
 Skrib City    12/12/0/0 (Dackleroy)
 Farplain      43/0/0/0 (EastWind)
@@ -24,5 +24,5 @@ Kupline         25/0/0/0 (Grove)
 Crow City       42/0/0/0 (Falkis Core)
 Lion's Tooth    29/0/0/0 (Falkis Core)
 
-522/195/100/0
+522/227/100/0
 

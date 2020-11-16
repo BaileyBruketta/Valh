@@ -5,3 +5,5 @@ TreeBranch,10,0,False,False,True,0
 TreeBranch,11,0,False,False,True,0
 TreeBranch,12,0,False,False,True,0
 CanOfBeets,19,0,True,False,True,0
+Full Beer,22,0,True,False,True,0
+Full Whiskey, 23, 0, True, False, True,0

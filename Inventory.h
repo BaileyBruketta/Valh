@@ -112,5 +112,7 @@ public:
 		int GetMagazineMax(int ItemID);
 
 	void SpendBullet(int ItemID);
+
+	int NumberOfItemsWithSpecifiedId(int id);
 		
 };

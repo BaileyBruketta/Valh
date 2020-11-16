@@ -268,3 +268,10 @@ void AInventory::SpendBullet(int ItemID)
 	}
 }
 
+int AInventory::NumberOfItemsWithSpecifiedId(int id)
+{
+	int val = 0;
+
+	return val;
+}
+

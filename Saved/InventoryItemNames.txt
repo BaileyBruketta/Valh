@@ -20,3 +20,5 @@
 19, Can of Beets, 6666, 6666
 20, Wooden Axe, 6666, 6666
 21, Small Fire, 6666, 6666
+22, Full Beer, 6666, 6666
+23, Full Whiskey, 6666, 6666

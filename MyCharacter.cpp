@@ -859,6 +859,9 @@ void AMyCharacter::FireWeaponOrTool()
 			if (TestTarget != NULL && !TestTarget->IsPendingKill())
 			{
 				TestTarget->DamageTarget(gunBaseDamage);
+				HitmarkerOn();
+				UGameplayStatics::PlaySoundAtLocation(this, hitsound, GetActorLocation());
+				GetWorld()->GetTimerManager().SetTimer(hitmarkertimer, this, &AMyCharacter::HitmarkerOff, 0.1f, false);
 				FRotator PlaceHolder; FActorSpawnParameters SpawnParams; AActor* SpawnBloodEffect = GetWorld()->SpawnActor<AActor>(BloodEffect, HitResult->ImpactPoint, PlaceHolder, SpawnParams);
 			}
 
