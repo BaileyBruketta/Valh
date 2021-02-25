@@ -18,7 +18,8 @@ public:
 	UFUNCTION(Blueprintcallable, category = "m")
 		void NewGame(FString newName);
 
-	void SetLoadIntoCheckerToTrue();
+	UFUNCTION(Blueprintcallable, category = "m")
+		void SetLoadIntoCheckerToTrue();
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,5 +28,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(Blueprintcallable, category = "m")
+		TArray<FString> GetSaveGameNames();
+
+	UFUNCTION(Blueprintcallable, category = "m")
+		void SetActivePlayerName(FString namex);
 
 };

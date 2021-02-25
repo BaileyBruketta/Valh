@@ -73,41 +73,58 @@ void AResourceSpawner::GenerateItemData(int BlockNumber)
 	//Get  csv line of metadata for each item type delivered in an array
 	//Iterate through each item type, by iterating through each line of the seed data file, where each file holds information for a type of item to spawn
 	//Generate a location
-	FString SaveDataFileName = "/ItemBlockData" + FString::FromInt(BlockNumber) + ".txt";
-	FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
-	FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
-	FVector Locs;
-	TArray<FString> CoordData = GetBlockCoords(BlockNumber);
-	int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]);
-	int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
-	TArray<FString> SeedFile = GetSeedData(BlockNumber);
 
-	for (int i = 0; i < SeedFile.Num(); i++)
-	{
-		TArray<FString> ItemData;
-		SeedFile[i].ParseIntoArray(ItemData, TEXT(","), 1);              //for each item type, we construct an array to hold its data from the file, during a for loop
-		TArray<int> ItemInts;                                            //we convert the text data from the file's lines into an int array for each line
-					ItemInts.Init(1, 4);                                 //initiate the array
-		for (int dat = 0; dat < ItemData.Num(); dat++)
-		{ItemInts[dat] = FCString::Atoi(*ItemData[dat]);}                //the conversion
 
-		int NumberOfItems = floor(FMath::FRandRange(ItemInts[2], ItemInts[3]));            //we determine the number of items of each item to spawn 
+	//if datafile is not found - ie, if we have not generated a file yet 
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
 
-		for (int j = 0; j < NumberOfItems; j++)                          //We generate data for each item to be spawned
+	FString BlockDataFile = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + "/SaveGames/" + playername + "/ItemBlockData" + FString::FromInt(BlockNumber) + ".txt";
+	//look for file
+	bool isExist = FPaths::FileExists(BlockDataFile);
+
+	if (isExist == false) {
+
+		FString SaveDataFileName = "/ItemBlockData" + FString::FromInt(BlockNumber) + ".txt";
+		FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
+		FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+		FVector Locs;
+		TArray<FString> CoordData = GetBlockCoords(BlockNumber);
+		int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]);
+		int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
+		TArray<FString> SeedFile = GetSeedData(BlockNumber);
+
+		for (int i = 0; i < SeedFile.Num(); i++)
 		{
-			Locs.X = FMath::FRandRange(xMin, xMax);
-			Locs.Y = FMath::FRandRange(yMin, yMax);
-			Locs.Z = 8000.0f;
+			TArray<FString> ItemData;
+			SeedFile[i].ParseIntoArray(ItemData, TEXT(","), 1);              //for each item type, we construct an array to hold its data from the file, during a for loop
+			TArray<int> ItemInts;                                            //we convert the text data from the file's lines into an int array for each line
+			ItemInts.Init(1, 4);                                 //initiate the array
+			for (int dat = 0; dat < ItemData.Num(); dat++)
+			{
+				ItemInts[dat] = FCString::Atoi(*ItemData[dat]);
+			}                //the conversion
 
-			TArray<FString> ItemInfo; ItemInfo.Init("", 5);            //We initialize an array of strings to save to the file
-			ItemInfo[0] = ItemData[0];                                 //we grab the name to save
-			ItemInfo[1] = ItemData[1];                                 //We grab the item ID to save
-			ItemInfo[2] = FString::SanitizeFloat(Locs.X);
-			ItemInfo[3] = FString::SanitizeFloat(Locs.Y);
-			ItemInfo[4] = FString::SanitizeFloat(Locs.Z);              //We sanitize the floats to strings and add to the array
+			int NumberOfItems = floor(FMath::FRandRange(ItemInts[2], ItemInts[3]));            //we determine the number of items of each item to spawn 
 
-			AppendItemToDataFile(BlockNumber, ItemInfo);               //We save the item to the data file
+			for (int j = 0; j < NumberOfItems; j++)                          //We generate data for each item to be spawned
+			{
+				Locs.X = FMath::FRandRange(xMin, xMax);
+				Locs.Y = FMath::FRandRange(yMin, yMax);
+				Locs.Z = 8000.0f;
 
+				TArray<FString> ItemInfo; ItemInfo.Init("", 5);            //We initialize an array of strings to save to the file
+				ItemInfo[0] = ItemData[0];                                 //we grab the name to save
+				ItemInfo[1] = ItemData[1];                                 //We grab the item ID to save
+				ItemInfo[2] = FString::SanitizeFloat(Locs.X);
+				ItemInfo[3] = FString::SanitizeFloat(Locs.Y);
+				ItemInfo[4] = FString::SanitizeFloat(Locs.Z);              //We sanitize the floats to strings and add to the array
+
+				AppendItemToDataFile(BlockNumber, ItemInfo);               //We save the item to the data file
+
+			}
 		}
 	}
 }

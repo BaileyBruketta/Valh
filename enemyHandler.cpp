@@ -63,10 +63,23 @@ void AenemyHandler::Tick(float DeltaTime)
 //      cont. should reduce first time start up time and removes the problem of trying to generate heightmap appropriate locations for unloaded maps
 void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 {
-	TArray<FString> CoordData = GetBlockCoords(BlockNumber);
+
+	//if datafile is not found - ie, if we have not generated a file yet 
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+
+	FString BlockDataFile = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + "/SaveGames/" + playername + "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt";
+	//look for file
+	bool isExist = FPaths::FileExists(BlockDataFile);
+
+	if (isExist == false) {
+
+		TArray<FString> CoordData = GetBlockCoords(BlockNumber);
 
 		//We start by Creating/Clearing save data for the block
-		FString SaveDataFileName = "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
+		FString SaveDataFileName = "/SaveGames/" + playername + "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
 		FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 
 		//We first grab the seed data for this block and parse it into useable pieces
@@ -88,7 +101,7 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 			TArray<FString> LineData;
 			//Parse                                                                      //  LineData            [ 0  , 1                   , 2                   , 3         ]
 			LoadedFile[LineInSeedData].ParseIntoArray(LineData, TEXT(","), 1);          //Seed Data is set up as [Name, NumberToSpawnMinimum, NumberToSpawnMaximum, TypeNumber]
-			
+
 			//determine how many enemies to make by using numbers from the seed data
 			int min = FCString::Atoi(*LineData[1]); int max = FCString::Atoi(*LineData[2]);
 			int NumberToCreate = floor(rand() % min + max);
@@ -107,7 +120,7 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 			for (int LineInTypeFile = 1; LineInTypeFile < TypeFile.Num(); LineInTypeFile++)
 			{
 				TArray<FString> Temp;
-				TypeFile[LineInTypeFile] = TypeFile[LineInTypeFile].Replace(TEXT(" "),TEXT(""));
+				TypeFile[LineInTypeFile] = TypeFile[LineInTypeFile].Replace(TEXT(" "), TEXT(""));
 				TypeFile[LineInTypeFile].ParseIntoArray(Temp, TEXT(","), 1);
 				//We save the specific enemy data to an array
 				if (FCString::Atoi(*Temp[1]) == EnemyType) { EnemyRootData = Temp; }
@@ -115,33 +128,33 @@ void AenemyHandler::CreateDataFromSeed(int BlockNumber)
 
 			//for each enemy that is to be created, we will write a line of data
 			for (int enemyOfTypeBeingCreated = 0; enemyOfTypeBeingCreated < NumberToCreate; enemyOfTypeBeingCreated++)
-			{	
-				FString NameToSave        = EnemyRootData[0];                           //Replace the fake vectors and rotations with something else
-				FString TypeToSave        = EnemyRootData[1];                            FVector LocationToSave; FRotator RotationToSave;
-				FString HealthToSave      = EnemyRootData[2];
+			{
+				FString NameToSave = EnemyRootData[0];                           //Replace the fake vectors and rotations with something else
+				FString TypeToSave = EnemyRootData[1];                            FVector LocationToSave; FRotator RotationToSave;
+				FString HealthToSave = EnemyRootData[2];
 				FString StateNumberToSave = "0";
-				FString WaitTimerToSave   = EnemyRootData[9];
+				FString WaitTimerToSave = EnemyRootData[9];
 				//randomize scale
 				float scaleMin = FCString::Atof(*EnemyRootData[7]); float scaleMax = FCString::Atof(*EnemyRootData[8]);
-				FString ScaleToSave       = FString::SanitizeFloat(FMath::FRandRange(scaleMin, scaleMax));
+				FString ScaleToSave = FString::SanitizeFloat(FMath::FRandRange(scaleMin, scaleMax));
 				//run location algorithm
-				int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]); 
+				int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]);
 				int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
 				FVector EnemyLocation; EnemyLocation = GenerateSpawnPoint(xMin, xMax, yMin, yMax);
-				FString FX = FString::FromInt(floor(EnemyLocation[0])); 
+				FString FX = FString::FromInt(floor(EnemyLocation[0]));
 				FString FY = FString::FromInt(floor(EnemyLocation[1]));
 				FString FZ = FString::FromInt(floor(EnemyLocation[2]));
 				//Write the data into file                     ; EnemyBlockSaveData : [Name,TypeNumber,Health,FVector.X,FVector.Y,FVector.Z,Rotation.X,Rotation.Y,Rotation.Z,CurrentStateNumber,WaitTimerRemaining,Scale,GlobalIdentifier]
 				FString LineToSave = NameToSave + "," + TypeToSave + "," + HealthToSave + "," + FX + "," + FY + "," + FZ + "," + "0" + "," + "0" + "," + "0" + "," + StateNumberToSave + "," + WaitTimerToSave + "," + ScaleToSave + "," + "\n";
 				FFileHelper::SaveStringToFile(LineToSave, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 			}
-			
+
 		}
 		//NumberOfEnemies = row[whateverColumnRefersTonumber]
 		//for (int i = 0; i < numberOfEnemies; i++)
 		//       append to CSV "EnemySaveData" Name, enemyType, health, globalidentifier, etc
 		//       globalIdentifier += 1
-	
+	}
 }
 
 //This is used to return an FVector for an apporpriate enemy location
@@ -174,8 +187,12 @@ FVector AenemyHandler::GenerateSpawnPoint(int xMin, int xMax, int yMin, int yMax
 //1) Relies on the block data being in order in the reference .txt file //2)Spawns in all the recorded enemies for a single block
 void AenemyHandler::SpawnFromBlockData(int BlockNumber)
 {
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
 	//Start by retreiving the block data
-	FString BlockDataFileName = "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt";
+	FString BlockDataFileName = "/SaveGames/" + playername + "/EnemyBlockData" + FString::FromInt(BlockNumber) + ".txt";
 	FString BlockDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + BlockDataFileName;
 	TArray<FString> LoadedData; FFileHelper::LoadANSITextFileToStrings(*BlockDataFilePath, NULL, LoadedData);
 
@@ -523,6 +540,8 @@ void AenemyHandler::SpawnEnemyById(int idToSpawn)
 	case 8: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude8, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 9: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude9, SpawnPoint, SpawnRot, SpawnParams); break;
 	case 10: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude10, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 11: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude11, SpawnPoint, SpawnRot, SpawnParams); break;
+	case 12: newEnemy = GetWorld()->SpawnActor<AenemyBaseClass>(enemiesToInclude12, SpawnPoint, SpawnRot, SpawnParams); break;
 	}
 
 	spawnedEnemyReferences[idToSpawn] = newEnemy;

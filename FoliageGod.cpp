@@ -96,66 +96,88 @@ TArray<FString> AFoliageGod::GetSeedData(int BlockNumber)
 
 void AFoliageGod::GeneratePlantData(int Block)
 {
-	//Clear the file
-	FString SaveDataFileName = "/FoliageBlockData" + FString::FromInt(Block) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
-	FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+	//if datafile is not found - ie, if we have not generated a file yet 
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Player name: %s"), playernamedata[0]));
 
-	FVector Locs;
-	//Get Coordinates for block
-	TArray<FString> CoordData = GetBlockCoords(Block);
-	//Get integer values for coords (x y bounds)
-	int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]);
-	int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
-	//Get  csv line of metadata for each plant type delivered in an array
-	TArray<FString> SeedFile = GetSeedData(Block);
-	//Iterate through each plant type
-	for (int i = 0; i < SeedFile.Num(); i++)
-	{
-		//grab metadata for plant                                                      0 PlantNumber, 1 min, 2 maxModifier, 3 SizeModification
-		TArray<FString> PlantData; SeedFile[i].ParseIntoArray(PlantData, TEXT(","), 1);
-		TArray<int>     PlantInts; PlantInts.Init(1,4);
-		for (int z = 0; z < PlantData.Num(); z++) { PlantInts[z] = FCString::Atoi(*PlantData[z]); }
+	FString BlockDataFile = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + "/SaveGames/" + playername + "/FoliageBlockData" + FString::FromInt(Block) + ".txt";
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("filepath: %s"), BlockDataFile));
+	//look for file
+	bool isExist = FPaths::FileExists(BlockDataFile);
 
-		//int numberOfPlants = floor(rand() % PlantInts[1] + PlantInts[2]);
-		int numberOfPlants = floor(FMath::FRandRange(PlantInts[1], PlantInts[2]));
+	//if no file, generate data
+	if (isExist == false) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("No plant data file found")));
 
-		for (int j = 0; j < numberOfPlants; j++)
+		//Clear the file
+		FString SaveDataFileName = "/SaveGames/" + playername + "/FoliageBlockData" + FString::FromInt(Block) + ".txt"; FString SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + SaveDataFileName;
+		FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *SaveDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+
+		FVector Locs;
+		//Get Coordinates for block
+		TArray<FString> CoordData = GetBlockCoords(Block);
+		//Get integer values for coords (x y bounds)
+		int xMin = FCString::Atoi(*CoordData[1]); int xMax = FCString::Atoi(*CoordData[2]);
+		int yMin = FCString::Atoi(*CoordData[3]); int yMax = FCString::Atoi(*CoordData[4]);
+		//Get  csv line of metadata for each plant type delivered in an array
+		TArray<FString> SeedFile = GetSeedData(Block);
+		//Iterate through each plant type
+		for (int i = 0; i < SeedFile.Num(); i++)
 		{
-			//Generate a scale
-			float Scale = rand() % PlantInts[3];
+			//grab metadata for plant                                                      0 PlantNumber, 1 min, 2 maxModifier, 3 SizeModification
+			TArray<FString> PlantData; SeedFile[i].ParseIntoArray(PlantData, TEXT(","), 1);
+			TArray<int>     PlantInts; PlantInts.Init(1, 4);
+			for (int z = 0; z < PlantData.Num(); z++) { PlantInts[z] = FCString::Atoi(*PlantData[z]); }
 
-			//Generate a location
-			bool underwater = true;
-			while (underwater == true)
+			//int numberOfPlants = floor(rand() % PlantInts[1] + PlantInts[2]);
+			int numberOfPlants = floor(FMath::FRandRange(PlantInts[1], PlantInts[2]));
+
+			for (int j = 0; j < numberOfPlants; j++)
 			{
-				Locs.X = FMath::FRandRange(xMin, xMax); Locs.Y = FMath::FRandRange(yMin, yMax);
-				//test height, see if new location is below the global water level
-				FVector HeightTest = Locs;        HeightTest.Z = 8000; FHitResult* HitResult = new FHitResult(); FVector StartTrace = HeightTest;
-				FVector EndTrace = HeightTest;  EndTrace.Z = -800; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
-				if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))    //If we can cut a straight path from sky to ground
+				//Generate a scale
+				float Scale = rand() % PlantInts[3];
+
+				//Generate a location
+				bool underwater = true;
+				while (underwater == true)
 				{
-					Locs.Z = HitResult->Location.Z; //Sets height to spawn plant at 
+					Locs.X = FMath::FRandRange(xMin, xMax); Locs.Y = FMath::FRandRange(yMin, yMax);
+					//test height, see if new location is below the global water level
+					FVector HeightTest = Locs;        HeightTest.Z = 8000; FHitResult* HitResult = new FHitResult(); FVector StartTrace = HeightTest;
+					FVector EndTrace = HeightTest;  EndTrace.Z = -800; FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+					if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))    //If we can cut a straight path from sky to ground
+					{
+						Locs.Z = HitResult->Location.Z; //Sets height to spawn plant at 
+					}
+					if (Locs.Z > 471) { underwater = false; } //determines if location for new plant spawn is underwater or not
 				}
-				if (Locs.Z > 471) { underwater = false; } //determines if location for new plant spawn is underwater or not
+
+				int ZRot = FMath::RandRange(0, 360);
+
+				//Save one line per plant
+				TArray<FString> PlantInfo; PlantInfo.Init("", 6);
+				PlantInfo[0] = PlantData[0]; PlantInfo[1] = FString::SanitizeFloat(Scale);
+				PlantInfo[2] = FString::SanitizeFloat(Locs.X); PlantInfo[3] = FString::SanitizeFloat(Locs.Y); PlantInfo[4] = FString::SanitizeFloat(Locs.Z);
+				PlantInfo[5] = FString::FromInt(ZRot);
+
+				AppendPlantToDataFile(Block, PlantInfo);
 			}
-
-			int ZRot = FMath::RandRange(0, 360);
-
-			//Save one line per plant
-			TArray<FString> PlantInfo; PlantInfo.Init("",6);
-			PlantInfo[0] = PlantData[0]; PlantInfo[1] = FString::SanitizeFloat(Scale);
-			PlantInfo[2] = FString::SanitizeFloat(Locs.X); PlantInfo[3] = FString::SanitizeFloat(Locs.Y); PlantInfo[4] = FString::SanitizeFloat(Locs.Z);
-			PlantInfo[5] = FString::FromInt(ZRot);
-
-			AppendPlantToDataFile(Block, PlantInfo);
 		}
+		//number,scale,x,y,z,fz
 	}
-	//number,scale,x,y,z,fz
 }
 
 void AFoliageGod::AppendPlantToDataFile(int BlockNumber, TArray<FString> PlantInfo)
 {
-	FString PlantDataFileName = "/FoliageBlockData" + FString::FromInt(BlockNumber) + ".txt"; 
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+
+	FString PlantDataFileName = "/SaveGames/" + playername + "/FoliageBlockData" + FString::FromInt(BlockNumber) + ".txt";
 	FString PlantDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + PlantDataFileName;
 	FString LineToSave = PlantInfo[0] + "," + PlantInfo[1] + "," + PlantInfo[2] + "," + PlantInfo[3] + "," + PlantInfo[4] + "," + PlantInfo[5] + "," + "\n";
 	FFileHelper::SaveStringToFile(LineToSave, *PlantDataFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
@@ -163,7 +185,12 @@ void AFoliageGod::AppendPlantToDataFile(int BlockNumber, TArray<FString> PlantIn
 
 TArray<FString> AFoliageGod::GetPlantData(int BlockNumber)
 {
-	FString PlantDataFileName = "/FoliageBlockData" + FString::FromInt(BlockNumber) + ".txt";
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+
+	FString PlantDataFileName = "/SaveGames/" + playername + "/FoliageBlockData" + FString::FromInt(BlockNumber) + ".txt";
 	FString PlantDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + PlantDataFileName;
 	TArray<FString> PlantData; FFileHelper::LoadANSITextFileToStrings(*PlantDataFilePath, NULL, PlantData);
 
@@ -203,6 +230,7 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 			switch (PlantIntegers[0])
 			{
 			case 0:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[0]->AddInstance(xxx); break;
 			case 1:
@@ -212,6 +240,7 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[2]->AddInstance(xxx); break;
 			case 3:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant3, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[3]->AddInstance(xxx); break;
 			case 4:
@@ -221,12 +250,14 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant5, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[5]->AddInstance(xxx); break;
 			case 6:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant6, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[6]->AddInstance(xxx); break;
 			case 7:
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant7, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[7]->AddInstance(xxx); break;
 			case 8:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant8, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[8]->AddInstance(xxx); break;
 			case 9:
@@ -236,9 +267,11 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock0, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[10]->AddInstance(xxx); break;
 			case 11:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock1, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[11]->AddInstance(xxx); break;
 			case 12:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(rock2, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[12]->AddInstance(xxx); break;
 			case 13:
@@ -254,30 +287,37 @@ void AFoliageGod::SpawnPlantsFromData(int Block)
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant11, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[16]->AddInstance(xxx); break;
 			case 17:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant12, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[17]->AddInstance(xxx); break;
 			case 18:
 				//SpawnedActorRef = GetWorld()->SpawnActor<AActor>(plant13, Locs, Rots, SpawnParams); SpawnedActorRef->SetActorScale3D(Scale); break;
 				MeshComponents[18]->AddInstance(xxx); break;
 			case 19:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[19]->AddInstance(xxx); break;
 			case 20:
 				MeshComponents[20]->AddInstance(xxx); break;
 			case 21:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[21]->AddInstance(xxx); break;
 			case 22:
 				MeshComponents[22]->AddInstance(xxx); break;
 			case 23:
 				MeshComponents[23]->AddInstance(xxx); break;
 			case 24:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[24]->AddInstance(xxx); break;
 			case 25:
+				Rots.Roll = 90.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[25]->AddInstance(xxx); break;
 			case 26:
 				MeshComponents[26]->AddInstance(xxx); break;
 			case 27:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[27]->AddInstance(xxx); break;
 			case 28:
+				Rots.Pitch = 180.0f; Rots.Roll = 180.0f; q = FQuat(Rots); xxx.SetRotation(q);
 				MeshComponents[28]->AddInstance(xxx); break;
 			case 29:
 				MeshComponents[29]->AddInstance(xxx); break;

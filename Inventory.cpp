@@ -30,12 +30,95 @@ AInventory::AInventory()
 // Called when the game starts or when spawned
 void AInventory::BeginPlay(){Super::BeginPlay();
 //test, player starts out with 3 pocketed rounds of .45 ACP
-AddToInventory(11, 0, false, false, false, 3, true, true);
+//AddToInventory(11, 0, false, false, false, 3, true, true);
+
+LoadInventory();
 Cast<AMyCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))->GenerateWeaponText();
 }
 
 // Called every frame
 void AInventory::Tick(float DeltaTime){Super::Tick(DeltaTime);}
+
+void AInventory::SaveInventory() {
+	//if datafile is not found - ie, if we have not generated a file yet 
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+	FString InventoryFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + "/SaveGames/" + playername + "/PlayerInventory.txt";
+
+
+	//clear
+	FString ClearingText = TEXT(""); FFileHelper::SaveStringToFile(ClearingText, *InventoryFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+	//save 
+	for (int i = 0; i < NumberOfItemsTotal; i++) {
+		FString LineToSave = FString::FromInt(ItemsInInventory[i]) + "," +
+			                 FString::FromInt(ItemCount[i])        + "," +
+			                 FString::FromInt(AmmoInWeapon[i])     + "," + 
+			                 boolConv(isConsum[i])                 + "," +
+			                 boolConv(isWeapon[i])                 + "," +
+			                 boolConv(isRes[i])                    + "," +
+			                 boolConv(isAmmo[i])                   + "," +
+			                 FString::FromInt(ContentsID[i])       + "," +
+			                 FString::FromInt(containerAmounts[i]);
+
+	FFileHelper::SaveStringToFile(LineToSave, *InventoryFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+	}
+
+
+}
+void AInventory::LoadInventory() {
+	// if datafile is not found - ie, if we have not generated a file yet
+	FString Name_Of_File_Containing_Player_Name = "/tmp/ActivePlayer.txt";
+	FString filepath_for_player_name = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Name_Of_File_Containing_Player_Name;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_name, NULL, playernamedata);
+	FString playername = playernamedata[0];
+	FString InventoryFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + "/SaveGames/" + playername + "/PlayerInventory.txt";
+
+	if (FPaths::FileExists(InventoryFilePath)) {
+		//load data from file
+		TArray<FString> InventoryData; FFileHelper::LoadANSITextFileToStrings(*InventoryFilePath, NULL, InventoryData);
+
+		//for each line, set our inventory 
+		for (int i = 0; i < InventoryData.Num(); i++) {
+			TArray<FString> InventoryDataString; InventoryData[i].ParseIntoArray(InventoryDataString, TEXT(","), 1);
+			ItemsInInventory[i] = FCString::Atoi(*InventoryDataString[0]);
+			ItemCount[i]        = FCString::Atoi(*InventoryDataString[1]);
+			AmmoInWeapon[i]     = FCString::Atoi(*InventoryDataString[2]);
+			isConsum[i]         = boolConvOut(InventoryDataString[3]);
+			isWeapon[i]         = boolConvOut(InventoryDataString[4]);
+			isRes[i]            = boolConvOut(InventoryDataString[5]);
+			isAmmo[i]           = boolConvOut(InventoryDataString[6]);
+			ContentsID[i]       = FCString::Atoi(*InventoryDataString[7]);
+			containerAmounts[i] = FCString::Atoi(*InventoryDataString[8]);
+		}
+
+
+	}
+	else {
+		//test, player starts out with 3 pocketed rounds of .45 ACP
+		AddToInventory(11, 0, false, false, false, 3, true, true);
+	}
+}
+
+bool AInventory::boolConvOut(FString in) {
+	bool x = false;
+	if (in == "true") {
+		x = true;
+	}
+	return x;
+}
+
+FString AInventory::boolConv(bool in) {
+	FString ret = "";
+	if (in == true) {
+		ret = "true";
+	}
+	else {
+		ret = "false";
+	}
+	return ret;
+}
 
 //Add the int for an item ID 
 void AInventory::AddToInventory(int ItemID, int ammo, bool consumable, bool equippable, bool resource, int contents, bool stackable, bool isam)

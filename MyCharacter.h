@@ -80,6 +80,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 		class AInventory* Inventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "building")
+		class ABuildCalculator* BuildCalculator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "crafting")
+		class ACraftCalculator* CraftCalculator;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "QuestManager")
 		class AQuestManager* QuestManager;
 
@@ -285,6 +291,12 @@ public:
 	//timer to be used by automatic weapon firing functions
 	float firearmTimer;
 
+	float meleeTimer;
+	void MeleeWeaponFire();
+	void DecreaseMeleeTimer();
+	FTimerHandle MeleePin;
+	void MeleeHandler();
+
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Guns")
 		float rateOfFire;
 
@@ -352,6 +364,17 @@ public:
 		float FATIGUE;
 
 	void UpdateStats();
+
+	////////////////////////////////////////////////////////////////
+	int buildcheck;
+
+	void BuildMenu();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+		void OpenBuildMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CloseBuildMenu();
 
 	
 	///////////////////////////////////////////////////////////////

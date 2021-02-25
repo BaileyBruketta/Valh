@@ -118,6 +118,7 @@ AMyCharacter::AMyCharacter()
 	HEALTH = 1; STAMINA = 1; HUNGER = 1; WATER = 1; FATIGUE = 1;
 
 	pausecheck = 1;
+	buildcheck = 1;
 	Paused = false;
 	CurrentEquippedWeapon = 6666;
 	//GenerateWeaponText();
@@ -129,6 +130,8 @@ AMyCharacter::AMyCharacter()
 	IndexSearching = 0;
 
 	pitchReset = 0;
+
+	meleeTimer = 0;
 }
 
 // Called when the game starts or when spawned
@@ -162,6 +165,8 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("AdsIn", IE_Released, this, &AMyCharacter::RelaxAim);
 
 	PlayerInputComponent->BindAction("PressQ", IE_Pressed, this, &AMyCharacter::PauseCheck);
+
+	PlayerInputComponent->BindAction("PressY", IE_Pressed, this, &AMyCharacter::BuildMenu);
 
 	//Movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
@@ -326,6 +331,13 @@ void AMyCharacter::JumpStaminaDrain()
 		STAMINA -= .05;
 		FATIGUE -= .0005;
 	}
+}
+
+void AMyCharacter::BuildMenu()
+{
+	buildcheck += 1;
+	if (buildcheck % 2 == 0) { OpenBuildMenu(); }
+	if (buildcheck % 2 != 0) { CloseBuildMenu(); }
 }
 
 
@@ -792,89 +804,89 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 
 void AMyCharacter::FireWeaponOrTool()
 {
-	FHitResult* HitResult = new FHitResult();
-	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
-	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
+FHitResult* HitResult = new FHitResult();
+FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
 
 
-	//bullet spread
-	float ranX = FMath::RandRange(-50, 50);
-	float ranY = FMath::RandRange(-50, 50);
-	float ranZ = FMath::RandRange(-50, 50);
-	FVector spreadAdjust = FVector(ranX, ranY, ranZ);
+//bullet spread
+float ranX = FMath::RandRange(-50, 50);
+float ranY = FMath::RandRange(-50, 50);
+float ranZ = FMath::RandRange(-50, 50);
+FVector spreadAdjust = FVector(ranX, ranY, ranZ);
 
-	FVector EndTrace = ((forwardVector*20000.f) + StartTrace + spreadAdjust);
+FVector EndTrace = ((forwardVector*20000.f) + StartTrace + spreadAdjust);
 
-	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
 
-	//play firing animation
-	UAnimInstance* AnimInstance = Gun->GetAnimInstance();
-	if (AnimInstance != NULL)
+//play firing animation
+UAnimInstance* AnimInstance = Gun->GetAnimInstance();
+if (AnimInstance != NULL)
+{
+	FName AnimPropName = TEXT("isWalkingForward");
+	if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
 	{
-		FName AnimPropName = TEXT("isWalkingForward");
-		if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
+		UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+		if (myBool != NULL)
 		{
-			UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
-			if (myBool != NULL)
-			{
-				myBool->SetPropertyValue_InContainer(AnimInst, false);
-			}
+			myBool->SetPropertyValue_InContainer(AnimInst, false);
 		}
-
-		FName AnimPropName2 = TEXT("isWalkingRight");
-		if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
-		{
-			UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
-			if (myBool != NULL)
-			{
-				myBool->SetPropertyValue_InContainer(AnimInst, false);
-			}
-		}
-
-		AnimInstance->Montage_Play(FireAnimation, 1.f);
 	}
 
-	WeaponRecoil();
-
-	//spawn gun flash
-	FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
-	AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
-
-	if (Gun0FireSound != NULL)
+	FName AnimPropName2 = TEXT("isWalkingRight");
+	if (UAnimInstance* AnimInst = Gun->GetAnimInstance())
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, Gun0FireSound, GetActorLocation());
-	}
-
-	if (ammoInMagazine > 0) {
-		//this is a raycast from the player character camera
-		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+		UBoolProperty* myBool = FindField<UBoolProperty>(AnimInst->GetClass(), AnimPropName);
+		if (myBool != NULL)
 		{
-			//makes line
-			//DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
-			//makes message
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
-
-			AenemyBaseClass* TestTarget = Cast<AenemyBaseClass>(HitResult->Actor.Get());
-
-			if (TestTarget != NULL && !TestTarget->IsPendingKill())
-			{
-				TestTarget->DamageTarget(gunBaseDamage);
-				HitmarkerOn();
-				UGameplayStatics::PlaySoundAtLocation(this, hitsound, GetActorLocation());
-				GetWorld()->GetTimerManager().SetTimer(hitmarkertimer, this, &AMyCharacter::HitmarkerOff, 0.1f, false);
-				FRotator PlaceHolder; FActorSpawnParameters SpawnParams; AActor* SpawnBloodEffect = GetWorld()->SpawnActor<AActor>(BloodEffect, HitResult->ImpactPoint, PlaceHolder, SpawnParams);
-			}
-
-			FVector_NetQuantizeNormal Locs;
-			FRotator Rots;
-			Locs = HitResult->Location;
-			SpawnBulletImpact(Locs, Rots);
-			
-
+			myBool->SetPropertyValue_InContainer(AnimInst, false);
 		}
 	}
 
-	Inventory->AmmoInWeapon[InventoryIndexEquipped] -= 1;
+	AnimInstance->Montage_Play(FireAnimation, 1.f);
+}
+
+WeaponRecoil();
+
+//spawn gun flash
+FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
+AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
+
+if (Gun0FireSound != NULL)
+{
+	UGameplayStatics::PlaySoundAtLocation(this, Gun0FireSound, GetActorLocation());
+}
+
+if (ammoInMagazine > 0) {
+	//this is a raycast from the player character camera
+	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams))
+	{
+		//makes line
+		//DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
+		//makes message
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
+
+		AenemyBaseClass* TestTarget = Cast<AenemyBaseClass>(HitResult->Actor.Get());
+
+		if (TestTarget != NULL && !TestTarget->IsPendingKill())
+		{
+			TestTarget->DamageTarget(gunBaseDamage);
+			HitmarkerOn();
+			UGameplayStatics::PlaySoundAtLocation(this, hitsound, GetActorLocation());
+			GetWorld()->GetTimerManager().SetTimer(hitmarkertimer, this, &AMyCharacter::HitmarkerOff, 0.1f, false);
+			FRotator PlaceHolder; FActorSpawnParameters SpawnParams; AActor* SpawnBloodEffect = GetWorld()->SpawnActor<AActor>(BloodEffect, HitResult->ImpactPoint, PlaceHolder, SpawnParams);
+		}
+
+		FVector_NetQuantizeNormal Locs;
+		FRotator Rots;
+		Locs = HitResult->Location;
+		SpawnBulletImpact(Locs, Rots);
+
+
+	}
+}
+
+Inventory->AmmoInWeapon[InventoryIndexEquipped] -= 1;
 
 }
 
@@ -883,7 +895,27 @@ void AMyCharacter::SpawnBulletImpact(FVector Loc, FRotator Rot)
 	FActorSpawnParameters SpawnParams;
 	AActor* SpawnedActorRef = GetWorld()->SpawnActor<AActor>(BulletImpact, Loc, Rot, SpawnParams);
 }
-
+void AMyCharacter::MeleeWeaponFire()
+{
+	if (meleeTimer < 1) {
+		FireWeaponOrTool();
+		//after fire
+		MeleeHandler();
+	}
+}
+void AMyCharacter::MeleeHandler()
+{
+	meleeTimer = rateOfFire;
+	DecreaseMeleeTimer();
+}
+void AMyCharacter::DecreaseMeleeTimer()
+{
+	meleeTimer -= 1;
+	if (meleeTimer > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(MeleePin, this, &AMyCharacter::DecreaseMeleeTimer, 2.0f, false);
+    }
+}
 void AMyCharacter::SemiAutomaticFire()
 {
 
@@ -932,6 +964,7 @@ void AMyCharacter::OnFire()
 		case 0: if (ammoInMagazine > 0) { SemiAutomaticFire(); } break;
 		case 1: if (ammoInMagazine > 0) { FullyAutomaticFire(); } break;
 		case 2: GatherWater(); break;
+		case 3: MeleeWeaponFire();
 		}
 	}
 }
@@ -1014,7 +1047,7 @@ bool AMyCharacter::CheckLoaderChecker()
 {
 	bool retval = false;
 
-	FString Location = "/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
+	FString Location = "/tmp/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
 	TArray<FString> LoadedFile;
 	//Load the file into an array, each line is saved as an array element. These lines are Comma Separated Values
 	FFileHelper::LoadANSITextFileToStrings(*Pathf, NULL, LoadedFile);
@@ -1030,7 +1063,7 @@ bool AMyCharacter::CheckLoaderChecker()
 
 void AMyCharacter::SetLoaderChecker()
 {
-	FString Location = "/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
+	FString Location = "/tmp/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
 	FString savee = "false";
 	FFileHelper::SaveStringToFile(savee, *Pathf, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 }

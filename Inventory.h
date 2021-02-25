@@ -114,5 +114,15 @@ public:
 	void SpendBullet(int ItemID);
 
 	int NumberOfItemsWithSpecifiedId(int id);
+
+
+	UFUNCTION(BlueprintCallable, Category = "functions")
+		void SaveInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "item stats")
+		void LoadInventory();
+
+	FString boolConv(bool in);
+	bool boolConvOut(FString in);
 		
 };

@@ -45,4 +45,20 @@ public:
 		float IntensityMultiplier;
 	void SetSunHeight();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "rain")
+		TSubclassOf<AActor> defaultRain;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "rain")
+		AActor* liveRain;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "rain")
+		float amountOfRain;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "rain")
+		float rainthreshold;
+
+	void SpawnRain();
+	void DestroyRain();
+
+
 };

@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Inventory.h"
-#include "CraftCalculator.generated.h"
+#include "BuildCalculator.generated.h"
 
 UCLASS()
-class VALH_API ACraftCalculator : public AActor
+class VALH_API ABuildCalculator : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACraftCalculator();
+	ABuildCalculator();
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,9 +25,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, category = "crafting")
-	TArray<int> getIdsOfCraftableItems();
+		TArray<int> getIdsOfBuildableItems();
 
-	
+
 	bool getCanCraftItem(int ItemId);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "defaults")

@@ -13,6 +13,8 @@ ADayNightCycle::ADayNightCycle()
 	PrimaryActorTick.bCanEverTick = true;
 	hour = 9;
 	min = 0;
+	rainthreshold = 10.0f;
+	amountOfRain = 0.0f;
 	//hour = 3;
 	//min = 55;
 }
@@ -44,8 +46,37 @@ void ADayNightCycle::UpdateTime()
 	AMyCharacter* MyChar = Cast<AMyCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MyChar->SetHoursMinutes(hour, min);
 
+	
+
+	if (liveRain != NULL) {
+		liveRain->SetActorTransform(MyChar->GetTransform());
+		amountOfRain -= FMath::FRandRange(0.1, 0.5);
+
+		if (amountOfRain < 1) {
+			DestroyRain();
+		}
+	}
+	else {
+		amountOfRain += FMath::FRandRange(0.1, 0.5);
+
+		if (amountOfRain > rainthreshold) {
+			if (FMath::FRandRange(0, 1000) > 995) {
+				SpawnRain();
+			}
+		}
+	}
+
 	//initally every 1.0f; turned min to dloat and set to .25f for smoothness
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADayNightCycle::UpdateTime, .0625f, false);
+
+}
+void ADayNightCycle::SpawnRain() {
+	FActorSpawnParameters SpawnParams;
+	FRotator Rots; FVector x;
+	liveRain = GetWorld()->SpawnActor<AActor>(defaultRain, x, Rots, SpawnParams);
+}
+void ADayNightCycle::DestroyRain() {
+	liveRain->Destroy();
 }
 
 void ADayNightCycle::ResetMinutes()

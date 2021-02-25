@@ -30,6 +30,15 @@ void AMainMenuActorDevice::Tick(float DeltaTime)
 
 }
 
+TArray<FString> AMainMenuActorDevice::GetSaveGameNames() {
+	TArray<FString> FileNames;
+	FString NamesFile= "/SaveGames/SaveFileNames.txt";
+	FString filepath_for_player_names = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + NamesFile;
+	TArray<FString> playernamedata; FFileHelper::LoadANSITextFileToStrings(*filepath_for_player_names, NULL, playernamedata);
+	FileNames = playernamedata;
+	return FileNames;
+}
+
 //This really needs something to make sure the player isn't using the name of an already existing savefile
 //ALTERNATIVELY - the actual save directory should be indexed, and there should be a table matching save files to names, allowing for identical names
 void AMainMenuActorDevice::NewGame(FString newName)
@@ -40,7 +49,7 @@ void AMainMenuActorDevice::NewGame(FString newName)
 	FFileManagerGeneric::Get().MakeDirectory(x, false);
 
 	//set a file stating whicbh player is currently being used, to be accessed by the next loaded map
-	FString LetGameKnowActiveSave = "/ActivePlayer.txt"; FString ActiveSave = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + LetGameKnowActiveSave;
+	FString LetGameKnowActiveSave = "/tmp/ActivePlayer.txt"; FString ActiveSave = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + LetGameKnowActiveSave;
 	FFileHelper::SaveStringToFile(newName, *ActiveSave, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 
 	SetLoadIntoCheckerToTrue();
@@ -48,9 +57,16 @@ void AMainMenuActorDevice::NewGame(FString newName)
 	
 }
 
+//TODO: A repair method to create an activeplayer, toggle, and other files if the user destroys them 
+
+void AMainMenuActorDevice::SetActivePlayerName(FString namex) {
+	FString LetGameKnowActiveSave = "/tmp/ActivePlayer.txt"; FString ActiveSave = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + LetGameKnowActiveSave;
+	FFileHelper::SaveStringToFile(namex, *ActiveSave, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+}
+
 void AMainMenuActorDevice::SetLoadIntoCheckerToTrue()
 {
-	FString Location = "/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
+	FString Location = "/tmp/ToggleMainMenuAndActiveCharacterBP.txt"; FString Pathf = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + Location;
 	FString savee = "true"; 
 	FFileHelper::SaveStringToFile(savee, *Pathf, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 }
