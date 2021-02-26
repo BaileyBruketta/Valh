@@ -1,19 +1,19 @@
-0, Whitewater Special, 11, 6
-1, Freedom Fighter, 12, 30
+0, Whitewater Special, 14, 6
+1, Freedom Fighter, 15, 30
 2, emptySpaceAvailableForItemToBePutHere, 6666, 6666
-3, Old English, 13, 30
+3, Old English, 16, 30
 4, emptySpaceAvailableForItemToBePutHere, 6666, 6666
 5, Fur Cloth, 6666, 6666
 6, Meat Steak, 6666, 6666
-7, Short Stack, 14, 30
+7, Short Stack, 17, 30
 8, Plastic Container, 6666, 6666
 9, Wood, 6666, 6666
 10, Wood, 6666, 6666
 11, Wood, 6666, 6666
 12, Wood, 6666, 6666
-13, American Metal, 15, 30
+13, American Metal, 18, 30
 14, .45 ACP, 6666, 6666
-15, 7.62 Russian Short, 6666, 6666
+15, 7.62 x 39 Russian Short, 6666, 6666
 16, 9 x 19 Parabellum, 6666, 6666
 17, 5.45 x 39 Devil's Bullet, 6666, 6666
 18, 5.56 x 45 NATO .223, 6666, 6666
@@ -22,3 +22,7 @@
 21, Small Fire, 6666, 6666
 22, Full Beer, 6666, 6666
 23, Full Whiskey, 6666, 6666
+24, D-Day, 11, 13
+25, Backwater, 27, 6
+26, Skinwalker, 15, 10
+27, .380 ACP, 6666, 6666

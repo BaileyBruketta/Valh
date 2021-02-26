@@ -619,13 +619,15 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 			Gun->SetAnimClass(Gun8AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun8FireAnimation;
 			currentFireType = 2;
+			break;
 
-	case 10: Gun->SetSkeletalMesh(Gun10MeshReference); SetGunVariables(10);
+	case 13: Gun->SetSkeletalMesh(Gun10MeshReference); SetGunVariables(13);
 		Gun->SetAnimClass(Gun10AnimReference->GetAnimBlueprintGeneratedClass());
 		FireAnimation = Gun10FireAnimation;
 		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 		currentFireType = 1; rateOfFire = 0.07f;
+		break;
 
 	case 20: Gun->SetSkeletalMesh(Gun20MeshReference); MeshMagazine->SetSkeletalMesh(Gun20AxeHead); SetGunVariables(20);
 		Gun->SetAnimClass(Gun20AnimReference->GetAnimBlueprintGeneratedClass());
@@ -634,6 +636,33 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 		currentFireType = 3; rateOfFire = 5.0f;
+		break;
+
+	case 24: Gun->SetSkeletalMesh(Gun24MeshReference); SetGunVariables(24);
+		Gun->SetAnimClass(Gun24AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun24FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 0;
+		break;
+
+	case 25: Gun->SetSkeletalMesh(Gun25MeshReference); SetGunVariables(25);
+		Gun->SetAnimClass(Gun25AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun25FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 0;
+		break;
+
+	case 26: Gun->SetSkeletalMesh(Gun26MeshReference); SetGunVariables(26);
+		Gun->SetAnimClass(Gun26AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun26FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 0;
+		break;
+
+
 	}
 
 	CurrentEquippedWeapon = gunNumber;
@@ -747,7 +776,7 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 
 	case 8: break;
 
-	case 10:
+	case 13:
 		//RelativeGunlocation.Set(-6.0f, 79.0f, 145.0f); Gun->SetRelativeLocation(RelativeGunlocation);
 		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 270.0f; Gun->SetRelativeRotation(GunRotation);
 		GunScale.X = 0.15f; GunScale.Y = 0.15f; GunScale.Z = 0.15f; Gun->SetRelativeScale3D(GunScale);
@@ -795,6 +824,81 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		IntermediaryLocation.Set(45.0f, 8.0f, 145.029f); ADSIntermediaryLocation.Set(77.0f, -14.1f, 120.5f);
 
 		gunBaseDamage = 35;
+		break;
+
+	case 24:
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 0.4f; GunScale.Y = 0.4f; GunScale.Z = 0.4f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = -90.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 1.0f; MagazineScale.Y = 1.0f; MagazineScale.Z = 1.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = -14.11f; AdsRelativeGunLocation.Y = 0.0f; AdsRelativeGunLocation.Z = 0.0f;
+		AdsGunRotation.Roll = 352.8f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 7.2f;
+
+		//arms
+		ArmScale.X = 3.0f; ArmScale.Y = 3.0f; ArmScale.Z = 3.0f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = 27.0f; RelativeLeftArmLocation.Y = -117.0f; RelativeLeftArmLocation.Z = 30.0f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = 273.0f; RelativeLeftArmRotation.Yaw = 93.58f; RelativeLeftArmRotation.Roll = 187.0f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -21.0f; RelativeRightArmLocation.Y = -112.94f; RelativeRightArmLocation.Z = 30.0f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = 266.39f; RelativeRightArmRotation.Yaw = 279.39f; RelativeRightArmRotation.Roll = 341.3f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(71.0f,-3.0f,134.0f); ADSIntermediaryLocation.Set(49.0f, -3.0f, 145.0f);
+
+		gunBaseDamage = 30;
+		break;
+
+	case 25:
+		//RelativeGunlocation.Set(-3.0f, 43.0f, 150.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = -0.28312f; GunRotation.Pitch = -0.0022f; GunRotation.Yaw = 0.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineScale.X = 0.0f; MagazineScale.Y = 0.0f; MagazineScale.Z = 0.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+
+		AdsRelativeGunLocation.X = 0.076412f; AdsRelativeGunLocation.Y = 43.0f; AdsRelativeGunLocation.Z = 154.0f;
+		AdsGunRotation.Roll = -0.000001f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 90.000008f;
+
+		//arms
+		ArmScale.X = .02f; ArmScale.Y = .02f; ArmScale.Z = .02f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = 0.186158f; RelativeLeftArmLocation.Y = -0.48665f; RelativeLeftArmLocation.Z = -0.01687f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -86.3908f; RelativeLeftArmRotation.Yaw = -0.02571f; RelativeLeftArmRotation.Roll = -61.167f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -0.14423f; RelativeRightArmLocation.Y = -0.51406f; RelativeRightArmLocation.Z = -0.11239f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -75.5992f; RelativeRightArmRotation.Yaw = 151.1990f; RelativeRightArmRotation.Roll = 111.5992f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(49.0f, -7.0f, 149.3649f); ADSIntermediaryLocation.Set(68.0f, -14.0f, 145.0f);
+
+		gunBaseDamage = 45;
+		break;
+	case 26:
+		//RelativeGunlocation.Set(-14.0f, 85.0f, 116.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+
+		GunRotation.Roll = 0.0f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 1.8f; GunScale.Y = 1.8f; GunScale.Z = 1.8f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = 270.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 0.01f; MagazineScale.Y = 0.01f; MagazineScale.Z = 0.01f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = -14.2045f; AdsRelativeGunLocation.Y = 0.0f; AdsRelativeGunLocation.Z = 0.0f;
+		AdsGunRotation.Roll = 0.0f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 0.0f;
+
+		//arms
+		ArmScale.X = 0.9f; ArmScale.Y = 0.9f; ArmScale.Z = 0.9f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = 10.82252f; RelativeLeftArmLocation.Y = 11.98381f; RelativeLeftArmLocation.Z = -12.0621f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -20.5727f; RelativeLeftArmRotation.Yaw = 198.751f; RelativeLeftArmRotation.Roll = -238.982f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -3.4584f; RelativeRightArmLocation.Y = -34.7869f; RelativeRightArmLocation.Z = 11.11032f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -78.5222f; RelativeRightArmRotation.Yaw = 164.8864f; RelativeRightArmRotation.Roll = 103.4948f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(76.99831f, 4.0f, 107.999f); ADSIntermediaryLocation.Set(80.19999f, -14.0f, 117.84999f);
+
+		gunBaseDamage = 23;
+		break;
 
 	}
 

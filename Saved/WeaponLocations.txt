@@ -1,0 +1,2 @@
+num, GRroll,GRpi,GRya, GSx,GSy,GSz, MSx,MSy,MSz, ARGLx,   ARGLy,ARGLz,  AGRr,     AGRp,AGRy,  ASx, ASy, ASz,   RLALx,    RLALy,    RLALz,     RLARp,   RLARy,    RLARr,      RRALx,    RRALy,   RRALz,     RRARp,   RRARy,    RRARr,      ILx, ILy,ILz,  ADSLx,ADSLy,ADSLz,  GBD
+0,   0,     0,   88,   0.2,0.2,0.2, 0,  0,  0,   0.076412,43,   154,    -0.000001,0,   90,    0.05,0.05,0.05,  -1.387729,-0.004257,0.087819,  -0.71068,98.032173,82.647003,  -1.447519,0.149462,0.451750,  11.96087,84.421829,78.219543,  61.0,-9, 145,  49,   -9,   150,    40

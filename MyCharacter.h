@@ -221,6 +221,43 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class USkeletalMesh* Gun20AxeHead;
 
+	//////////////////////////////////////////////////////////////////////////////         D Day
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun24MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun24AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun24MagazineMeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun24FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////        Backwater
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun25MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun25AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun25FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////        Skinwalker
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun26MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun26AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun26FireAnimation;
+
+
 	//Body Parts
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body Parts")
 		class USkeletalMesh* RightArmPart;
