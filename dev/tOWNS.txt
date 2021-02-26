@@ -1,0 +1,29 @@
+exis, names, locations, dialogues, decorated town
+Blitzkrau  - 25/25/25/0/0 (Shtalton) 
+Cebwon     - 22/22/22/0/0 (Shtalton)
+Eastpointe - 13/13/13/0 (Shtalton)
+RiverWater - 22/22/5/0/0   (Shtalton)
+Doville    - 13/13/13/0 (Shrion)
+Oasis      -  5/5/0/0/0   (Shrion)
+Harbortwon - 18/1/0/0/0  (Helpelia)
+Falessa    - 24/24/22/0/0 (Helpelia)
+Wilds Var. - 5/5/5/0/0
+Dorsal Village 8/8/0/0/0 (Dackleroy)
+Southville    18/18/0/0/0 (Dackleroy)
+Berg Island   15/15/15/0/0 (Dackleroy)
+Metropolis    25/0/0/0/0 (Dackleroy)
+Skrib City    12/12/0/0/0 (Dackleroy)
+Farplain      43/0/0/0/0 (EastWind)
+Honeyville    22/0/0/0/0 (EastWind)
+Shackleheart  58/0/0/0/0 (CitySpeak)
+Night Village 18/0/0/0/0 (CitySpeak)
+Great Wraith    15/0/0/0/0 (Grove)
+Highpointe      8/8/0/0/0 (Grove)
+Fort Headsworth 22/22/0/0/0 (Grove)
+Bowsmith        15/15/0/0/0 (Grove)
+Kupline         25/0/0/0/0 (Grove)
+Crow City       42/0/0/0/0 (Falkis Core)
+Lion's Tooth    29/0/0/0/0 (Falkis Core)
+
+522/227/120/0/0
+
