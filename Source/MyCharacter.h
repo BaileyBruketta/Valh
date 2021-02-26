@@ -257,6 +257,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class UAnimMontage* Gun26FireAnimation;
 
+	//////////////////////////////////////////////////////////////////////////////        NT-7Z
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun28MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun28AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun28FireAnimation;
+
 
 	//Body Parts
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Body Parts")
@@ -271,6 +282,9 @@ public:
 	//Gun Flash
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		TSubclassOf<AActor> GunFlash;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		TSubclassOf<AActor> smallBulletCasing;
 
 
 	//This is the base function called, from here, a seconday "Hashmap" functions will be called to grab locations for guns 

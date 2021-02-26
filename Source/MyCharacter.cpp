@@ -662,6 +662,14 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 		currentFireType = 0;
 		break;
 
+	case 28: Gun->SetSkeletalMesh(Gun28MeshReference); SetGunVariables(28);
+		Gun->SetAnimClass(Gun28AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun28FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 1; rateOfFire = 0.08f;
+		break;
+
 
 	}
 
@@ -900,6 +908,33 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		gunBaseDamage = 23;
 		break;
 
+	case 28:
+		//RelativeGunlocation.Set(-14.0f, 85.0f, 116.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+
+		GunRotation.Roll = 7.2f; GunRotation.Pitch = -1.0f; GunRotation.Yaw = 180.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 2.0f; GunScale.Y = 2.0f; GunScale.Z = 2.0f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = 270.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 0.01f; MagazineScale.Y = 0.01f; MagazineScale.Z = 0.01f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = -12.82f; AdsRelativeGunLocation.Y = 0.0f; AdsRelativeGunLocation.Z = 0.0f;
+		AdsGunRotation.Roll = 7.2f; AdsGunRotation.Pitch = -1.0f; AdsGunRotation.Yaw = 180.0f;
+
+		//arms
+		ArmScale.X = 0.8f; ArmScale.Y = 0.8f; ArmScale.Z = 0.8f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = -7.82f; RelativeLeftArmLocation.Y = 3.654f; RelativeLeftArmLocation.Z = 6.3634f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -9.52532f; RelativeLeftArmRotation.Yaw = 104.268f; RelativeLeftArmRotation.Roll = 12.13496f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = 7.374845f; RelativeRightArmLocation.Y = -0.21207f; RelativeRightArmLocation.Z = 27.11080f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -2.06621f; RelativeRightArmRotation.Yaw = 79.670f; RelativeRightArmRotation.Roll = -12.8216f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(111.0f, 6.0f, 127.0f); ADSIntermediaryLocation.Set(77.0f, 2.0f, 149.0f);
+
+		gunBaseDamage = 16;
+		break;
+
 	}
 
 	Intermediary->SetRelativeLocation(IntermediaryLocation);
@@ -955,6 +990,9 @@ WeaponRecoil();
 //spawn gun flash
 FRotator xx; FVector zz = FP_MuzzleLocation->GetComponentLocation(); FActorSpawnParameters SpawnParams;
 AActor* GunFlashSpawned = GetWorld()->SpawnActor<AActor>(GunFlash, zz, xx, SpawnParams);
+AActor* BulletCasingSpawned = GetWorld()->SpawnActor<AActor>(smallBulletCasing, Gun->GetSocketLocation(TEXT("case")), xx, SpawnParams);
+//AActor* BulletCasingSpawned = GetWorld()->SpawnActor<AActor>(smallBulletCasing, zz, xx, SpawnParams);
+
 
 if (Gun0FireSound != NULL)
 {
