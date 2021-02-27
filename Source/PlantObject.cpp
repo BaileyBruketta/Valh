@@ -24,3 +24,7 @@ void APlantObject::Tick(float DeltaTime)
 
 }
 
+void APlantObject::PlantSeed() {
+
+}
+

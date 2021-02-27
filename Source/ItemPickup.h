@@ -69,6 +69,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		int ContentsID;  //eg. -fresh water is 1, empty is 0
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		int amount;  //ie : seeds - pick up 1 item and get 20 seeds
+
 	UFUNCTION(BlueprintCallable, Category = "item grabbed")
 		int GetCont();
 
@@ -88,5 +91,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Questing")
 		int GetNumberCompleted();
+
+
 
 };

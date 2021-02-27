@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine.h"
+#include "FarmActor.h"
 #include "enemybaseClass.h"
 #include "GameFramework/InputSettings.h"
 
@@ -22,7 +23,7 @@ AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	SeedEquipped = 0;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -607,6 +608,14 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 			currentFireType = 1; rateOfFire = 0.06f; 
 		break;
 
+	case 4: Gun->SetSkeletalMesh(Gun4MeshReference); SetGunVariables(4);
+		Gun->SetAnimClass(Gun4AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun4FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 4; rateOfFire = 5.0f;
+		break;
+
 	case 7: Gun->SetSkeletalMesh(Gun7MeshReference); MeshMagazine->SetSkeletalMesh(Gun7WoodenParts); SetGunVariables(7);
 			Gun->SetAnimClass(Gun7AnimReference->GetAnimBlueprintGeneratedClass());
 			FireAnimation = Gun7FireAnimation;
@@ -668,6 +677,14 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
 		currentFireType = 1; rateOfFire = 0.08f;
+		break;
+
+	case 30: Gun->SetSkeletalMesh(Gun30MeshReference); SetGunVariables(30);
+		Gun->SetAnimClass(Gun30AnimReference->GetAnimBlueprintGeneratedClass());
+		FireAnimation = Gun30FireAnimation;
+		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
+		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
+		currentFireType = 5; rateOfFire = 0.08f;
 		break;
 
 
@@ -755,6 +772,29 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		IntermediaryLocation.Set(77.0f, -4.0f, 120.5f); ADSIntermediaryLocation.Set(59.0f, -15.9f, 125.f);
 
 		gunBaseDamage = 10;
+		break;
+
+	case 4:
+		//RelativeGunlocation.Set(-9.0f, 80.0f, 125.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+		GunRotation.Roll = 273.599f; GunRotation.Pitch = 0.0f; GunRotation.Yaw = 0.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 1.0f; GunScale.Y = 1.0f; GunScale.Z = 1.0f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineScale.X = 0.0f; MagazineScale.Y = 0.0f; MagazineScale.Z = 0.0f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+
+		AdsRelativeGunLocation.X = 2.20f; AdsRelativeGunLocation.Y = 84.0f; AdsRelativeGunLocation.Z = 125.4f;
+		AdsGunRotation.Roll = 273.599f; AdsGunRotation.Pitch = 0.0f; AdsGunRotation.Yaw = 0.0f;
+
+		//arms
+		ArmScale.X = .025; ArmScale.Y = .025; ArmScale.Z = .025;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+		RelativeLeftArmLocation.X = 0.258656f; RelativeLeftArmLocation.Y = -0.749805f; RelativeLeftArmLocation.Z = -0.048086f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -58.591228f; RelativeLeftArmRotation.Yaw = 32.205643f; RelativeLeftArmRotation.Roll = -116.262787f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = -0.284246f; RelativeRightArmLocation.Y = -0.727555f; RelativeRightArmLocation.Z = -0.251357f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -68.481956f; RelativeRightArmRotation.Yaw = 107.846153f; RelativeRightArmRotation.Roll = 148.189743f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(113.0f, -1.0f, 145.0f); ADSIntermediaryLocation.Set(113.0f, -1.0f, 145.0f);
+
+		gunBaseDamage = 8;
 		break;
 
 	case 7:
@@ -935,6 +975,33 @@ void AMyCharacter::SetGunVariables(int gunNumber)
 		gunBaseDamage = 16;
 		break;
 
+	case 30:
+		//RelativeGunlocation.Set(-14.0f, 85.0f, 116.0f); Gun->SetRelativeLocation(RelativeGunlocation);
+
+		GunRotation.Roll = 7.2f; GunRotation.Pitch = -1.0f; GunRotation.Yaw = 180.0f; Gun->SetRelativeRotation(GunRotation);
+		GunScale.X = 2.0f; GunScale.Y = 2.0f; GunScale.Z = 2.0f; Gun->SetRelativeScale3D(GunScale);
+
+		MagazineRotation.Roll = 270.f; MagazineRotation.Pitch = 0.0f; MagazineRotation.Yaw = 0.0f; MeshMagazine->SetRelativeRotation(MagazineRotation);
+		MagazineScale.X = 0.01f; MagazineScale.Y = 0.01f; MagazineScale.Z = 0.01f; MeshMagazine->SetRelativeScale3D(MagazineScale);
+		RelativeMagazineLocation.X = 0.0f; RelativeMagazineLocation.Y = 0.152f; RelativeMagazineLocation.Z = 0.0f; MeshMagazine->SetRelativeLocation(RelativeMagazineLocation);
+
+		AdsRelativeGunLocation.X = -12.82f; AdsRelativeGunLocation.Y = 0.0f; AdsRelativeGunLocation.Z = 0.0f;
+		AdsGunRotation.Roll = 7.2f; AdsGunRotation.Pitch = -1.0f; AdsGunRotation.Yaw = 180.0f;
+
+		//arms
+		ArmScale.X = 0.8f; ArmScale.Y = 0.8f; ArmScale.Z = 0.8f;
+		LeftArm->SetRelativeScale3D(ArmScale); RightArm->SetRelativeScale3D(ArmScale);
+
+		RelativeLeftArmLocation.X = -7.82f; RelativeLeftArmLocation.Y = 3.654f; RelativeLeftArmLocation.Z = 6.3634f; LeftArm->SetRelativeLocation(RelativeLeftArmLocation);
+		RelativeLeftArmRotation.Pitch = -9.52532f; RelativeLeftArmRotation.Yaw = 104.268f; RelativeLeftArmRotation.Roll = 12.13496f; LeftArm->SetRelativeRotation(RelativeLeftArmRotation);
+		RelativeRightArmLocation.X = 7.374845f; RelativeRightArmLocation.Y = -0.21207f; RelativeRightArmLocation.Z = 27.11080f; RightArm->SetRelativeLocation(RelativeRightArmLocation);
+		RelativeRightArmRotation.Pitch = -2.06621f; RelativeRightArmRotation.Yaw = 79.670f; RelativeRightArmRotation.Roll = -12.8216f; RightArm->SetRelativeRotation(RelativeRightArmRotation);
+
+		IntermediaryLocation.Set(111.0f, 6.0f, 127.0f); ADSIntermediaryLocation.Set(77.0f, 2.0f, 149.0f);
+
+		gunBaseDamage = 0;
+		break;
+
 	}
 
 	Intermediary->SetRelativeLocation(IntermediaryLocation);
@@ -1106,8 +1173,49 @@ void AMyCharacter::OnFire()
 		case 0: if (ammoInMagazine > 0) { SemiAutomaticFire(); } break;
 		case 1: if (ammoInMagazine > 0) { FullyAutomaticFire(); } break;
 		case 2: GatherWater(); break;
-		case 3: MeleeWeaponFire();
+		case 3: ammoInMagazine = 1; MeleeWeaponFire();
+		case 4: ammoInMagazine = 1; MeleeWeaponFire(); TryMakeDirt();  break;
+		case 5: TryPlantSeed();  break;
 		}
+	}
+}
+
+void AMyCharacter::TryPlantSeed() {
+	FHitResult* HitResult = new FHitResult();
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
+	FVector EndTrace = ((forwardVector*20000.f) + StartTrace);
+
+	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams)) {
+
+		APlantObject* TestTarget = Cast<APlantObject>(HitResult->Actor.Get());
+		if (TestTarget != NULL && !TestTarget->IsPendingKill()) {
+			TestTarget->PlantSeed();
+		}
+	}
+}
+
+void AMyCharacter::TryMakeDirt() {
+	FHitResult* HitResult = new FHitResult();
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector forwardVector = FirstPersonCameraComponent->GetForwardVector();
+	FVector EndTrace = ((forwardVector*20000.f) + StartTrace);
+	HEALTH = 1; STAMINA = 1; HUNGER = 1; WATER = 1; FATIGUE = 1;
+	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+	if (STAMINA > 0.05f) {
+		if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams)) {
+
+			if (FVector::Distance(HitResult->Location, GetActorLocation()) < 100.0f) {
+				//make dirt
+				farmClass->AddDirt(HitResult->Location);
+			}
+
+		}
+		STAMINA -= .01f;
+		FATIGUE -= .01f;
+		WATER -= .01f;
+		HUNGER -= .01f;
 	}
 }
 

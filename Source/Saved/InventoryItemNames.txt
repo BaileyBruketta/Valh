@@ -2,7 +2,7 @@
 1, Freedom Fighter, 15, 30
 2, emptySpaceAvailableForItemToBePutHere, 6666, 6666
 3, Old English, 16, 30
-4, emptySpaceAvailableForItemToBePutHere, 6666, 6666
+4, Shovel, 6666, 6666
 5, Fur Cloth, 6666, 6666
 6, Meat Steak, 6666, 6666
 7, Short Stack, 17, 30
@@ -26,3 +26,7 @@
 25, Backwater, 27, 6
 26, Skinwalker, 15, 10
 27, .380 ACP, 6666, 6666
+28, NT-7Z, 29, 20  
+29, 4.6 x 30 NATO, 6666, 6666
+30, Potato Seed Bag, 31, 500
+31, Potato Seed, 6666, 6666

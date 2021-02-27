@@ -9,3 +9,5 @@ Cubeot,1,3,9
 Wolf,2,5,10
 Wavedog,1,6,11
 Crow,8,20,12
+NFK-Q15,1,2,1
+CRE54,2,15,3

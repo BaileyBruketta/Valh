@@ -31,7 +31,13 @@ public:
 		TSubclassOf<class AenemyBaseClass> enemiesToInclude0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
 		TSubclassOf<class AenemyBaseClass> enemiesToInclude2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemies")
+		TSubclassOf<class AenemyBaseClass> enemiesToInclude3;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Enemies")
 		TSubclassOf<class AenemyBaseClass> enemiesToInclude4;

@@ -95,6 +95,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "QuestManager")
 		TSubclassOf<AActor> QuestManagerDefault;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+		class AFarmActor* farmClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+		TSubclassOf<AActor> farmClassDefault;
+
 	/** Sound to play each time we pick up an item */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class USoundBase* PickupSound;
@@ -134,7 +140,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimMontage* FireAnimation;
 
-	
+	int SeedEquipped;
 
 	// TOOLS, WEAPONS, EQUIPMENT
 
@@ -267,6 +273,28 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
 		class UAnimMontage* Gun28FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////        Shovel
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun4MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun4AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun4FireAnimation;
+
+	//////////////////////////////////////////////////////////////////////////////        seed bag
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class USkeletalMesh* Gun30MeshReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimBlueprint* Gun30AnimReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guns")
+		class UAnimMontage* Gun30FireAnimation;
 
 
 	//Body Parts
@@ -495,4 +523,7 @@ public:
 		void AddBullet();
 
 		int pitchReset;
+
+		void TryMakeDirt();
+		void TryPlantSeed();
 };

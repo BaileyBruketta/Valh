@@ -26,4 +26,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Mesh")
 		UStaticMesh* plantMesh;
 
+	void PlantSeed();
+
 };

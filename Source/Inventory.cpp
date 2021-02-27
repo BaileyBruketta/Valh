@@ -220,7 +220,8 @@ int AInventory::GetGunNumber(int ItemID)
 	{
 	case 0 : gunNumber = 0;  break;
 	case 1:  gunNumber = 1;  break;
-	case 2:
+	case 2: break;
+	case 4:  gunNumber = 4; break;
 	case 3:  gunNumber = 3;  break;
 	case 7:  gunNumber = 7;  break;
 	case 8:  gunNumber = 8;  break;
@@ -230,6 +231,7 @@ int AInventory::GetGunNumber(int ItemID)
 	case 25: gunNumber = 25; break;
 	case 26: gunNumber = 26; break;
 	case 28: gunNumber = 28; break;
+	case 30: gunNumber = 30; break;
 	}
 
 	return gunNumber;
@@ -247,6 +249,7 @@ int AInventory::GetGunDamage(int ItemID)
 		gunDamage = 20;
 		break;
 	case 2 :
+	case 4: gunDamage = 8; break;
 	case 3 :
 		gunDamage = 9;
 		break;
@@ -260,6 +263,7 @@ int AInventory::GetGunDamage(int ItemID)
 	case 25: gunDamage = 45; break;
 	case 26: gunDamage = 23; break;
 	case 28: gunDamage = 16; break;
+	case 30: gunDamage = 0; break;
 	}
 
 	return gunDamage;
@@ -277,6 +281,7 @@ FString AInventory::GetWeaponCaliber(int itemID)
 	case 0: ItemCaliber = ".45 ACP"; break;
 	case 1: ItemCaliber = "7.62 x 39 Russian Short"; break;
 	case 3: ItemCaliber = "9 x 19 Parabellum"; break;
+	case 4: ItemCaliber = "Shovel"; break;
 	case 7: ItemCaliber = "5.45 x 39 Devil's Bullet "; break;
 	case 8: ItemCaliber = "Plastic Container"; break;
 	case 13: ItemCaliber = "5.56  x 45 NATO .223"; break;
@@ -286,6 +291,7 @@ FString AInventory::GetWeaponCaliber(int itemID)
 	case 25: ItemCaliber = ".380 ACP"; break;
 	case 26: ItemCaliber = "7.62 x 39 Russian Short"; break;
 	case 28: ItemCaliber = "4.6 x 30 NATO"; break;
+	case 30: ItemCaliber = "Potato Seed"; break;
 	}
 
 	return ItemCaliber;
@@ -304,6 +310,7 @@ FString AInventory::GetAmmoCaliber(int index)
 	case 4: AmmoCal = "5.56  x 45 NATO .223"; break;
 	case 5: AmmoCal = ".380 ACP"; break;
 	case 6: AmmoCal = "4.6 x 30 NATO"; break;
+	case 7: AmmoCal = "Potato Seed"; break;
 	}
 
 	return AmmoCal;
