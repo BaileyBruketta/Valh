@@ -526,4 +526,6 @@ public:
 
 		void TryMakeDirt();
 		void TryPlantSeed();
+
+		int PlantSeedSelected;
 };

@@ -52,18 +52,38 @@ void AFarmActor::AddAndGenerateDirtAtLocation(FVector location, int number) {
 
 }
 
+void AFarmActor::SeeIfPlantHasBeenPlanted(int number) {
+	if (plantNumber[number] != spawnedPlantObjects[number]->numseedplanted) {
+		if (spawnedPlantObjects[number]->numseedplanted != 0) {
+			plantNumber[number] = spawnedPlantObjects[number]->numseedplanted;
+		}
+		else if (spawnedPlantObjects[number]->numseedplanted == 0) {
+			spawnedPlantObjects[number]->numseedplanted = plantNumber[number];
+		}
+
+	}
+}
+
 void AFarmActor::PlantUpdate() {
 	//for each plant
 	playerlocation = playerCharacterReference->GetActorLocation();
 	for (int i = 0; i < numberofplants; i++) {
 		//if there is a plant/dirt in this slot 
 		if (dirtBool[i] == true) {
-			//stats 
-			if (plantWaterLevel[i] > 0) { plantWaterLevel[i] -= .01f; }
-			if (plantWaterLevel[i] < 5) { plantHealth[i] -= .5f; }
-			
-			//to do - plants die
 
+
+			//see if a plant has been planted since last check
+			//if so , change saved number
+			//SeeIfPlantHasBeenPlanted(i);
+
+			if (plantNumber[i] != 0) {
+
+				//stats 
+				if (plantWaterLevel[i] > 0) { plantWaterLevel[i] -= .01f; }
+				if (plantWaterLevel[i] < 5) { plantHealth[i] -= .5f; }
+
+				//to do - plants die
+			}
 
 			//rendering
 			//if within range

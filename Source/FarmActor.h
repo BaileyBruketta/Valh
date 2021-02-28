@@ -64,4 +64,5 @@ public:
 	ACharacter* playerCharacterReference;
 	bool distanceCheck(FVector plantlocation);
 	FVector playerlocation;
+	void SeeIfPlantHasBeenPlanted(int number);
 };

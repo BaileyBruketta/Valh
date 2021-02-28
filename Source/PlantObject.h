@@ -26,6 +26,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Mesh")
 		UStaticMesh* plantMesh;
 
-	void PlantSeed();
+	UFUNCTION(Blueprintcallable, Category = "functions")
+		void PlantSeed(int seednum); 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Mesh")
+		int numseedplanted;
+	
 
 };

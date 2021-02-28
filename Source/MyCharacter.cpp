@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine.h"
+#include "PlantObject.h"
 #include "FarmActor.h"
 #include "enemybaseClass.h"
 #include "GameFramework/InputSettings.h"
@@ -133,6 +134,7 @@ AMyCharacter::AMyCharacter()
 	pitchReset = 0;
 
 	meleeTimer = 0;
+	PlantSeedSelected = 0;
 }
 
 // Called when the game starts or when spawned
@@ -679,12 +681,13 @@ void AMyCharacter::ChangeGunEquipped(int gunNumber)
 		currentFireType = 1; rateOfFire = 0.08f;
 		break;
 
+		//potato seed
 	case 30: Gun->SetSkeletalMesh(Gun30MeshReference); SetGunVariables(30);
 		Gun->SetAnimClass(Gun30AnimReference->GetAnimBlueprintGeneratedClass());
 		FireAnimation = Gun30FireAnimation;
 		LeftArm->SetupAttachment(Gun, TEXT("LeftArm"));
 		RightArm->SetupAttachment(Gun, TEXT("RightArm"));
-		currentFireType = 5; rateOfFire = 0.08f;
+		currentFireType = 5; rateOfFire = 0.08f; PlantSeedSelected = 31;
 		break;
 
 
@@ -1175,7 +1178,7 @@ void AMyCharacter::OnFire()
 		case 2: GatherWater(); break;
 		case 3: ammoInMagazine = 1; MeleeWeaponFire();
 		case 4: ammoInMagazine = 1; MeleeWeaponFire(); TryMakeDirt();  break;
-		case 5: TryPlantSeed();  break;
+		case 5: if (ammoInMagazine > 0) { TryPlantSeed();  }  break;
 		}
 	}
 }
@@ -1190,9 +1193,16 @@ void AMyCharacter::TryPlantSeed() {
 	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams)) {
 
 		APlantObject* TestTarget = Cast<APlantObject>(HitResult->Actor.Get());
-		if (TestTarget != NULL && !TestTarget->IsPendingKill()) {
-			TestTarget->PlantSeed();
-		}
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *HitResult->Actor->GetName()));
+
+			if (TestTarget != NULL && !TestTarget->IsPendingKill()) {
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Test Target not null")));
+				if (TestTarget->numseedplanted == 0) {
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("seednum is 0")));
+					TestTarget->PlantSeed(PlantSeedSelected);
+					//FireWeaponOrTool();
+				}
+			}
 	}
 }
 

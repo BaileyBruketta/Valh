@@ -1,0 +1,2 @@
+seed bag ID, plant fruit name, plant fruit ID, plant max size, fruit max size
+30, potato, 32, 1, 1
